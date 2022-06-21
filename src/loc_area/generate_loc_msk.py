@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 #     |------------------------------------------------------------|
-#     | This module creates general envelope surfaces to be        |
-#     | used to generate a Localised Multi-Envelope s-coordinate   |
+#     | This module creates localisation and transitioning masks   |
+#     | to generate a Localised Multi-Envelope s-coordinate        |
 #     | vertical grid.                                             |
 #     |                                                            |
 #     |                                                            |
