@@ -1,0 +1,22 @@
+# ==========================================================================
+# INPUT FILE TO SETUP A LOCALISED VERTICAL COORDINATE SYSTEM               |
+# ==========================================================================
+
+# A) INPUT FILES
+
+# *) Bathymetry of the domain
+bathyFile = '/data/users/dbruciaf/GS/orca025/GO8_domain/bathy_eORCA025_no_closea-20220404.nc'
+
+# *) Horizontal grid of the domain
+hgridFile = '/data/users/dbruciaf/GS/orca025/GO8_domain/coordinates.nc'
+
+# B) LOCALISATION AREA: parameters to identify
+#    limits of localisation area
+loc_isobt = 4500.
+loc_polyg = 2
+
+# c) TRANSITION AREA: parameters for Gaussian filtering 
+#    to identify limits of transition area
+s2z_factr = 1.e-10
+s2z_sigma = 4
+s2z_itera = 1
