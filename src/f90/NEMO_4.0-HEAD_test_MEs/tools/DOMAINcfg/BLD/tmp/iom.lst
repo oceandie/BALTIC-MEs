@@ -1,0 +1,2482 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S u m m a r y   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Compilation
+-----------
+File     : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/iom.f90
+Compiled : 04/29/22  10:43:21
+Compiler : Version 8.3.4
+Ftnlx    : Version 8318 (libcif 83016)
+Target   : x86-64
+Command  : ftn_driver.exe -hcpu=haswell -hstatic -D__CRAYXC -D__CRAY_HASWELL
+           -D__CRAYXT_COMPUTE_LINUX_TARGET -hnetwork=aries -oiom.o
+           -I/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HE
+           AD_test_MEs/tools/DOMAINcfg/BLD/inc -sreal64 -sinteger32 -Ovector0
+           -hfp0 -O0 -hflex_mp=intolerant -eCID
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/common/moci/modules/packages/XIOS/2.0/24708/952/inc
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/m
+           ct
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/p
+           smile.MPI1 -c -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/opt/cray/libsci/13.0.1/CRAY/83/haswell/include
+           -I/opt/cray/mpt/7.0.4/gni/mpich2-cray/83/include
+           -I/opt/cray/rca/1.0.0-2.0502.60530.1.62.ari/include
+           -I/opt/cray/alps/5.2.4-2.0502.9774.31.11.ari/include
+           -I/opt/cray/xpmem/0.1-2.0502.64982.5.3.ari/include
+           -I/opt/cray/gni-headers/4.0-1.0502.10859.7.8.ari/include
+           -I/opt/cray/dmapp/7.0.1-1.0502.11080.8.76.ari/include
+           -I/opt/cray/pmi/5.0.5-1.0000.10300.134.8.ari/include
+           -I/opt/cray/ugni/6.0-1.0502.10863.8.29.ari/include
+           -I/opt/cray/udreg/2.3.2-1.0502.10518.2.17.ari/include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/pkgconfig/../include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/wlm_detect/1.0-1.0502.64649.2.1.ari/include
+           -I/opt/cray/krca/1.0.0-2.0502.63139.4.31.ari/include
+           -I/opt/cray-hss-devel/7.2.0/include /projects/jmmp/dbruciaf/NEMO/CHEC
+           KOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/iom
+           .f90
+
+ftnlx report
+------------
+Source   : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp//projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/iom.f90
+Date     : 04/29/2022  10:43:22
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S o u r c e   L i s t i n g
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    1.    MODULE iom
+    2.       !!=====================================================================
+    3.       !!                    ***  MODULE  iom ***
+    4.       !! Input/Output manager :  Library to read input files
+    5.       !!====================================================================
+    6.       !! History :  2.0  ! 2005-12  (J. Belier) Original code
+    7.       !!            2.0  ! 2006-02  (S. Masson) Adaptation to NEMO
+    8.       !!            3.0  ! 2007-07  (D. Storkey) Changes to iom_gettime
+    9.       !!            3.4  ! 2012-12  (R. Bourdalle-Badie and G. Reffray)  add C1D case  
+   10.       !!--------------------------------------------------------------------
+   11.    
+   12.       !!--------------------------------------------------------------------
+   13.       !!   iom_open       : open a file read only
+   14.       !!   iom_close      : close a file or all files opened by iom
+   15.       !!   iom_get        : read a field (interfaced to several routines)
+   16.       !!   iom_gettime    : read the time axis cdvar in the file
+   17.       !!   iom_varid      : get the id of a variable in a file
+   18.       !!   iom_rstput     : write a field in a restart file (interfaced to several routines)
+   19.       !!--------------------------------------------------------------------
+   20.       USE dom_oce         ! ocean space and time domain
+                 ^                                             
+ftn-1193 ftn: CAUTION IOM, File = iom.f90, Line = 20, Column = 8 
+  Module "PAR_KIND" is indirectly used in module "DOM_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_kind.o".  That file no
+  longer exists.
+
+                 ^                                             
+ftn-1193 ftn: CAUTION IOM, File = iom.f90, Line = 20, Column = 8 
+  Module "PAR_OCE" is indirectly used in module "DOM_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_oce.o".  That file no
+  longer exists.
+
+   21.       USE lbclnk          ! lateal boundary condition / mpp exchanges
+   22.       USE iom_def         ! iom variables definitions
+   23.       USE iom_nf90        ! NetCDF format with native NetCDF library
+   24.       USE in_out_manager  ! I/O manager
+                 ^                             
+ftn-1193 ftn: CAUTION IOM, File = iom.f90, Line = 24, Column = 8 
+  Module "NC4INTERFACE" is indirectly used in module "IN_OUT_MANAGER" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/nc4interface.o".  That file no
+  longer exists.
+
+   25.       USE lib_mpp           ! MPP library
+   26.    
+   27.       IMPLICIT NONE
+   28.       PUBLIC   !   must be public to be able to access iom_def through iom
+   29.       
+   30.       LOGICAL, PUBLIC, PARAMETER ::   lk_iomput = .FALSE.       !: iom_put flag
+   31.       PUBLIC iom_init, iom_swap, iom_open, iom_close, iom_setkt, iom_varid, iom_get, iom_gettime, iom_rstput, iom_put
+   32.       PUBLIC iom_getatt, iom_use, iom_context_finalize
+   33.    
+   34.       PRIVATE iom_rp0d, iom_rp1d, iom_rp2d, iom_rp3d
+   35.       PRIVATE iom_g0d, iom_g1d, iom_g2d, iom_g3d, iom_get_123d
+   36.       PRIVATE iom_p1d, iom_p2d, iom_p3d
+   37.    
+   38.       INTERFACE iom_get
+   39.          MODULE PROCEDURE iom_g0d, iom_g1d, iom_g2d, iom_g3d
+   40.       END INTERFACE
+   41.       INTERFACE iom_getatt
+   42.          MODULE PROCEDURE iom_g0d_intatt
+   43.       END INTERFACE
+   44.       INTERFACE iom_rstput
+   45.          MODULE PROCEDURE iom_rp0d, iom_rp1d, iom_rp2d, iom_rp3d
+   46.       END INTERFACE
+   47.      INTERFACE iom_put
+   48.         MODULE PROCEDURE iom_p0d, iom_p1d, iom_p2d, iom_p3d
+   49.      END INTERFACE
+   50.    
+   51.       !!----------------------------------------------------------------------
+   52.       !! NEMO/OCE 4.0 , NEMO Consortium (2018)
+   53.       !! $Id: iom.F90 8572 2017-09-28 08:27:06Z cbricaud $
+   54.       !! Software governed by the CeCILL licence (./LICENSE)
+   55.       !!----------------------------------------------------------------------
+   56.    
+   57.    CONTAINS
+   58.    
+   59.       SUBROUTINE iom_init( cdname ) 
+   60.          !!----------------------------------------------------------------------
+   61.          !!                     ***  ROUTINE   ***
+   62.          !!
+   63.          !! ** Purpose :   
+   64.          !!
+   65.          !!----------------------------------------------------------------------
+   66.          CHARACTER(len=*), INTENT(in)  :: cdname
+   67.          
+   68.       END SUBROUTINE iom_init
+ftn-5004 ftn: NOTE File = iom.f90, Line = 68 
+  Dummy Argument "CDNAME" is not referenced or defined.
+
+   69.    
+   70.    
+   71.       SUBROUTINE iom_swap( cdname )
+   72.          !!---------------------------------------------------------------------
+   73.          !!                   ***  SUBROUTINE  iom_swap  ***
+   74.          !!
+   75.          !! ** Purpose :  swap context between different agrif grid for xmlio_server
+   76.          !!---------------------------------------------------------------------
+   77.          CHARACTER(len=*), INTENT(in) :: cdname
+   78.          !
+   79.       END SUBROUTINE iom_swap
+ftn-5004 ftn: NOTE File = iom.f90, Line = 79 
+  Dummy Argument "CDNAME" is not referenced or defined.
+
+   80.    
+   81.    
+   82.       SUBROUTINE iom_open( cdname, kiomid, ldwrt, kdom, kiolib, ldstop, ldiof )
+   83.          !!---------------------------------------------------------------------
+   84.          !!                   ***  SUBROUTINE  iom_open  ***
+   85.          !!
+   86.          !! ** Purpose :  open an input file (return 0 if not found)
+   87.          !!---------------------------------------------------------------------
+   88.          CHARACTER(len=*), INTENT(in   )           ::   cdname   ! File name
+   89.          INTEGER         , INTENT(  out)           ::   kiomid   ! iom identifier of the opened file
+   90.          LOGICAL         , INTENT(in   ), OPTIONAL ::   ldwrt    ! open in write modeb          (default = .FALSE.)
+   91.          INTEGER         , INTENT(in   ), OPTIONAL ::   kdom     ! Type of domain to be written (default = jpdom_local_noovlap)
+   92.          INTEGER         , INTENT(in   ), OPTIONAL ::   kiolib   ! library used to open the file (default = jpnf90) 
+   93.          LOGICAL         , INTENT(in   ), OPTIONAL ::   ldstop   ! stop if open to read a non-existing file (default = .TRUE.)
+   94.          LOGICAL         , INTENT(in   ), OPTIONAL ::   ldiof    ! Interp On the Fly, needed for AGRIF (default = .FALSE.)
+   95.    
+   96.          CHARACTER(LEN=256)    ::   clname    ! the name of the file based on cdname [[+clcpu]+clcpu]
+   97.          CHARACTER(LEN=256)    ::   cltmpn    ! tempory name to store clname (in writting mode)
+   98.          CHARACTER(LEN=10)     ::   clsuffix  ! ".nc" or ".dimg"
+   99.          CHARACTER(LEN=15)     ::   clcpu     ! the cpu number (max jpmax_digits digits)
+  100.          CHARACTER(LEN=256)    ::   clinfo    ! info character
+  101.          LOGICAL               ::   llok      ! check the existence 
+  102.          LOGICAL               ::   llwrt     ! local definition of ldwrt
+  103.          LOGICAL               ::   llnoov    ! local definition to read overlap
+  104.          LOGICAL               ::   llstop    ! local definition of ldstop
+  105.          LOGICAL               ::   lliof     ! local definition of ldiof
+  106.          INTEGER               ::   iolib     ! library do we use to open the file
+  107.          INTEGER               ::   icnt      ! counter for digits in clcpu (max = jpmax_digits)
+  108.          INTEGER               ::   iln, ils  ! lengths of character
+  109.          INTEGER               ::   idom      ! type of domain
+  110.          INTEGER               ::   istop     ! 
+  111.          INTEGER, DIMENSION(2,5) ::   idompar ! domain parameters: 
+  112.          ! local number of points for x,y dimensions
+  113.          ! position of first local point for x,y dimensions
+  114.          ! position of last local point for x,y dimensions
+  115.          ! start halo size for x,y dimensions
+  116.          ! end halo size for x,y dimensions
+  117.          !---------------------------------------------------------------------
+  118.          ! Initializations and control
+  119.          ! =============
+  120.          kiomid = -1
+  121.          clinfo = '                    iom_open ~~~  '
+  122.          istop = nstop
+  123.          ! if iom_open is called for the first time: initialize iom_file(:)%nfid to 0
+  124.          ! (could be done when defining iom_file in f95 but not in f90)
+  125.          IF( Agrif_Root() ) THEN
+  126.             IF( iom_open_init == 0 ) THEN
+  127.                iom_file(:)%nfid = 0
+ftn-6332 ftn: VECTOR File = iom.f90, Line = 127 
+  A loop starting at line 127 was not vectorized because it does not map well onto the target architecture.
+
+  128.                iom_open_init = 1
+  129.             ENDIF
+  130.          ENDIF
+  131.          ! do we read or write the file?
+  132.          IF( PRESENT(ldwrt) ) THEN   ;   llwrt = ldwrt
+  133.          ELSE                        ;   llwrt = .FALSE.
+  134.          ENDIF
+  135.          ! do we call ctl_stop if we try to open a non-existing file in read mode?
+  136.          IF( PRESENT(ldstop) ) THEN   ;   llstop = ldstop
+  137.          ELSE                         ;   llstop = .TRUE.
+  138.          ENDIF
+  139.          ! what library do we use to open the file?
+  140.          IF( PRESENT(kiolib) ) THEN   ;   iolib = kiolib
+  141.          ELSE                         ;   iolib = jpnf90
+  142.          ENDIF
+  143.          ! are we using interpolation on the fly?
+  144.          IF( PRESENT(ldiof) ) THEN   ;   lliof = ldiof
+  145.          ELSE                        ;   lliof = .FALSE.
+  146.          ENDIF
+  147.          ! do we read the overlap 
+  148.          ! ugly patch SM+JMM+RB to overwrite global definition in some cases
+  149.          llnoov = (jpni * jpnj ) == jpnij .AND. .NOT. lk_agrif 
+  150.          ! create the file name by added, if needed, TRIM(Agrif_CFixed()) and TRIM(clsuffix)
+  151.          ! =============
+  152.          clname   = trim(cdname)
+  153.          IF ( .NOT. Agrif_Root() .AND. .NOT. lliof ) THEN
+  154.             iln    = INDEX(clname,'/') 
+  155.             cltmpn = clname(1:iln)
+  156.             clname = clname(iln+1:LEN_TRIM(clname))
+  157.             clname=TRIM(cltmpn)//TRIM(Agrif_CFixed())//'_'//TRIM(clname)
+  158.          ENDIF
+  159.          ! which suffix should we use?
+  160.          SELECT CASE (iolib)
+  161.          CASE (jpnf90   ) ;   clsuffix = '.nc'
+  162.          CASE DEFAULT     ;   clsuffix = ''
+  163.          END SELECT
+  164.          ! Add the suffix if needed
+  165.          iln = LEN_TRIM(clname)
+  166.          ils = LEN_TRIM(clsuffix)
+  167.          IF( iln <= ils .OR. INDEX( TRIM(clname), TRIM(clsuffix), back = .TRUE. ) /= iln - ils + 1 )   &
+  168.             &   clname = TRIM(clname)//TRIM(clsuffix)
+  169.          cltmpn = clname   ! store this name
+  170.          ! try to find if the file to be opened already exist
+  171.          ! =============
+  172.          INQUIRE( FILE = clname, EXIST = llok )
+  173.          IF( .NOT.llok ) THEN
+  174.             ! we try to add the cpu number to the name
+  175.                WRITE(clcpu,*) narea-1
+  176.             clcpu  = TRIM(ADJUSTL(clcpu))
+  177.             iln = INDEX(clname,TRIM(clsuffix), back = .TRUE.)
+  178.             clname = clname(1:iln-1)//'_'//TRIM(clcpu)//TRIM(clsuffix)
+  179.             icnt = 0
+  180.             INQUIRE( FILE = clname, EXIST = llok ) 
+  181.             ! we try different formats for the cpu number by adding 0
+  182.             DO WHILE( .NOT.llok .AND. icnt < jpmax_digits )
+  183.                clcpu  = "0"//trim(clcpu)
+  184.                clname = clname(1:iln-1)//'_'//TRIM(clcpu)//TRIM(clsuffix)
+  185.                INQUIRE( FILE = clname, EXIST = llok )
+  186.                icnt = icnt + 1
+  187.             END DO
+  188.          ENDIF
+  189.          IF( llwrt ) THEN
+  190.             ! check the domain definition
+  191.    ! JMM + SM: ugly patch before getting the new version of lib_mpp)
+  192.    !         idom = jpdom_local_noovlap   ! default definition
+  193.             IF( llnoov ) THEN   ;   idom = jpdom_local_noovlap   ! default definition
+  194.             ELSE                ;   idom = jpdom_local_full      ! default definition
+  195.             ENDIF
+  196.             IF( PRESENT(kdom) )   idom = kdom
+  197.             ! create the domain informations
+  198.             ! =============
+  199.             SELECT CASE (idom)
+  200.             CASE (jpdom_local_full)
+  201.                idompar(:,1) = (/ jpi             , jpj              /)
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 201 
+  A loop starting at line 201 was not vectorized because its trip count is too small.
+
+  202.                idompar(:,2) = (/ nimpp           , njmpp            /)
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 202 
+  A loop starting at line 202 was not vectorized because its trip count is too small.
+
+  203.                idompar(:,3) = (/ nimpp + jpi - 1 , njmpp + jpj - 1  /)
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 203 
+  A loop starting at line 203 was not vectorized because its trip count is too small.
+
+  204.                idompar(:,4) = (/ nldi - 1        , nldj - 1         /)
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 204 
+  A loop starting at line 204 was not vectorized because its trip count is too small.
+
+  205.                idompar(:,5) = (/ jpi - nlei      , jpj - nlej       /)
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 205 
+  A loop starting at line 205 was not vectorized because its trip count is too small.
+
+  206.             CASE (jpdom_local_noextra)
+  207.                idompar(:,1) = (/ nlci            , nlcj             /)
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 207 
+  A loop starting at line 207 was not vectorized because its trip count is too small.
+
+  208.                idompar(:,2) = (/ nimpp           , njmpp            /)
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 208 
+  A loop starting at line 208 was not vectorized because its trip count is too small.
+
+  209.                idompar(:,3) = (/ nimpp + nlci - 1, njmpp + nlcj - 1 /)
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 209 
+  A loop starting at line 209 was not vectorized because its trip count is too small.
+
+  210.                idompar(:,4) = (/ nldi - 1        , nldj - 1         /)
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 210 
+  A loop starting at line 210 was not vectorized because its trip count is too small.
+
+  211.                idompar(:,5) = (/ nlci - nlei     , nlcj - nlej      /)
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 211 
+  A loop starting at line 211 was not vectorized because its trip count is too small.
+
+  212.             CASE (jpdom_local_noovlap)
+  213.                idompar(:,1) = (/ nlei  - nldi + 1, nlej  - nldj + 1 /)
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 213 
+  A loop starting at line 213 was not vectorized because its trip count is too small.
+
+  214.                idompar(:,2) = (/ nimpp + nldi - 1, njmpp + nldj - 1 /)
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 214 
+  A loop starting at line 214 was not vectorized because its trip count is too small.
+
+  215.                idompar(:,3) = (/ nimpp + nlei - 1, njmpp + nlej - 1 /)
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 215 
+  A loop starting at line 215 was not vectorized because its trip count is too small.
+
+  216.                idompar(:,4) = (/ 0               , 0                /)
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 216 
+  A loop starting at line 216 was not vectorized because its trip count is too small.
+
+  217.                idompar(:,5) = (/ 0               , 0                /)
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 217 
+  A loop starting at line 217 was not vectorized because its trip count is too small.
+
+  218.             CASE DEFAULT
+  219.                CALL ctl_stop( TRIM(clinfo), 'wrong value of kdom, only jpdom_local* cases are accepted' )
+  220.             END SELECT
+  221.          ENDIF
+  222.          ! Open the NetCDF or RSTDIMG file
+  223.          ! =============
+  224.          ! do we have some free file identifier?
+  225.          IF( MINVAL(iom_file(:)%nfid) /= 0 )   &
+ftn-6297 ftn: VECTOR File = iom.f90, Line = 225 
+  A loop starting at line 225 was not vectorized because a recurrence was found at line 225.
+
+  226.             &   CALL ctl_stop( TRIM(clinfo), 'No more free file identifier', 'increase jpmax_files in iom_def' )
+  227.          ! if no file was found...
+  228.          IF( .NOT. llok ) THEN
+  229.             IF( .NOT. llwrt ) THEN   ! we are in read mode 
+  230.                IF( llstop ) THEN   ;   CALL ctl_stop( TRIM(clinfo), 'File '//TRIM(cltmpn)//'* not found' )
+  231.                ELSE                ;   istop = nstop + 1   ! make sure that istop /= nstop so we don't open the file
+  232.                ENDIF
+  233.             ELSE                     ! we are in write mode so we 
+  234.                clname = cltmpn       ! get back the file name without the cpu number
+  235.             ENDIF
+  236.          ELSE
+  237.             IF( llwrt .AND. .NOT. ln_clobber ) THEN   ! we stop as we want to write in a new file 
+  238.                CALL ctl_stop( TRIM(clinfo), 'We want to write in a new file but '//TRIM(clname)//' already exists...' )
+  239.                istop = nstop + 1                      ! make sure that istop /= nstop so we don't open the file
+  240.             ELSEIF( llwrt ) THEN     ! the file exists and we are in write mode with permission to 
+  241.                clname = cltmpn       ! overwrite so get back the file name without the cpu number
+  242.             ENDIF
+  243.          ENDIF
+  244.          IF( istop == nstop ) THEN   ! no error within this routine
+  245.             SELECT CASE (iolib)
+  246.             CASE (jpnf90   )   ;   CALL iom_nf90_open(    clname, kiomid, llwrt, llok, idompar )
+  247.             CASE DEFAULT
+  248.             END SELECT
+  249.          ENDIF
+  250.          !
+  251.       END SUBROUTINE iom_open
+  252.    
+  253.    
+  254.       SUBROUTINE iom_close( kiomid )
+  255.          !!--------------------------------------------------------------------
+  256.          !!                   ***  SUBROUTINE  iom_close  ***
+  257.          !!
+  258.          !! ** Purpose : close an input file, or all files opened by iom
+  259.          !!--------------------------------------------------------------------
+  260.          INTEGER, INTENT(inout), OPTIONAL ::   kiomid   ! iom identifier of the file to be closed
+  261.          !                                              ! return 0 when file is properly closed
+  262.          !                                              ! No argument: all files opened by iom are closed
+  263.    
+  264.          INTEGER ::   jf         ! dummy loop indices
+  265.          INTEGER ::   i_s, i_e   ! temporary integer
+  266.          CHARACTER(LEN=100)    ::   clinfo    ! info character
+  267.          !---------------------------------------------------------------------
+  268.          !
+  269.          clinfo = '                    iom_close ~~~  '
+  270.          IF( PRESENT(kiomid) ) THEN
+  271.             i_s = kiomid
+  272.             i_e = kiomid
+  273.          ELSE
+  274.             i_s = 1
+  275.             i_e = jpmax_files
+  276.          ENDIF
+  277.    
+  278.          IF( i_s > 0 ) THEN
+  279.             DO jf = i_s, i_e
+  280.                IF( iom_file(jf)%nfid > 0 ) THEN
+  281.                   SELECT CASE (iom_file(jf)%iolib)
+  282.                   CASE (jpnf90   )   ;   CALL iom_nf90_close(    jf )
+  283.                   CASE DEFAULT
+  284.                   END SELECT
+  285.                   iom_file(jf)%nfid       = 0          ! free the id 
+  286.                   IF( PRESENT(kiomid) )   kiomid = 0   ! return 0 as id to specify that the file was closed
+  287.                   IF(lwp) WRITE(numout,*) TRIM(clinfo)//' close file: '//TRIM(iom_file(jf)%name)//' ok'
+  288.                ELSEIF( PRESENT(kiomid) ) THEN
+  289.                   WRITE(ctmp1,*) '--->',  kiomid
+  290.                   CALL ctl_stop( TRIM(clinfo)//' Invalid file identifier', ctmp1 )
+  291.                ENDIF
+  292.             END DO
+  293.          ENDIF
+  294.          !    
+  295.       END SUBROUTINE iom_close
+  296.    
+  297.    
+  298.       FUNCTION iom_varid ( kiomid, cdvar, kdimsz, kndims, ldstop )  
+  299.          !!-----------------------------------------------------------------------
+  300.          !!                  ***  FUNCTION  iom_varid  ***
+  301.          !!
+  302.          !! ** Purpose : get the id of a variable in a file (return 0 if not found)
+  303.          !!-----------------------------------------------------------------------
+  304.          INTEGER              , INTENT(in   )           ::   kiomid   ! file Identifier
+  305.          CHARACTER(len=*)     , INTENT(in   )           ::   cdvar    ! name of the variable
+  306.          INTEGER, DIMENSION(:), INTENT(  out), OPTIONAL ::   kdimsz   ! size of the dimensions
+  307.          INTEGER,               INTENT(  out), OPTIONAL ::   kndims   ! size of the dimensions
+  308.          LOGICAL              , INTENT(in   ), OPTIONAL ::   ldstop   ! stop if looking for non-existing variable (default = .TRUE.)
+  309.          !
+  310.          INTEGER                        ::   iom_varid, iiv, i_nvd
+  311.          LOGICAL                        ::   ll_fnd
+  312.          CHARACTER(LEN=100)             ::   clinfo                   ! info character
+  313.          LOGICAL                        ::   llstop                   ! local definition of ldstop
+  314.          !!-----------------------------------------------------------------------
+  315.          iom_varid = 0                         ! default definition
+  316.          ! do we call ctl_stop if we look for non-existing variable?
+  317.          IF( PRESENT(ldstop) ) THEN   ;   llstop = ldstop
+  318.          ELSE                         ;   llstop = .TRUE.
+  319.          ENDIF
+  320.          !
+  321.          IF( kiomid > 0 ) THEN
+  322.             clinfo = 'iom_varid, file: '//trim(iom_file(kiomid)%name)//', var: '//trim(cdvar)
+  323.             IF( iom_file(kiomid)%nfid == 0 ) THEN 
+  324.                CALL ctl_stop( trim(clinfo), 'the file is not open' )
+  325.             ELSE
+  326.                ll_fnd  = .FALSE.
+  327.                iiv = 0
+  328.                !
+  329.                DO WHILE ( .NOT.ll_fnd .AND. iiv < iom_file(kiomid)%nvars )
+  330.                   iiv = iiv + 1
+  331.                   ll_fnd  = ( TRIM(cdvar) == TRIM(iom_file(kiomid)%cn_var(iiv)) )
+  332.                END DO
+  333.                !
+  334.                IF( .NOT.ll_fnd ) THEN
+  335.                   iiv = iiv + 1
+  336.                   IF( iiv <= jpmax_vars ) THEN
+  337.                      SELECT CASE (iom_file(kiomid)%iolib)
+  338.                      CASE (jpnf90   )   ;   iom_varid = iom_nf90_varid  ( kiomid, cdvar, iiv, kdimsz, kndims )
+  339.                      CASE DEFAULT   
+  340.                      END SELECT
+  341.                   ELSE
+  342.                      CALL ctl_stop( trim(clinfo), 'Too many variables in the file '//iom_file(kiomid)%name,   &
+  343.                            &                         'increase the parameter jpmax_vars')
+  344.                   ENDIF
+  345.                   IF( llstop .AND. iom_varid == -1 )   CALL ctl_stop( TRIM(clinfo)//' not found' ) 
+  346.                ELSE
+  347.                   iom_varid = iiv
+  348.                   IF( PRESENT(kdimsz) ) THEN 
+  349.                      i_nvd = iom_file(kiomid)%ndims(iiv)
+  350.                      IF( i_nvd == size(kdimsz) ) THEN
+  351.                         kdimsz(:) = iom_file(kiomid)%dimsz(1:i_nvd,iiv)
+ftn-6262 ftn: VECTOR File = iom.f90, Line = 351 
+  A loop starting at line 351 was not vectorized because it contains a call to a subroutine or function on line 351.
+
+  352.                      ELSE
+  353.                         WRITE(ctmp1,*) i_nvd, size(kdimsz)
+  354.                         CALL ctl_stop( trim(clinfo), 'error in kdimsz size'//trim(ctmp1) )
+  355.                      ENDIF
+  356.                   ENDIF
+  357.                   IF( PRESENT(kndims) )  kndims = iom_file(kiomid)%ndims(iiv)
+  358.                ENDIF
+  359.             ENDIF
+  360.          ENDIF
+  361.          !
+  362.       END FUNCTION iom_varid
+  363.    
+  364.    
+  365.       !!----------------------------------------------------------------------
+  366.       !!                   INTERFACE iom_get
+  367.       !!----------------------------------------------------------------------
+  368.       SUBROUTINE iom_g0d( kiomid, cdvar, pvar, ktime )
+  369.          INTEGER         , INTENT(in   )                 ::   kiomid    ! Identifier of the file
+  370.          CHARACTER(len=*), INTENT(in   )                 ::   cdvar     ! Name of the variable
+  371.          REAL(wp)        , INTENT(  out)                 ::   pvar      ! read field
+  372.          INTEGER         , INTENT(in   ),     OPTIONAL   ::   ktime     ! record number
+  373.          !
+  374.          INTEGER                                         ::   idvar     ! variable id
+  375.          INTEGER                                         ::   idmspc    ! number of spatial dimensions
+  376.          INTEGER         , DIMENSION(1)                  ::   itime     ! record number
+  377.          CHARACTER(LEN=100)                              ::   clinfo    ! info character
+  378.          CHARACTER(LEN=100)                              ::   clname    ! file name
+  379.          CHARACTER(LEN=1)                                ::   cldmspc   !
+  380.          !
+  381.          itime = 1
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 381 
+  A loop starting at line 381 was not vectorized because its trip count is too small.
+
+  382.          IF( PRESENT(ktime) ) itime = ktime
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 382 
+  A loop starting at line 382 was not vectorized because its trip count is too small.
+
+  383.          !
+  384.          clname = iom_file(kiomid)%name
+  385.          clinfo = '          iom_g0d, file: '//trim(clname)//', var: '//trim(cdvar)
+  386.          !
+  387.          IF( kiomid > 0 ) THEN
+  388.             idvar = iom_varid( kiomid, cdvar )
+  389.             IF( iom_file(kiomid)%nfid > 0 .AND. idvar > 0 ) THEN
+  390.                idmspc = iom_file ( kiomid )%ndims( idvar )
+  391.                IF( iom_file(kiomid)%luld(idvar) )  idmspc = idmspc - 1
+  392.                WRITE(cldmspc , fmt='(i1)') idmspc
+  393.                IF( idmspc > 0 )  CALL ctl_stop( TRIM(clinfo), 'When reading to a 0D array, we do not accept data', &
+  394.                                     &                         'with 1 or more spatial dimensions: '//cldmspc//' were found.' , &
+  395.                                     &                         'Use ncwa -a to suppress the unnecessary dimensions' )
+  396.                SELECT CASE (iom_file(kiomid)%iolib)
+  397.                CASE (jpnf90   )   ;   CALL iom_nf90_get(    kiomid, idvar, pvar, itime )
+  398.                CASE DEFAULT    
+  399.                END SELECT
+  400.             ENDIF
+  401.          ENDIF
+  402.       END SUBROUTINE iom_g0d
+  403.    
+  404.       SUBROUTINE iom_g1d( kiomid, kdom, cdvar, pvar, ktime, kstart, kcount )
+  405.          INTEGER         , INTENT(in   )                         ::   kiomid    ! Identifier of the file
+  406.          INTEGER         , INTENT(in   )                         ::   kdom      ! Type of domain to be read
+  407.          CHARACTER(len=*), INTENT(in   )                         ::   cdvar     ! Name of the variable
+  408.          REAL(wp)        , INTENT(  out), DIMENSION(:)           ::   pvar      ! read field
+  409.          INTEGER         , INTENT(in   )              , OPTIONAL ::   ktime     ! record number
+  410.          INTEGER         , INTENT(in   ), DIMENSION(1), OPTIONAL ::   kstart    ! start axis position of the reading 
+  411.          INTEGER         , INTENT(in   ), DIMENSION(1), OPTIONAL ::   kcount    ! number of points in each axis
+  412.          !
+  413.          IF( kiomid > 0 ) THEN
+  414.             IF( iom_file(kiomid)%nfid > 0 ) CALL iom_get_123d( kiomid, kdom       , cdvar        , pv_r1d=pvar,   &
+  415.                  &                                                     ktime=ktime, kstart=kstart, kcount=kcount )
+  416.          ENDIF
+  417.       END SUBROUTINE iom_g1d
+  418.    
+  419.       SUBROUTINE iom_g2d( kiomid, kdom, cdvar, pvar, ktime, kstart, kcount, lrowattr )
+  420.          INTEGER         , INTENT(in   )                           ::   kiomid    ! Identifier of the file
+  421.          INTEGER         , INTENT(in   )                           ::   kdom      ! Type of domain to be read
+  422.          CHARACTER(len=*), INTENT(in   )                           ::   cdvar     ! Name of the variable
+  423.          REAL(wp)        , INTENT(  out), DIMENSION(:,:)           ::   pvar      ! read field
+  424.          INTEGER         , INTENT(in   )                , OPTIONAL ::   ktime     ! record number
+  425.          INTEGER         , INTENT(in   ), DIMENSION(2)  , OPTIONAL ::   kstart    ! start axis position of the reading 
+  426.          INTEGER         , INTENT(in   ), DIMENSION(2)  , OPTIONAL ::   kcount    ! number of points in each axis
+  427.          LOGICAL         , INTENT(in   )                , OPTIONAL ::   lrowattr  ! logical flag telling iom_get to
+  428.                                                                                   ! look for and use a file attribute
+  429.                                                                                   ! called open_ocean_jstart to set the start
+  430.                                                                                   ! value for the 2nd dimension (netcdf only)
+  431.          !
+  432.          IF( kiomid > 0 ) THEN
+  433.             IF( iom_file(kiomid)%nfid > 0 ) CALL iom_get_123d( kiomid, kdom       , cdvar        , pv_r2d=pvar,   &
+  434.                  &                                                     ktime=ktime, kstart=kstart, kcount=kcount, &
+  435.                  &                                                     lrowattr=lrowattr )
+  436.          ENDIF
+  437.       END SUBROUTINE iom_g2d
+  438.    
+  439.       SUBROUTINE iom_g3d( kiomid, kdom, cdvar, pvar, ktime, kstart, kcount, lrowattr )
+  440.          INTEGER         , INTENT(in   )                             ::   kiomid    ! Identifier of the file
+  441.          INTEGER         , INTENT(in   )                             ::   kdom      ! Type of domain to be read
+  442.          CHARACTER(len=*), INTENT(in   )                             ::   cdvar     ! Name of the variable
+  443.          REAL(wp)        , INTENT(  out), DIMENSION(:,:,:)           ::   pvar      ! read field
+  444.          INTEGER         , INTENT(in   )                  , OPTIONAL ::   ktime     ! record number
+  445.          INTEGER         , INTENT(in   ), DIMENSION(3)    , OPTIONAL ::   kstart    ! start axis position of the reading 
+  446.          INTEGER         , INTENT(in   ), DIMENSION(3)    , OPTIONAL ::   kcount    ! number of points in each axis
+  447.          LOGICAL         , INTENT(in   )                  , OPTIONAL ::   lrowattr  ! logical flag telling iom_get to
+  448.                                                                                     ! look for and use a file attribute
+  449.                                                                                     ! called open_ocean_jstart to set the start
+  450.                                                                                     ! value for the 2nd dimension (netcdf only)
+  451.          !
+  452.          IF( kiomid > 0 ) THEN
+  453.             IF( iom_file(kiomid)%nfid > 0 ) CALL iom_get_123d( kiomid, kdom       , cdvar        , pv_r3d=pvar,   &
+  454.                  &                                                     ktime=ktime, kstart=kstart, kcount=kcount, &
+  455.                  &                                                     lrowattr=lrowattr )
+  456.          ENDIF
+  457.       END SUBROUTINE iom_g3d
+  458.       !!----------------------------------------------------------------------
+  459.    
+  460.       SUBROUTINE iom_get_123d( kiomid, kdom  , cdvar ,   &
+  461.             &                  pv_r1d, pv_r2d, pv_r3d,   &
+  462.             &                  ktime , kstart, kcount,   &
+  463.             &                  lrowattr                )
+  464.          !!-----------------------------------------------------------------------
+  465.          !!                  ***  ROUTINE  iom_get_123d  ***
+  466.          !!
+  467.          !! ** Purpose : read a 1D/2D/3D variable
+  468.          !!
+  469.          !! ** Method : read ONE record at each CALL
+  470.          !!-----------------------------------------------------------------------
+  471.          INTEGER                    , INTENT(in   )           ::   kiomid     ! Identifier of the file
+  472.          INTEGER                    , INTENT(in   )           ::   kdom       ! Type of domain to be read
+  473.          CHARACTER(len=*)           , INTENT(in   )           ::   cdvar      ! Name of the variable
+  474.          REAL(wp), DIMENSION(:)     , INTENT(  out), OPTIONAL ::   pv_r1d     ! read field (1D case)
+  475.          REAL(wp), DIMENSION(:,:)   , INTENT(  out), OPTIONAL ::   pv_r2d     ! read field (2D case)
+  476.          REAL(wp), DIMENSION(:,:,:) , INTENT(  out), OPTIONAL ::   pv_r3d     ! read field (3D case)
+  477.          INTEGER                    , INTENT(in   ), OPTIONAL ::   ktime      ! record number
+  478.          INTEGER , DIMENSION(:)     , INTENT(in   ), OPTIONAL ::   kstart     ! start position of the reading in each axis 
+  479.          INTEGER , DIMENSION(:)     , INTENT(in   ), OPTIONAL ::   kcount     ! number of points to be read in each axis
+  480.          LOGICAL                    , INTENT(in   ), OPTIONAL ::   lrowattr   ! logical flag telling iom_get to
+  481.                                                                               ! look for and use a file attribute
+  482.                                                                               ! called open_ocean_jstart to set the start
+  483.                                                                               ! value for the 2nd dimension (netcdf only)
+  484.          !
+  485.          LOGICAL                        ::   llnoov      ! local definition to read overlap
+  486.          LOGICAL                        ::   luse_jattr  ! local definition to read open_ocean_jstart file attribute
+  487.          INTEGER                        ::   jstartrow   ! start point for 2nd dimension optionally set by file attribute
+  488.          INTEGER                        ::   jl          ! loop on number of dimension 
+  489.          INTEGER                        ::   idom        ! type of domain
+  490.          INTEGER                        ::   idvar       ! id of the variable
+  491.          INTEGER                        ::   inbdim      ! number of dimensions of the variable
+  492.          INTEGER                        ::   idmspc      ! number of spatial dimensions 
+  493.          INTEGER                        ::   itime       ! record number
+  494.          INTEGER                        ::   istop       ! temporary value of nstop
+  495.          INTEGER                        ::   ix1, ix2, iy1, iy2   ! subdomain indexes
+  496.          INTEGER                        ::   ji, jj      ! loop counters
+  497.          INTEGER                        ::   irankpv     ! 
+  498.          INTEGER                        ::   ind1, ind2  ! substring index
+  499.          INTEGER, DIMENSION(jpmax_dims) ::   istart      ! starting point to read for each axis
+  500.          INTEGER, DIMENSION(jpmax_dims) ::   icnt        ! number of value to read along each axis 
+  501.          INTEGER, DIMENSION(jpmax_dims) ::   idimsz      ! size of the dimensions of the variable
+  502.          INTEGER, DIMENSION(jpmax_dims) ::   ishape      ! size of the dimensions of the variable
+  503.          REAL(wp)                       ::   zscf, zofs  ! sacle_factor and add_offset
+  504.          INTEGER                        ::   itmp        ! temporary integer
+  505.          CHARACTER(LEN=256)             ::   clinfo      ! info character
+  506.          CHARACTER(LEN=256)             ::   clname      ! file name
+  507.          CHARACTER(LEN=1)               ::   clrankpv, cldmspc      ! 
+  508.          !---------------------------------------------------------------------
+  509.          !
+  510.          clname = iom_file(kiomid)%name   !   esier to read
+  511.          clinfo = '          iom_get_123d, file: '//trim(clname)//', var: '//trim(cdvar)
+  512.          ! local definition of the domain ?
+  513.          idom = kdom
+  514.          ! do we read the overlap 
+  515.          ! ugly patch SM+JMM+RB to overwrite global definition in some cases
+  516.          llnoov = (jpni * jpnj ) == jpnij .AND. .NOT. lk_agrif 
+  517.          ! check kcount and kstart optionals parameters...
+  518.          IF( PRESENT(kcount) .AND. (.NOT. PRESENT(kstart)) ) CALL ctl_stop(trim(clinfo), 'kcount present needs kstart present')
+  519.          IF( PRESENT(kstart) .AND. (.NOT. PRESENT(kcount)) ) CALL ctl_stop(trim(clinfo), 'kstart present needs kcount present')
+  520.          IF( PRESENT(kstart) .AND. idom /= jpdom_unknown   ) CALL ctl_stop(trim(clinfo), 'kstart present needs kdom = jpdom_unknown')
+  521.    
+  522.          luse_jattr = .false.
+  523.          IF( PRESENT(lrowattr) ) THEN
+  524.             IF( lrowattr .AND. idom /= jpdom_data   ) CALL ctl_stop(trim(clinfo), 'lrowattr present and true needs kdom = jpdom_data')
+  525.             IF( lrowattr .AND. idom == jpdom_data   ) luse_jattr = .true.
+  526.          ENDIF
+  527.          IF( luse_jattr ) THEN
+  528.             SELECT CASE (iom_file(kiomid)%iolib)
+  529.             CASE (jpnf90   )   
+  530.                 ! Ok
+  531.             CASE DEFAULT    
+  532.             END SELECT
+  533.          ENDIF
+  534.    
+  535.          ! Search for the variable in the data base (eventually actualize data)
+  536.          istop = nstop
+  537.          idvar = iom_varid( kiomid, cdvar )
+  538.          !
+  539.          IF( idvar > 0 ) THEN
+  540.             ! to write iom_file(kiomid)%dimsz in a shorter way !
+  541.             idimsz(:) = iom_file(kiomid)%dimsz(:, idvar) 
+ftn-6210 ftn: VECTOR File = iom.f90, Line = 541 
+  A loop starting at line 541 was partially vectorized with a single vector iteration.
+
+  542.             inbdim = iom_file(kiomid)%ndims(idvar)            ! number of dimensions in the file
+  543.             idmspc = inbdim                                   ! number of spatial dimensions in the file
+  544.             IF( iom_file(kiomid)%luld(idvar) )   idmspc = inbdim - 1
+  545.             IF( idmspc > 3 )   CALL ctl_stop(trim(clinfo), 'the file has more than 3 spatial dimensions this case is not coded...') 
+  546.             !
+  547.             ! update idom definition...
+  548.             ! Identify the domain in case of jpdom_auto(glo/dta) definition
+  549.             IF( idom == jpdom_autoglo .OR. idom == jpdom_autodta ) THEN            
+  550.                IF( idom == jpdom_autoglo ) THEN   ;   idom = jpdom_global 
+  551.                ELSE                               ;   idom = jpdom_data
+  552.                ENDIF
+  553.                ind1 = INDEX( clname, '_', back = .TRUE. ) + 1
+  554.                ind2 = INDEX( clname, '.', back = .TRUE. ) - 1
+  555.                IF( ind2 > ind1 ) THEN   ;   IF( VERIFY( clname(ind1:ind2), '0123456789' ) == 0 )   idom = jpdom_local   ;   ENDIF
+  556.             ENDIF
+  557.             ! Identify the domain in case of jpdom_local definition
+  558.             IF( idom == jpdom_local ) THEN
+  559.                IF(     idimsz(1) == jpi               .AND. idimsz(2) == jpj               ) THEN   ;   idom = jpdom_local_full
+  560.                ELSEIF( idimsz(1) == nlci              .AND. idimsz(2) == nlcj              ) THEN   ;   idom = jpdom_local_noextra
+  561.                ELSEIF( idimsz(1) == (nlei - nldi + 1) .AND. idimsz(2) == (nlej - nldj + 1) ) THEN   ;   idom = jpdom_local_noovlap
+  562.                ELSE   ;   CALL ctl_stop( trim(clinfo), 'impossible to identify the local domain' )
+  563.                ENDIF
+  564.             ENDIF
+  565.             !
+  566.             ! check the consistency between input array and data rank in the file
+  567.             !
+  568.             ! initializations
+  569.             itime = 1
+  570.             IF( PRESENT(ktime) ) itime = ktime
+  571.    
+  572.             irankpv = 1 * COUNT( (/PRESENT(pv_r1d)/) ) + 2 * COUNT( (/PRESENT(pv_r2d)/) ) + 3 * COUNT( (/PRESENT(pv_r3d)/) )
+ftn-6297 ftn: VECTOR File = iom.f90, Line = 572 
+  A loop starting at line 572 was not vectorized because a recurrence was found at line 572.
+
+  573.             WRITE(clrankpv, fmt='(i1)') irankpv
+  574.             WRITE(cldmspc , fmt='(i1)') idmspc
+  575.             !
+  576.             IF(     idmspc <  irankpv ) THEN 
+  577.                CALL ctl_stop( TRIM(clinfo), 'The file has only '//cldmspc//' spatial dimension',   &
+  578.                   &                         'it is impossible to read a '//clrankpv//'D array from this file...' )
+  579.             ELSEIF( idmspc == irankpv ) THEN
+  580.                IF( PRESENT(pv_r1d) .AND. idom /= jpdom_unknown )   &
+  581.                   &   CALL ctl_stop( TRIM(clinfo), 'case not coded...You must use jpdom_unknown' )
+  582.             ELSEIF( idmspc >  irankpv ) THEN
+  583.                   IF( PRESENT(pv_r2d) .AND. itime == 1 .AND. idimsz(3) == 1 .AND. idmspc == 3 ) THEN
+  584.                      CALL ctl_warn( trim(clinfo), '2D array but 3 spatial dimensions for the data...'              ,   &
+  585.                            &         'As the size of the z dimension is 1 and as we try to read the first record, ',   &
+  586.                            &         'we accept this case, even if there is a possible mix-up between z and time dimension' )   
+  587.                      idmspc = idmspc - 1
+  588.                   ELSE
+  589.                      CALL ctl_stop( TRIM(clinfo), 'To keep iom lisibility, when reading a '//clrankpv//'D array,'         ,   &
+  590.                         &                         'we do not accept data with '//cldmspc//' spatial dimensions',   &
+  591.                         &                         'Use ncwa -a to suppress the unnecessary dimensions' )
+  592.                   ENDIF
+  593.             ENDIF
+  594.    
+  595.             !
+  596.             ! definition of istart and icnt
+  597.             !
+  598.             icnt  (:) = 1
+ftn-6205 ftn: VECTOR File = iom.f90, Line = 598 
+  A loop starting at line 598 was vectorized with a single vector iteration.
+
+  599.             istart(:) = 1
+ftn-6205 ftn: VECTOR File = iom.f90, Line = 599 
+  A loop starting at line 599 was vectorized with a single vector iteration.
+
+  600.             istart(idmspc+1) = itime
+  601.    
+  602.             IF(              PRESENT(kstart)       ) THEN ; istart(1:idmspc) = kstart(1:idmspc) ; icnt(1:idmspc) = kcount(1:idmspc)
+ftn-6263 ftn: VECTOR File = iom.f90, Line = 602 
+  A loop starting at line 602 was not vectorized because it contains a reference to a non-vector intrinsic on line 602.
+
+  603.             ELSE
+  604.                IF(           idom == jpdom_unknown ) THEN                                       ; icnt(1:idmspc) = idimsz(1:idmspc)
+ftn-6263 ftn: VECTOR File = iom.f90, Line = 604 
+  A loop starting at line 604 was not vectorized because it contains a reference to a non-vector intrinsic on line 604.
+
+  605.                ELSE 
+  606.                   IF( .NOT. PRESENT(pv_r1d) ) THEN   !   not a 1D array
+  607.                      IF(     idom == jpdom_data    ) THEN
+  608.                         jstartrow = 1
+  609.                         IF( luse_jattr ) THEN
+  610.                            CALL iom_getatt(kiomid, 'open_ocean_jstart', jstartrow ) ! -999 is returned if the attribute is not found
+  611.                            jstartrow = MAX(1,jstartrow)
+  612.                         ENDIF
+  613.                         istart(1:2) = (/ mig(1), mjg(1) + jstartrow - 1 /)  ! icnt(1:2) done below
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 613 
+  A loop starting at line 613 was not vectorized because its trip count is too small.
+
+  614.                      ELSEIF( idom == jpdom_global  ) THEN ; istart(1:2) = (/ nimpp , njmpp  /)  ! icnt(1:2) done below
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 614 
+  A loop starting at line 614 was not vectorized because its trip count is too small.
+
+  615.                      ENDIF
+  616.                      ! we do not read the overlap                     -> we start to read at nldi, nldj
+  617.    ! JMM + SM: ugly patch before getting the new version of lib_mpp)
+  618.    !                  IF( idom /= jpdom_local_noovlap )   istart(1:2) = istart(1:2) + (/ nldi - 1, nldj - 1 /)
+  619.                      IF( llnoov .AND. idom /= jpdom_local_noovlap ) istart(1:2) = istart(1:2) + (/ nldi - 1, nldj - 1 /)
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 619 
+  A loop starting at line 619 was not vectorized because its trip count is too small.
+
+  620.                      ! we do not read the overlap and the extra-halos -> from nldi to nlei and from nldj to nlej 
+  621.    ! JMM + SM: ugly patch before getting the new version of lib_mpp)
+  622.    !                  icnt(1:2) = (/ nlei - nldi + 1, nlej - nldj + 1 /)
+  623.                      IF( llnoov ) THEN   ;   icnt(1:2) = (/ nlei - nldi + 1, nlej - nldj + 1 /)
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 623 
+  A loop starting at line 623 was not vectorized because its trip count is too small.
+
+  624.                      ELSE                ;   icnt(1:2) = (/ nlci           , nlcj            /)
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 624 
+  A loop starting at line 624 was not vectorized because its trip count is too small.
+
+  625.                      ENDIF
+  626.                      IF( PRESENT(pv_r3d) ) THEN
+  627.                         IF( idom == jpdom_data ) THEN   ; icnt(3) = jpkdta
+  628.                         ELSE                            ; icnt(3) = jpk
+  629.                         ENDIF
+  630.                      ENDIF
+  631.                   ENDIF
+  632.                ENDIF
+  633.             ENDIF
+  634.    
+  635.             ! check that istart and icnt can be used with this file
+  636.             !-
+  637.             DO jl = 1, jpmax_dims
+  638.                itmp = istart(jl)+icnt(jl)-1
+  639.                IF( itmp > idimsz(jl) .AND. idimsz(jl) /= 0 ) THEN
+  640.                   WRITE( ctmp1, FMT="('(istart(', i1, ') + icnt(', i1, ') - 1) = ', i5)" ) jl, jl, itmp
+  641.                   WRITE( ctmp2, FMT="(' is larger than idimsz(', i1,') = ', i5)"         ) jl, idimsz(jl)
+  642.                   CALL ctl_stop( trim(clinfo), 'start and count too big regarding to the size of the data, ', ctmp1, ctmp2 )     
+  643.                ENDIF
+  644.             END DO
+  645.    
+  646.             ! check that icnt matches the input array
+  647.             !-     
+  648.             IF( idom == jpdom_unknown ) THEN
+  649.                IF( irankpv == 1 )        ishape(1:1) = SHAPE(pv_r1d)
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 649 
+  A loop starting at line 649 was not vectorized because its trip count is too small.
+
+  650.                IF( irankpv == 2 )        ishape(1:2) = SHAPE(pv_r2d)
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 650 
+  A loop starting at line 650 was not vectorized because its trip count is too small.
+
+  651.                IF( irankpv == 3 )        ishape(1:3) = SHAPE(pv_r3d)
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 651 
+  A loop starting at line 651 was not vectorized because its trip count is too small.
+
+  652.                ctmp1 = 'd'
+  653.             ELSE
+  654.                IF( irankpv == 2 ) THEN
+  655.    ! JMM + SM: ugly patch before getting the new version of lib_mpp)
+  656.    !               ishape(1:2) = SHAPE(pv_r2d(nldi:nlei,nldj:nlej  ))   ;   ctmp1 = 'd(nldi:nlei,nldj:nlej)'
+  657.                   IF( llnoov ) THEN ; ishape(1:2)=SHAPE(pv_r2d(nldi:nlei,nldj:nlej  )) ; ctmp1='d(nldi:nlei,nldj:nlej)'
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 657 
+  A loop starting at line 657 was not vectorized because its trip count is too small.
+
+  658.                   ELSE              ; ishape(1:2)=SHAPE(pv_r2d(1   :nlci,1   :nlcj  )) ; ctmp1='d(1:nlci,1:nlcj)'
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 658 
+  A loop starting at line 658 was not vectorized because its trip count is too small.
+
+  659.                   ENDIF
+  660.                ENDIF
+  661.                IF( irankpv == 3 ) THEN 
+  662.    ! JMM + SM: ugly patch before getting the new version of lib_mpp)
+  663.    !               ishape(1:3) = SHAPE(pv_r3d(nldi:nlei,nldj:nlej,:))   ;   ctmp1 = 'd(nldi:nlei,nldj:nlej,:)'
+  664.                   IF( llnoov ) THEN ; ishape(1:3)=SHAPE(pv_r3d(nldi:nlei,nldj:nlej,:)) ; ctmp1='d(nldi:nlei,nldj:nlej,:)'
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 664 
+  A loop starting at line 664 was not vectorized because its trip count is too small.
+
+  665.                   ELSE              ; ishape(1:3)=SHAPE(pv_r3d(1   :nlci,1   :nlcj,:)) ; ctmp1='d(1:nlci,1:nlcj,:)'
+ftn-6271 ftn: VECTOR File = iom.f90, Line = 665 
+  A loop starting at line 665 was not vectorized because its trip count is too small.
+
+  666.                   ENDIF
+  667.                ENDIF
+  668.             ENDIF
+  669.             
+  670.             DO jl = 1, irankpv
+  671.                WRITE( ctmp2, FMT="(', ', i1,'): ', i5,' /= icnt(', i1,'):', i5)" ) jl, ishape(jl), jl, icnt(jl)
+  672.                IF( ishape(jl) /= icnt(jl) )   CALL ctl_stop( TRIM(clinfo), 'size(pv_r'//clrankpv//TRIM(ctmp1)//TRIM(ctmp2) )
+  673.             END DO
+  674.    
+  675.          ENDIF
+  676.    
+  677.          ! read the data
+  678.          !-     
+  679.          IF( idvar > 0 .AND. istop == nstop ) THEN   ! no additional errors until this point...
+  680.             !
+  681.             ! find the right index of the array to be read
+  682.    ! JMM + SM: ugly patch before getting the new version of lib_mpp)
+  683.    !         IF( idom /= jpdom_unknown ) THEN   ;   ix1 = nldi   ;   ix2 = nlei      ;   iy1 = nldj   ;   iy2 = nlej
+  684.    !         ELSE                               ;   ix1 = 1      ;   ix2 = icnt(1)   ;   iy1 = 1      ;   iy2 = icnt(2)
+  685.    !         ENDIF
+  686.             IF( llnoov ) THEN
+  687.                IF( idom /= jpdom_unknown ) THEN   ;   ix1 = nldi   ;   ix2 = nlei      ;   iy1 = nldj   ;   iy2 = nlej
+  688.                ELSE                               ;   ix1 = 1      ;   ix2 = icnt(1)   ;   iy1 = 1      ;   iy2 = icnt(2)
+  689.                ENDIF
+  690.             ELSE
+  691.                IF( idom /= jpdom_unknown ) THEN   ;   ix1 = 1      ;   ix2 = nlci      ;   iy1 = 1      ;   iy2 = nlcj
+  692.                ELSE                               ;   ix1 = 1      ;   ix2 = icnt(1)   ;   iy1 = 1      ;   iy2 = icnt(2)
+  693.                ENDIF
+  694.             ENDIF
+  695.          
+  696.             SELECT CASE (iom_file(kiomid)%iolib)
+  697.             CASE (jpnf90   )   ;   CALL iom_nf90_get(    kiomid, idvar, inbdim, istart, icnt, ix1, ix2, iy1, iy2,   &
+  698.                &                                         pv_r1d, pv_r2d, pv_r3d )
+  699.             CASE DEFAULT    
+  700.             END SELECT
+  701.    
+  702.             IF( istop == nstop ) THEN   ! no additional errors until this point...
+  703.                IF(lwp) WRITE(numout,"(10x,' read ',a,' (rec: ',i6,') in ',a,' ok')") TRIM(cdvar), itime, TRIM(iom_file(kiomid)%name)
+  704.              
+  705.                !--- overlap areas and extra hallows (mpp)
+  706.                IF(     PRESENT(pv_r2d) .AND. idom /= jpdom_unknown ) THEN
+  707.                   CALL lbc_lnk( pv_r2d,'Z',-999.,'no0' )
+                                       ^                        
+ftn-1438 ftn: CAUTION IOM_GET_123D, File = iom.f90, Line = 707, Column = 30 
+  This argument produces a possible copy in and out to a temporary variable.
+
+  708.                ELSEIF( PRESENT(pv_r3d) .AND. idom /= jpdom_unknown ) THEN
+  709.                   ! this if could be simplified with the new lbc_lnk that works with any size of the 3rd dimension
+  710.                   IF( icnt(3) == jpk ) THEN
+  711.                      CALL lbc_lnk( pv_r3d,'Z',-999.,'no0' )
+                                          ^                        
+ftn-1438 ftn: CAUTION IOM_GET_123D, File = iom.f90, Line = 711, Column = 33 
+  This argument produces a possible copy in and out to a temporary variable.
+
+  712.                   ELSE   ! put some arbitrary value (a call to lbc_lnk will be done later...)
+  713.                      DO jj = nlcj+1, jpj   ;   pv_r3d(1:nlci, jj, :) = pv_r3d(1:nlci, nlej, :)   ;   END DO
+ftn-6263 ftn: VECTOR File = iom.f90, Line = 713 
+  A loop starting at line 713 was not vectorized because it contains a reference to a non-vector intrinsic on line 713.
+
+  714.                      DO ji = nlci+1, jpi   ;   pv_r3d(ji    , : , :) = pv_r3d(nlei  , :   , :)   ;   END DO
+ftn-6263 ftn: VECTOR File = iom.f90, Line = 714 
+  A loop starting at line 714 was not vectorized because it contains a reference to a non-vector intrinsic on line 714.
+
+  715.                   ENDIF
+  716.                ENDIF
+  717.                
+  718.                !--- Apply scale_factor and offset
+  719.                zscf = iom_file(kiomid)%scf(idvar)      ! scale factor
+  720.                zofs = iom_file(kiomid)%ofs(idvar)      ! offset
+  721.                IF(     PRESENT(pv_r1d) ) THEN
+  722.                   IF( zscf /= 1. )   pv_r1d(:) = pv_r1d(:) * zscf 
+ftn-6263 ftn: VECTOR File = iom.f90, Line = 722 
+  A loop starting at line 722 was not vectorized because it contains a reference to a non-vector intrinsic on line 722.
+
+  723.                   IF( zofs /= 0. )   pv_r1d(:) = pv_r1d(:) + zofs
+ftn-6263 ftn: VECTOR File = iom.f90, Line = 723 
+  A loop starting at line 723 was not vectorized because it contains a reference to a non-vector intrinsic on line 723.
+
+  724.                ELSEIF( PRESENT(pv_r2d) ) THEN
+  725.    !CDIR COLLAPSE
+  726.                   IF( zscf /= 1.)   pv_r2d(:,:) = pv_r2d(:,:) * zscf
+ftn-6263 ftn: VECTOR File = iom.f90, Line = 726 
+  A loop starting at line 726 was not vectorized because it contains a reference to a non-vector intrinsic on line 726.
+
+  727.    !CDIR COLLAPSE
+  728.                   IF( zofs /= 0.)   pv_r2d(:,:) = pv_r2d(:,:) + zofs
+ftn-6263 ftn: VECTOR File = iom.f90, Line = 728 
+  A loop starting at line 728 was not vectorized because it contains a reference to a non-vector intrinsic on line 728.
+
+  729.                ELSEIF( PRESENT(pv_r3d) ) THEN
+  730.    !CDIR COLLAPSE
+  731.                   IF( zscf /= 1.)   pv_r3d(:,:,:) = pv_r3d(:,:,:) * zscf
+ftn-6263 ftn: VECTOR File = iom.f90, Line = 731 
+  A loop starting at line 731 was not vectorized because it contains a reference to a non-vector intrinsic on line 731.
+
+  732.    !CDIR COLLAPSE
+  733.                   IF( zofs /= 0.)   pv_r3d(:,:,:) = pv_r3d(:,:,:) + zofs
+ftn-6263 ftn: VECTOR File = iom.f90, Line = 733 
+  A loop starting at line 733 was not vectorized because it contains a reference to a non-vector intrinsic on line 733.
+
+  734.                ENDIF
+  735.                !
+  736.             ENDIF
+  737.             !
+  738.          ENDIF
+  739.          !
+  740.       END SUBROUTINE iom_get_123d
+  741.    
+  742.    
+  743.       SUBROUTINE iom_gettime( kiomid, ptime, cdvar, kntime, cdunits, cdcalendar )
+  744.          !!--------------------------------------------------------------------
+  745.          !!                   ***  SUBROUTINE iom_gettime  ***
+  746.          !!
+  747.          !! ** Purpose : read the time axis cdvar in the file 
+  748.          !!--------------------------------------------------------------------
+  749.          INTEGER                    , INTENT(in   ) ::   kiomid     ! file Identifier
+  750.          REAL(wp), DIMENSION(:)     , INTENT(  out) ::   ptime      ! the time axis
+  751.          CHARACTER(len=*), OPTIONAL , INTENT(in   ) ::   cdvar      ! time axis name
+  752.          INTEGER         , OPTIONAL , INTENT(  out) ::   kntime     ! number of times in file
+  753.          CHARACTER(len=*), OPTIONAL , INTENT(  out) ::   cdunits    ! units attribute of time coordinate
+  754.          CHARACTER(len=*), OPTIONAL , INTENT(  out) ::   cdcalendar ! calendar attribute of 
+  755.          !
+  756.          INTEGER, DIMENSION(1) :: kdimsz
+  757.          INTEGER            ::   idvar    ! id of the variable
+  758.          CHARACTER(LEN=32)  ::   tname    ! local name of time coordinate
+  759.          CHARACTER(LEN=100) ::   clinfo   ! info character
+  760.          !---------------------------------------------------------------------
+  761.          !
+  762.          IF ( PRESENT(cdvar) ) THEN
+  763.             tname = cdvar
+  764.          ELSE
+  765.             tname = iom_file(kiomid)%uldname
+  766.          ENDIF
+  767.          IF( kiomid > 0 ) THEN
+  768.             clinfo = 'iom_gettime, file: '//trim(iom_file(kiomid)%name)//', var: '//trim(tname)
+  769.             IF ( PRESENT(kntime) ) THEN
+  770.                idvar  = iom_varid( kiomid, tname, kdimsz = kdimsz )
+  771.                kntime = kdimsz(1)
+  772.             ELSE
+  773.                idvar = iom_varid( kiomid, tname )
+  774.             ENDIF
+  775.             !
+  776.             ptime(:) = 0. ! default definition
+ftn-6263 ftn: VECTOR File = iom.f90, Line = 776 
+  A loop starting at line 776 was not vectorized because it contains a reference to a non-vector intrinsic on line 776.
+
+  777.             IF( idvar > 0 ) THEN
+  778.                IF( iom_file(kiomid)%ndims(idvar) == 1 ) THEN
+  779.                   IF( iom_file(kiomid)%luld(idvar) ) THEN
+  780.                      IF( iom_file(kiomid)%dimsz(1,idvar) <= size(ptime) ) THEN
+  781.                         SELECT CASE (iom_file(kiomid)%iolib)
+  782.                         CASE (jpnf90   )   ;   CALL iom_nf90_gettime(   kiomid, idvar, ptime, cdunits, cdcalendar )
+  783.                         CASE DEFAULT    
+  784.                         END SELECT
+  785.                      ELSE
+  786.                         WRITE(ctmp1,*) 'error with the size of ptime ',size(ptime),iom_file(kiomid)%dimsz(1,idvar)
+  787.                         CALL ctl_stop( trim(clinfo), trim(ctmp1) )
+  788.                      ENDIF
+  789.                   ELSE
+  790.                      CALL ctl_stop( trim(clinfo), 'variable dimension is not unlimited... use iom_get' )
+  791.                   ENDIF
+  792.                ELSE
+  793.                   CALL ctl_stop( trim(clinfo), 'the variable has more than 1 dimension' )
+  794.                ENDIF
+  795.             ELSE
+  796.                CALL ctl_stop( trim(clinfo), 'variable not found in '//iom_file(kiomid)%name )
+  797.             ENDIF
+  798.          ENDIF
+  799.          !
+  800.       END SUBROUTINE iom_gettime
+  801.    
+  802.    
+  803.       !!----------------------------------------------------------------------
+  804.       !!                   INTERFACE iom_getatt
+  805.       !!----------------------------------------------------------------------
+  806.       SUBROUTINE iom_g0d_intatt( kiomid, cdatt, pvar )
+  807.          INTEGER         , INTENT(in   )                 ::   kiomid    ! Identifier of the file
+  808.          CHARACTER(len=*), INTENT(in   )                 ::   cdatt     ! Name of the attribute
+  809.          INTEGER         , INTENT(  out)                 ::   pvar      ! read field
+  810.          !
+  811.          IF( kiomid > 0 ) THEN
+  812.             IF( iom_file(kiomid)%nfid > 0 ) THEN
+  813.                SELECT CASE (iom_file(kiomid)%iolib)
+  814.                CASE (jpnf90   )   ;   CALL iom_nf90_getatt( kiomid, cdatt, pvar )
+  815.                CASE DEFAULT    
+  816.                END SELECT
+  817.             ENDIF
+  818.          ENDIF
+  819.       END SUBROUTINE iom_g0d_intatt
+  820.    
+  821.    
+  822.       !!----------------------------------------------------------------------
+  823.       !!                   INTERFACE iom_rstput
+  824.       !!----------------------------------------------------------------------
+  825.       SUBROUTINE iom_rp0d( kt, kwrite, kiomid, cdvar, pvar, ktype )
+  826.          INTEGER         , INTENT(in)                         ::   kt       ! ocean time-step
+  827.          INTEGER         , INTENT(in)                         ::   kwrite   ! writing time-step
+  828.          INTEGER         , INTENT(in)                         ::   kiomid   ! Identifier of the file 
+  829.          CHARACTER(len=*), INTENT(in)                         ::   cdvar    ! time axis name
+  830.          REAL(wp)        , INTENT(in)                         ::   pvar     ! written field
+  831.          INTEGER         , INTENT(in), OPTIONAL               ::   ktype    ! variable external type
+  832.          INTEGER :: ivid   ! variable id
+  833.          IF( kiomid > 0 ) THEN
+  834.             IF( iom_file(kiomid)%nfid > 0 ) THEN
+  835.                ivid = iom_varid( kiomid, cdvar, ldstop = .FALSE. )
+  836.                SELECT CASE (iom_file(kiomid)%iolib)
+  837.                CASE (jpnf90   )   ;   CALL iom_nf90_rstput(   kt, kwrite, kiomid, cdvar, ivid, ktype, pv_r0d = pvar )
+  838.                CASE DEFAULT     
+  839.                END SELECT
+  840.             ENDIF
+  841.          ENDIF
+  842.       END SUBROUTINE iom_rp0d
+  843.    
+  844.       SUBROUTINE iom_rp1d( kt, kwrite, kiomid, cdvar, pvar, ktype )
+  845.          INTEGER         , INTENT(in)                         ::   kt       ! ocean time-step
+  846.          INTEGER         , INTENT(in)                         ::   kwrite   ! writing time-step
+  847.          INTEGER         , INTENT(in)                         ::   kiomid   ! Identifier of the file 
+  848.          CHARACTER(len=*), INTENT(in)                         ::   cdvar    ! time axis name
+  849.          REAL(wp)        , INTENT(in), DIMENSION(          :) ::   pvar     ! written field
+  850.          INTEGER         , INTENT(in), OPTIONAL               ::   ktype    ! variable external type
+  851.          INTEGER :: ivid   ! variable id
+  852.          IF( kiomid > 0 ) THEN
+  853.             IF( iom_file(kiomid)%nfid > 0 ) THEN
+  854.                ivid = iom_varid( kiomid, cdvar, ldstop = .FALSE. )
+  855.                SELECT CASE (iom_file(kiomid)%iolib)
+  856.                CASE (jpnf90   )   ;   CALL iom_nf90_rstput(   kt, kwrite, kiomid, cdvar, ivid, ktype, pv_r1d = pvar )
+  857.                CASE DEFAULT     
+  858.                END SELECT
+  859.             ENDIF
+  860.          ENDIF
+  861.       END SUBROUTINE iom_rp1d
+  862.    
+  863.       SUBROUTINE iom_rp2d( kt, kwrite, kiomid, cdvar, pvar, ktype )
+  864.          INTEGER         , INTENT(in)                         ::   kt       ! ocean time-step
+  865.          INTEGER         , INTENT(in)                         ::   kwrite   ! writing time-step
+  866.          INTEGER         , INTENT(in)                         ::   kiomid   ! Identifier of the file 
+  867.          CHARACTER(len=*), INTENT(in)                         ::   cdvar    ! time axis name
+  868.          REAL(wp)        , INTENT(in), DIMENSION(:,    :    ) ::   pvar     ! written field
+  869.          INTEGER         , INTENT(in), OPTIONAL               ::   ktype    ! variable external type
+  870.          INTEGER :: ivid   ! variable id
+  871.          IF( kiomid > 0 ) THEN
+  872.             IF( iom_file(kiomid)%nfid > 0 ) THEN
+  873.                ivid = iom_varid( kiomid, cdvar, ldstop = .FALSE. )
+  874.                SELECT CASE (iom_file(kiomid)%iolib)
+  875.                CASE (jpnf90   )   ;   CALL iom_nf90_rstput(   kt, kwrite, kiomid, cdvar, ivid, ktype, pv_r2d = pvar )
+  876.                CASE DEFAULT     
+  877.                END SELECT
+  878.             ENDIF
+  879.          ENDIF
+  880.       END SUBROUTINE iom_rp2d
+  881.    
+  882.       SUBROUTINE iom_rp3d( kt, kwrite, kiomid, cdvar, pvar, ktype )
+  883.          INTEGER         , INTENT(in)                         ::   kt       ! ocean time-step
+  884.          INTEGER         , INTENT(in)                         ::   kwrite   ! writing time-step
+  885.          INTEGER         , INTENT(in)                         ::   kiomid   ! Identifier of the file 
+  886.          CHARACTER(len=*), INTENT(in)                         ::   cdvar    ! time axis name
+  887.          REAL(wp)        , INTENT(in),       DIMENSION(:,:,:) ::   pvar     ! written field
+  888.          INTEGER         , INTENT(in), OPTIONAL               ::   ktype    ! variable external type
+  889.          INTEGER :: ivid   ! variable id
+  890.          IF( kiomid > 0 ) THEN
+  891.             IF( iom_file(kiomid)%nfid > 0 ) THEN
+  892.                ivid = iom_varid( kiomid, cdvar, ldstop = .FALSE. )
+  893.                SELECT CASE (iom_file(kiomid)%iolib)
+  894.                CASE (jpnf90   )   ;   CALL iom_nf90_rstput(   kt, kwrite, kiomid, cdvar, ivid, ktype, pv_r3d = pvar )
+  895.                CASE DEFAULT     
+  896.                END SELECT
+  897.             ENDIF
+  898.          ENDIF
+  899.       END SUBROUTINE iom_rp3d
+  900.    
+  901.    
+  902.       !!----------------------------------------------------------------------
+  903.       !!                   INTERFACE iom_put
+  904.       !!----------------------------------------------------------------------
+  905.       SUBROUTINE iom_p0d( cdname, pfield0d )
+  906.          CHARACTER(LEN=*), INTENT(in) ::   cdname
+  907.          REAL(wp)        , INTENT(in) ::   pfield0d
+  908.          REAL(wp)        , DIMENSION(jpi,jpj) ::   zz     ! masson
+  909.          IF( .FALSE. )   WRITE(numout,*) cdname, pfield0d   ! useless test to avoid compilation warnings
+  910.       END SUBROUTINE iom_p0d
+ftn-5002 ftn: NOTE File = iom.f90, Line = 910 
+  Local variable "ZZ" is declared but neither defined nor used.
+
+  911.    
+  912.       SUBROUTINE iom_p1d( cdname, pfield1d )
+  913.          CHARACTER(LEN=*)          , INTENT(in) ::   cdname
+  914.          REAL(wp),     DIMENSION(:), INTENT(in) ::   pfield1d
+  915.          IF( .FALSE. )   WRITE(numout,*) cdname, pfield1d   ! useless test to avoid compilation warnings
+  916.       END SUBROUTINE iom_p1d
+  917.    
+  918.       SUBROUTINE iom_p2d( cdname, pfield2d )
+  919.          CHARACTER(LEN=*)            , INTENT(in) ::   cdname
+  920.          REAL(wp),     DIMENSION(:,:), INTENT(in) ::   pfield2d
+  921.          IF( .FALSE. )   WRITE(numout,*) cdname, pfield2d   ! useless test to avoid compilation warnings
+  922.       END SUBROUTINE iom_p2d
+  923.    
+  924.       SUBROUTINE iom_p3d( cdname, pfield3d )
+  925.          CHARACTER(LEN=*)                , INTENT(in) ::   cdname
+  926.          REAL(wp),       DIMENSION(:,:,:), INTENT(in) ::   pfield3d
+  927.          IF( .FALSE. )   WRITE(numout,*) cdname, pfield3d   ! useless test to avoid compilation warnings
+  928.       END SUBROUTINE iom_p3d
+  929.       !!----------------------------------------------------------------------
+  930.    
+  931.    
+  932.    
+  933.       SUBROUTINE iom_setkt( kt, cdname )
+  934.          INTEGER         , INTENT(in)::   kt 
+  935.          CHARACTER(LEN=*), INTENT(in) ::   cdname
+  936.          IF( .FALSE. )   WRITE(numout,*) kt, cdname   ! useless test to avoid compilation warnings
+  937.       END SUBROUTINE iom_setkt
+  938.    
+  939.       SUBROUTINE iom_context_finalize( cdname )
+  940.          CHARACTER(LEN=*), INTENT(in) ::   cdname
+  941.          IF( .FALSE. )   WRITE(numout,*)  cdname   ! useless test to avoid compilation warnings
+  942.       END SUBROUTINE iom_context_finalize
+  943.    
+  944.    
+  945.       LOGICAL FUNCTION iom_use( cdname )
+  946.          CHARACTER(LEN=*), INTENT(in) ::   cdname
+  947.          iom_use = .FALSE.
+  948.       END FUNCTION iom_use
+ftn-5004 ftn: NOTE File = iom.f90, Line = 948 
+  Dummy Argument "CDNAME" is not referenced or defined.
+
+  949.       
+  950.       !!======================================================================
+  951.    END MODULE iom
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                         E x t e r n a l   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Name  Messages
+----  --------
+ADJUSTL(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_OPEN in IOM (Line 176, file iom.f90)
+
+Name  Messages
+----  --------
+AGRIF_CFIXED in DOM_OCE
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_OPEN in IOM (Line 157, file iom.f90)
+
+Name  Messages
+----  --------
+AGRIF_ROOT in DOM_OCE
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_OPEN in IOM (Line 125, file iom.f90)
+                   IOM_OPEN in IOM (Line 153, file iom.f90)
+
+Name  Messages
+----  --------
+COUNT(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_GET_123D in IOM (Line 572, file iom.f90)
+                   IOM_GET_123D in IOM (Line 572, file iom.f90)
+                   IOM_GET_123D in IOM (Line 572, file iom.f90)
+
+Name  Messages
+----  --------
+CTL_NAM in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+CTL_OPN in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+CTL_STOP in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_OPEN in IOM (Line 219, file iom.f90)
+                   IOM_OPEN in IOM (Line 226, file iom.f90)
+                   IOM_OPEN in IOM (Line 230, file iom.f90)
+                   IOM_OPEN in IOM (Line 238, file iom.f90)
+                   IOM_CLOSE in IOM (Line 290, file iom.f90)
+                   IOM_VARID in IOM (Line 324, file iom.f90)
+                   IOM_VARID in IOM (Line 342, file iom.f90)
+                   IOM_VARID in IOM (Line 345, file iom.f90)
+                   IOM_VARID in IOM (Line 354, file iom.f90)
+                   IOM_G0D in IOM (Line 393, file iom.f90)
+                   IOM_GET_123D in IOM (Line 518, file iom.f90)
+                   IOM_GET_123D in IOM (Line 519, file iom.f90)
+                   IOM_GET_123D in IOM (Line 520, file iom.f90)
+                   IOM_GET_123D in IOM (Line 524, file iom.f90)
+                   IOM_GET_123D in IOM (Line 545, file iom.f90)
+                   IOM_GET_123D in IOM (Line 562, file iom.f90)
+                   IOM_GET_123D in IOM (Line 577, file iom.f90)
+                   IOM_GET_123D in IOM (Line 581, file iom.f90)
+                   IOM_GET_123D in IOM (Line 589, file iom.f90)
+                   IOM_GET_123D in IOM (Line 642, file iom.f90)
+                   IOM_GET_123D in IOM (Line 672, file iom.f90)
+                   IOM_GETTIME in IOM (Line 787, file iom.f90)
+                   IOM_GETTIME in IOM (Line 790, file iom.f90)
+                   IOM_GETTIME in IOM (Line 793, file iom.f90)
+                   IOM_GETTIME in IOM (Line 796, file iom.f90)
+
+Name  Messages
+----  --------
+CTL_WARN in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_GET_123D in IOM (Line 584, file iom.f90)
+
+Name  Messages
+----  --------
+DOM_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+Name  Messages
+----  --------
+DOM_OCE_ALLOC in DOM_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GET_NF90_SYMBOL in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GET_UNIT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+INDEX(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_OPEN in IOM (Line 154, file iom.f90)
+                   IOM_OPEN in IOM (Line 167, file iom.f90)
+                   IOM_OPEN in IOM (Line 177, file iom.f90)
+                   IOM_GET_123D in IOM (Line 553, file iom.f90)
+                   IOM_GET_123D in IOM (Line 554, file iom.f90)
+
+Name  Messages
+----  --------
+IN_OUT_MANAGER
+      Defined as:  No definitions.
+
+      Used By:     IOM
+
+Name  Messages
+----  --------
+IOM
+      Defined as:  Module (line 1, file iom.f90)
+
+        Uses:      PAR_KIND  (indirectly)
+                   PAR_OCE  (indirectly)
+                   LBCLNK
+                   PAR_OCE  (indirectly)
+                   LIB_MPP  (indirectly)
+                   LIB_MPP
+                   IOM_DEF
+                   IOM_NF90
+                   IN_OUT_MANAGER
+                   PAR_KIND  (indirectly)
+                   NC4INTERFACE  (indirectly)
+                   PAR_OCE  (indirectly)
+
+Name  Messages
+----  --------
+IOM_CLOSE in IOM
+      Defined as:  Subroutine (line 31, file iom.f90)
+
+      Interface:   None
+
+      Calls:       CTL_STOP in LIB_MPP (Line 290, file iom.f90)
+                   IOM_NF90_CLOSE in IOM_NF90 (Line 282, file iom.f90)
+                   PRESENT(Intrinsic) (Line 270, file iom.f90)
+                   PRESENT(Intrinsic) (Line 286, file iom.f90)
+                   PRESENT(Intrinsic) (Line 288, file iom.f90)
+                   TRIM(Intrinsic) (Line 287, file iom.f90)
+                   TRIM(Intrinsic) (Line 287, file iom.f90)
+                   TRIM(Intrinsic) (Line 290, file iom.f90)
+
+Name  Messages
+----  --------
+IOM_CONTEXT_FINALIZE in IOM
+      Defined as:  Subroutine (line 32, file iom.f90)
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_DEF
+      Defined as:  No definitions.
+
+      Used By:     IOM
+
+Name  Messages
+----  --------
+IOM_G0D in IOM
+      Defined as:  Subroutine (line 35, file iom.f90)
+
+      Interface:   None
+
+      Calls:       IOM_VARID in IOM (Line 388, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 393, file iom.f90)
+                   IOM_NF90_G0D in IOM_NF90 (Line 397, file iom.f90)
+                   PRESENT(Intrinsic) (Line 382, file iom.f90)
+                   TRIM(Intrinsic) (Line 385, file iom.f90)
+                   TRIM(Intrinsic) (Line 385, file iom.f90)
+                   TRIM(Intrinsic) (Line 393, file iom.f90)
+
+Name  Messages
+----  --------
+IOM_G0D_INTATT in IOM
+      Defined as:  Subroutine (line 806, file iom.f90)
+
+      Interface:   None
+
+      Called By:   IOM_GET_123D in IOM (Line 610, file iom.f90)
+
+      Calls:       IOM_NF90_INTATT in IOM_NF90 (Line 814, file iom.f90)
+
+Name  Messages
+----  --------
+IOM_G1D in IOM
+      Defined as:  Subroutine (line 35, file iom.f90)
+
+      Interface:   None
+
+      Calls:       IOM_GET_123D in IOM (Line 414, file iom.f90)
+
+Name  Messages
+----  --------
+IOM_G2D in IOM
+      Defined as:  Subroutine (line 35, file iom.f90)
+
+      Interface:   None
+
+      Calls:       IOM_GET_123D in IOM (Line 433, file iom.f90)
+
+Name  Messages
+----  --------
+IOM_G3D in IOM
+      Defined as:  Subroutine (line 35, file iom.f90)
+
+      Interface:   None
+
+      Calls:       IOM_GET_123D in IOM (Line 453, file iom.f90)
+
+Name  Messages
+----  --------
+IOM_GETTIME in IOM
+      Defined as:  Subroutine (line 31, file iom.f90)
+
+      Interface:   None
+
+      Calls:       IOM_VARID in IOM (Line 770, file iom.f90)
+                   IOM_VARID in IOM (Line 773, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 787, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 790, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 793, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 796, file iom.f90)
+                   IOM_NF90_GETTIME in IOM_NF90 (Line 782, file iom.f90)
+                   PRESENT(Intrinsic) (Line 762, file iom.f90)
+                   PRESENT(Intrinsic) (Line 769, file iom.f90)
+                   TRIM(Intrinsic) (Line 768, file iom.f90)
+                   TRIM(Intrinsic) (Line 768, file iom.f90)
+                   TRIM(Intrinsic) (Line 787, file iom.f90)
+                   TRIM(Intrinsic) (Line 787, file iom.f90)
+                   TRIM(Intrinsic) (Line 790, file iom.f90)
+                   TRIM(Intrinsic) (Line 793, file iom.f90)
+                   TRIM(Intrinsic) (Line 796, file iom.f90)
+                   SIZE(Intrinsic) (Line 780, file iom.f90)
+                   SIZE(Intrinsic) (Line 786, file iom.f90)
+
+Name  Messages
+----  --------
+IOM_GET_123D in IOM
+      Defined as:  Subroutine (line 35, file iom.f90)
+
+      Interface:   None
+
+      Called By:   IOM_G1D in IOM (Line 414, file iom.f90)
+                   IOM_G2D in IOM (Line 433, file iom.f90)
+                   IOM_G3D in IOM (Line 453, file iom.f90)
+
+      Calls:       IOM_VARID in IOM (Line 537, file iom.f90)
+                   IOM_G0D_INTATT in IOM (Line 610, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 518, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 519, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 520, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 524, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 545, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 562, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 577, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 581, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 589, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 642, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 672, file iom.f90)
+                   CTL_WARN in LIB_MPP (Line 584, file iom.f90)
+                   IOM_NF90_G123D in IOM_NF90 (Line 697, file iom.f90)
+                   MPP_LNK_2D in LIB_MPP (Line 707, file iom.f90)
+                   MPP_LNK_3D in LIB_MPP (Line 711, file iom.f90)
+                   TRIM(Intrinsic) (Line 511, file iom.f90)
+                   TRIM(Intrinsic) (Line 511, file iom.f90)
+                   TRIM(Intrinsic) (Line 518, file iom.f90)
+                   TRIM(Intrinsic) (Line 519, file iom.f90)
+                   TRIM(Intrinsic) (Line 520, file iom.f90)
+                   TRIM(Intrinsic) (Line 524, file iom.f90)
+                   TRIM(Intrinsic) (Line 545, file iom.f90)
+                   TRIM(Intrinsic) (Line 562, file iom.f90)
+                   TRIM(Intrinsic) (Line 577, file iom.f90)
+                   TRIM(Intrinsic) (Line 581, file iom.f90)
+                   TRIM(Intrinsic) (Line 584, file iom.f90)
+                   TRIM(Intrinsic) (Line 589, file iom.f90)
+                   TRIM(Intrinsic) (Line 642, file iom.f90)
+                   TRIM(Intrinsic) (Line 672, file iom.f90)
+                   TRIM(Intrinsic) (Line 672, file iom.f90)
+                   TRIM(Intrinsic) (Line 672, file iom.f90)
+                   TRIM(Intrinsic) (Line 703, file iom.f90)
+                   TRIM(Intrinsic) (Line 703, file iom.f90)
+                   PRESENT(Intrinsic) (Line 518, file iom.f90)
+                   PRESENT(Intrinsic) (Line 518, file iom.f90)
+                   PRESENT(Intrinsic) (Line 519, file iom.f90)
+                   PRESENT(Intrinsic) (Line 519, file iom.f90)
+                   PRESENT(Intrinsic) (Line 520, file iom.f90)
+                   PRESENT(Intrinsic) (Line 523, file iom.f90)
+                   PRESENT(Intrinsic) (Line 570, file iom.f90)
+                   PRESENT(Intrinsic) (Line 572, file iom.f90)
+                   PRESENT(Intrinsic) (Line 572, file iom.f90)
+                   PRESENT(Intrinsic) (Line 572, file iom.f90)
+                   PRESENT(Intrinsic) (Line 580, file iom.f90)
+                   PRESENT(Intrinsic) (Line 583, file iom.f90)
+                   PRESENT(Intrinsic) (Line 602, file iom.f90)
+                   PRESENT(Intrinsic) (Line 606, file iom.f90)
+                   PRESENT(Intrinsic) (Line 626, file iom.f90)
+                   PRESENT(Intrinsic) (Line 706, file iom.f90)
+                   PRESENT(Intrinsic) (Line 708, file iom.f90)
+                   PRESENT(Intrinsic) (Line 721, file iom.f90)
+                   PRESENT(Intrinsic) (Line 724, file iom.f90)
+                   PRESENT(Intrinsic) (Line 729, file iom.f90)
+                   INDEX(Intrinsic) (Line 553, file iom.f90)
+                   INDEX(Intrinsic) (Line 554, file iom.f90)
+                   VERIFY(Intrinsic) (Line 555, file iom.f90)
+                   COUNT(Intrinsic) (Line 572, file iom.f90)
+                   COUNT(Intrinsic) (Line 572, file iom.f90)
+                   COUNT(Intrinsic) (Line 572, file iom.f90)
+                   MAX(Intrinsic) (Line 611, file iom.f90)
+                   SHAPE(Intrinsic) (Line 649, file iom.f90)
+                   SHAPE(Intrinsic) (Line 650, file iom.f90)
+                   SHAPE(Intrinsic) (Line 651, file iom.f90)
+                   SHAPE(Intrinsic) (Line 657, file iom.f90)
+                   SHAPE(Intrinsic) (Line 658, file iom.f90)
+                   SHAPE(Intrinsic) (Line 664, file iom.f90)
+                   SHAPE(Intrinsic) (Line 665, file iom.f90)
+
+Name  Messages
+----  --------
+IOM_INIT in IOM
+      Defined as:  Subroutine (line 31, file iom.f90)
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90
+      Defined as:  No definitions.
+
+      Used By:     IOM
+
+Name  Messages
+----  --------
+IOM_NF90_CLOSE in IOM_NF90
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_CLOSE in IOM (Line 282, file iom.f90)
+
+Name  Messages
+----  --------
+IOM_NF90_G0D in IOM_NF90
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_G0D in IOM (Line 397, file iom.f90)
+
+Name  Messages
+----  --------
+IOM_NF90_G123D in IOM_NF90
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_GET_123D in IOM (Line 697, file iom.f90)
+
+Name  Messages
+----  --------
+IOM_NF90_GETTIME in IOM_NF90
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_GETTIME in IOM (Line 782, file iom.f90)
+
+Name  Messages
+----  --------
+IOM_NF90_INTATT in IOM_NF90
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_G0D_INTATT in IOM (Line 814, file iom.f90)
+
+Name  Messages
+----  --------
+IOM_NF90_OPEN in IOM_NF90
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_OPEN in IOM (Line 246, file iom.f90)
+
+Name  Messages
+----  --------
+IOM_NF90_RP0123D in IOM_NF90
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_RP0D in IOM (Line 837, file iom.f90)
+                   IOM_RP1D in IOM (Line 856, file iom.f90)
+                   IOM_RP2D in IOM (Line 875, file iom.f90)
+                   IOM_RP3D in IOM (Line 894, file iom.f90)
+
+Name  Messages
+----  --------
+IOM_NF90_VARID in IOM_NF90
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_VARID in IOM (Line 338, file iom.f90)
+
+Name  Messages
+----  --------
+IOM_OPEN in IOM
+      Defined as:  Subroutine (line 31, file iom.f90)
+
+      Interface:   None
+
+      Calls:       AGRIF_CFIXED in DOM_OCE (Line 157, file iom.f90)
+                   AGRIF_ROOT in DOM_OCE (Line 125, file iom.f90)
+                   AGRIF_ROOT in DOM_OCE (Line 153, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 219, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 226, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 230, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 238, file iom.f90)
+                   IOM_NF90_OPEN in IOM_NF90 (Line 246, file iom.f90)
+                   PRESENT(Intrinsic) (Line 132, file iom.f90)
+                   PRESENT(Intrinsic) (Line 136, file iom.f90)
+                   PRESENT(Intrinsic) (Line 140, file iom.f90)
+                   PRESENT(Intrinsic) (Line 144, file iom.f90)
+                   PRESENT(Intrinsic) (Line 196, file iom.f90)
+                   TRIM(Intrinsic) (Line 152, file iom.f90)
+                   TRIM(Intrinsic) (Line 157, file iom.f90)
+                   TRIM(Intrinsic) (Line 157, file iom.f90)
+                   TRIM(Intrinsic) (Line 157, file iom.f90)
+                   TRIM(Intrinsic) (Line 167, file iom.f90)
+                   TRIM(Intrinsic) (Line 167, file iom.f90)
+                   TRIM(Intrinsic) (Line 168, file iom.f90)
+                   TRIM(Intrinsic) (Line 168, file iom.f90)
+                   TRIM(Intrinsic) (Line 176, file iom.f90)
+                   TRIM(Intrinsic) (Line 177, file iom.f90)
+                   TRIM(Intrinsic) (Line 178, file iom.f90)
+                   TRIM(Intrinsic) (Line 178, file iom.f90)
+                   TRIM(Intrinsic) (Line 183, file iom.f90)
+                   TRIM(Intrinsic) (Line 184, file iom.f90)
+                   TRIM(Intrinsic) (Line 184, file iom.f90)
+                   TRIM(Intrinsic) (Line 219, file iom.f90)
+                   TRIM(Intrinsic) (Line 226, file iom.f90)
+                   TRIM(Intrinsic) (Line 230, file iom.f90)
+                   TRIM(Intrinsic) (Line 230, file iom.f90)
+                   TRIM(Intrinsic) (Line 238, file iom.f90)
+                   TRIM(Intrinsic) (Line 238, file iom.f90)
+                   INDEX(Intrinsic) (Line 154, file iom.f90)
+                   INDEX(Intrinsic) (Line 167, file iom.f90)
+                   INDEX(Intrinsic) (Line 177, file iom.f90)
+                   LEN_TRIM(Intrinsic) (Line 156, file iom.f90)
+                   LEN_TRIM(Intrinsic) (Line 165, file iom.f90)
+                   LEN_TRIM(Intrinsic) (Line 166, file iom.f90)
+                   ADJUSTL(Intrinsic) (Line 176, file iom.f90)
+                   MINVAL(Intrinsic) (Line 225, file iom.f90)
+
+Name  Messages
+----  --------
+IOM_P0D in IOM
+      Defined as:  Subroutine (line 905, file iom.f90)
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_P1D in IOM
+      Defined as:  Subroutine (line 36, file iom.f90)
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_P2D in IOM
+      Defined as:  Subroutine (line 36, file iom.f90)
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_P3D in IOM
+      Defined as:  Subroutine (line 36, file iom.f90)
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_RP0D in IOM
+      Defined as:  Subroutine (line 34, file iom.f90)
+
+      Interface:   None
+
+      Calls:       IOM_VARID in IOM (Line 835, file iom.f90)
+                   IOM_NF90_RP0123D in IOM_NF90 (Line 837, file iom.f90)
+
+Name  Messages
+----  --------
+IOM_RP1D in IOM
+      Defined as:  Subroutine (line 34, file iom.f90)
+
+      Interface:   None
+
+      Calls:       IOM_VARID in IOM (Line 854, file iom.f90)
+                   IOM_NF90_RP0123D in IOM_NF90 (Line 856, file iom.f90)
+
+Name  Messages
+----  --------
+IOM_RP2D in IOM
+      Defined as:  Subroutine (line 34, file iom.f90)
+
+      Interface:   None
+
+      Calls:       IOM_VARID in IOM (Line 873, file iom.f90)
+                   IOM_NF90_RP0123D in IOM_NF90 (Line 875, file iom.f90)
+
+Name  Messages
+----  --------
+IOM_RP3D in IOM
+      Defined as:  Subroutine (line 34, file iom.f90)
+
+      Interface:   None
+
+      Calls:       IOM_VARID in IOM (Line 892, file iom.f90)
+                   IOM_NF90_RP0123D in IOM_NF90 (Line 894, file iom.f90)
+
+Name  Messages
+----  --------
+IOM_SETKT in IOM
+      Defined as:  Subroutine (line 31, file iom.f90)
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_SWAP in IOM
+      Defined as:  Subroutine (line 31, file iom.f90)
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_USE in IOM
+      Defined as:  Function (line 32, file iom.f90)
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_VARID in IOM
+      Defined as:  Function (line 31, file iom.f90)
+
+      Interface:   None
+
+      Called By:   IOM_G0D in IOM (Line 388, file iom.f90)
+                   IOM_GET_123D in IOM (Line 537, file iom.f90)
+                   IOM_GETTIME in IOM (Line 770, file iom.f90)
+                   IOM_GETTIME in IOM (Line 773, file iom.f90)
+                   IOM_RP0D in IOM (Line 835, file iom.f90)
+                   IOM_RP1D in IOM (Line 854, file iom.f90)
+                   IOM_RP2D in IOM (Line 873, file iom.f90)
+                   IOM_RP3D in IOM (Line 892, file iom.f90)
+
+      Calls:       CTL_STOP in LIB_MPP (Line 324, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 342, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 345, file iom.f90)
+                   CTL_STOP in LIB_MPP (Line 354, file iom.f90)
+                   IOM_NF90_VARID in IOM_NF90 (Line 338, file iom.f90)
+                   PRESENT(Intrinsic) (Line 317, file iom.f90)
+                   PRESENT(Intrinsic) (Line 348, file iom.f90)
+                   PRESENT(Intrinsic) (Line 357, file iom.f90)
+                   TRIM(Intrinsic) (Line 322, file iom.f90)
+                   TRIM(Intrinsic) (Line 322, file iom.f90)
+                   TRIM(Intrinsic) (Line 324, file iom.f90)
+                   TRIM(Intrinsic) (Line 331, file iom.f90)
+                   TRIM(Intrinsic) (Line 331, file iom.f90)
+                   TRIM(Intrinsic) (Line 342, file iom.f90)
+                   TRIM(Intrinsic) (Line 345, file iom.f90)
+                   TRIM(Intrinsic) (Line 354, file iom.f90)
+                   TRIM(Intrinsic) (Line 354, file iom.f90)
+                   SIZE(Intrinsic) (Line 350, file iom.f90)
+                   SIZE(Intrinsic) (Line 353, file iom.f90)
+
+Name  Messages
+----  --------
+LBCLNK
+      Defined as:  No definitions.
+
+      Used By:     IOM
+
+Name  Messages
+----  --------
+LEN_TRIM(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_OPEN in IOM (Line 156, file iom.f90)
+                   IOM_OPEN in IOM (Line 165, file iom.f90)
+                   IOM_OPEN in IOM (Line 166, file iom.f90)
+
+Name  Messages
+----  --------
+LIB_MPP
+      Defined as:  No definitions.
+
+      Used By:     IOM  (indirectly)
+                   IOM
+
+Name  Messages
+----  --------
+MAX(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_GET_123D in IOM (Line 611, file iom.f90)
+
+Name  Messages
+----  --------
+MINVAL(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_OPEN in IOM (Line 225, file iom.f90)
+
+Name  Messages
+----  --------
+MPPBCAST_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPGATHER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_REAL_MULTIPLE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPRECV in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSCATTER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSEND in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSTOP in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_REALDD in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_REALDD in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSYNC in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_COMM_FREE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_ICE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_NORTH in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_ZNL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_E in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_ICB in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_GET_123D in IOM (Line 707, file iom.f90)
+
+Name  Messages
+----  --------
+MPP_LNK_2D_9 in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_E in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_ICB in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_MULTIPLE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_3D in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_GET_123D in IOM (Line 711, file iom.f90)
+
+Name  Messages
+----  --------
+MPP_LNK_3D_GATHER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_BDY_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_BDY_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_SUM_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_SUM_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MAXLOC2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MAXLOC3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MINLOC2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MINLOC3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MYNODE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NC4INTERFACE
+      Defined as:  No definitions.
+
+      Used By:     IOM  (indirectly)
+
+Name  Messages
+----  --------
+PAR_KIND
+      Defined as:  No definitions.
+
+      Used By:     IOM  (indirectly)
+                   IOM  (indirectly)
+
+Name  Messages
+----  --------
+PAR_OCE
+      Defined as:  No definitions.
+
+      Used By:     IOM  (indirectly)
+                   IOM  (indirectly)
+                   IOM  (indirectly)
+
+Name  Messages
+----  --------
+PRESENT(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_OPEN in IOM (Line 132, file iom.f90)
+                   IOM_OPEN in IOM (Line 136, file iom.f90)
+                   IOM_OPEN in IOM (Line 140, file iom.f90)
+                   IOM_OPEN in IOM (Line 144, file iom.f90)
+                   IOM_OPEN in IOM (Line 196, file iom.f90)
+                   IOM_CLOSE in IOM (Line 270, file iom.f90)
+                   IOM_CLOSE in IOM (Line 286, file iom.f90)
+                   IOM_CLOSE in IOM (Line 288, file iom.f90)
+                   IOM_VARID in IOM (Line 317, file iom.f90)
+                   IOM_VARID in IOM (Line 348, file iom.f90)
+                   IOM_VARID in IOM (Line 357, file iom.f90)
+                   IOM_G0D in IOM (Line 382, file iom.f90)
+                   IOM_GET_123D in IOM (Line 518, file iom.f90)
+                   IOM_GET_123D in IOM (Line 518, file iom.f90)
+                   IOM_GET_123D in IOM (Line 519, file iom.f90)
+                   IOM_GET_123D in IOM (Line 519, file iom.f90)
+                   IOM_GET_123D in IOM (Line 520, file iom.f90)
+                   IOM_GET_123D in IOM (Line 523, file iom.f90)
+                   IOM_GET_123D in IOM (Line 570, file iom.f90)
+                   IOM_GET_123D in IOM (Line 572, file iom.f90)
+                   IOM_GET_123D in IOM (Line 572, file iom.f90)
+                   IOM_GET_123D in IOM (Line 572, file iom.f90)
+                   IOM_GET_123D in IOM (Line 580, file iom.f90)
+                   IOM_GET_123D in IOM (Line 583, file iom.f90)
+                   IOM_GET_123D in IOM (Line 602, file iom.f90)
+                   IOM_GET_123D in IOM (Line 606, file iom.f90)
+                   IOM_GET_123D in IOM (Line 626, file iom.f90)
+                   IOM_GET_123D in IOM (Line 706, file iom.f90)
+                   IOM_GET_123D in IOM (Line 708, file iom.f90)
+                   IOM_GET_123D in IOM (Line 721, file iom.f90)
+                   IOM_GET_123D in IOM (Line 724, file iom.f90)
+                   IOM_GET_123D in IOM (Line 729, file iom.f90)
+                   IOM_GETTIME in IOM (Line 762, file iom.f90)
+                   IOM_GETTIME in IOM (Line 769, file iom.f90)
+
+Name  Messages
+----  --------
+SET_NF90_DEF_VAR_CHUNKING in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SET_NF90_DEF_VAR_DEFLATE in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SHAPE(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_GET_123D in IOM (Line 649, file iom.f90)
+                   IOM_GET_123D in IOM (Line 650, file iom.f90)
+                   IOM_GET_123D in IOM (Line 651, file iom.f90)
+                   IOM_GET_123D in IOM (Line 657, file iom.f90)
+                   IOM_GET_123D in IOM (Line 658, file iom.f90)
+                   IOM_GET_123D in IOM (Line 664, file iom.f90)
+                   IOM_GET_123D in IOM (Line 665, file iom.f90)
+
+Name  Messages
+----  --------
+SIZE(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_VARID in IOM (Line 350, file iom.f90)
+                   IOM_VARID in IOM (Line 353, file iom.f90)
+                   IOM_GETTIME in IOM (Line 780, file iom.f90)
+                   IOM_GETTIME in IOM (Line 786, file iom.f90)
+
+Name  Messages
+----  --------
+TRIM(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_OPEN in IOM (Line 152, file iom.f90)
+                   IOM_OPEN in IOM (Line 157, file iom.f90)
+                   IOM_OPEN in IOM (Line 157, file iom.f90)
+                   IOM_OPEN in IOM (Line 157, file iom.f90)
+                   IOM_OPEN in IOM (Line 167, file iom.f90)
+                   IOM_OPEN in IOM (Line 167, file iom.f90)
+                   IOM_OPEN in IOM (Line 168, file iom.f90)
+                   IOM_OPEN in IOM (Line 168, file iom.f90)
+                   IOM_OPEN in IOM (Line 176, file iom.f90)
+                   IOM_OPEN in IOM (Line 177, file iom.f90)
+                   IOM_OPEN in IOM (Line 178, file iom.f90)
+                   IOM_OPEN in IOM (Line 178, file iom.f90)
+                   IOM_OPEN in IOM (Line 183, file iom.f90)
+                   IOM_OPEN in IOM (Line 184, file iom.f90)
+                   IOM_OPEN in IOM (Line 184, file iom.f90)
+                   IOM_OPEN in IOM (Line 219, file iom.f90)
+                   IOM_OPEN in IOM (Line 226, file iom.f90)
+                   IOM_OPEN in IOM (Line 230, file iom.f90)
+                   IOM_OPEN in IOM (Line 230, file iom.f90)
+                   IOM_OPEN in IOM (Line 238, file iom.f90)
+                   IOM_OPEN in IOM (Line 238, file iom.f90)
+                   IOM_CLOSE in IOM (Line 287, file iom.f90)
+                   IOM_CLOSE in IOM (Line 287, file iom.f90)
+                   IOM_CLOSE in IOM (Line 290, file iom.f90)
+                   IOM_VARID in IOM (Line 322, file iom.f90)
+                   IOM_VARID in IOM (Line 322, file iom.f90)
+                   IOM_VARID in IOM (Line 324, file iom.f90)
+                   IOM_VARID in IOM (Line 331, file iom.f90)
+                   IOM_VARID in IOM (Line 331, file iom.f90)
+                   IOM_VARID in IOM (Line 342, file iom.f90)
+                   IOM_VARID in IOM (Line 345, file iom.f90)
+                   IOM_VARID in IOM (Line 354, file iom.f90)
+                   IOM_VARID in IOM (Line 354, file iom.f90)
+                   IOM_G0D in IOM (Line 385, file iom.f90)
+                   IOM_G0D in IOM (Line 385, file iom.f90)
+                   IOM_G0D in IOM (Line 393, file iom.f90)
+                   IOM_GET_123D in IOM (Line 511, file iom.f90)
+                   IOM_GET_123D in IOM (Line 511, file iom.f90)
+                   IOM_GET_123D in IOM (Line 518, file iom.f90)
+                   IOM_GET_123D in IOM (Line 519, file iom.f90)
+                   IOM_GET_123D in IOM (Line 520, file iom.f90)
+                   IOM_GET_123D in IOM (Line 524, file iom.f90)
+                   IOM_GET_123D in IOM (Line 545, file iom.f90)
+                   IOM_GET_123D in IOM (Line 562, file iom.f90)
+                   IOM_GET_123D in IOM (Line 577, file iom.f90)
+                   IOM_GET_123D in IOM (Line 581, file iom.f90)
+                   IOM_GET_123D in IOM (Line 584, file iom.f90)
+                   IOM_GET_123D in IOM (Line 589, file iom.f90)
+                   IOM_GET_123D in IOM (Line 642, file iom.f90)
+                   IOM_GET_123D in IOM (Line 672, file iom.f90)
+                   IOM_GET_123D in IOM (Line 672, file iom.f90)
+                   IOM_GET_123D in IOM (Line 672, file iom.f90)
+                   IOM_GET_123D in IOM (Line 703, file iom.f90)
+                   IOM_GET_123D in IOM (Line 703, file iom.f90)
+                   IOM_GETTIME in IOM (Line 768, file iom.f90)
+                   IOM_GETTIME in IOM (Line 768, file iom.f90)
+                   IOM_GETTIME in IOM (Line 787, file iom.f90)
+                   IOM_GETTIME in IOM (Line 787, file iom.f90)
+                   IOM_GETTIME in IOM (Line 790, file iom.f90)
+                   IOM_GETTIME in IOM (Line 793, file iom.f90)
+                   IOM_GETTIME in IOM (Line 796, file iom.f90)
+
+Name  Messages
+----  --------
+VERIFY(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOM_GET_123D in IOM (Line 555, file iom.f90)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

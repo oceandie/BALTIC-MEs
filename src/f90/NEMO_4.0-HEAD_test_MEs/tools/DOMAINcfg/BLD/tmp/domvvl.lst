@@ -1,0 +1,1931 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S u m m a r y   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Compilation
+-----------
+File     : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/domvvl.f90
+Compiled : 04/29/22  10:43:32
+Compiler : Version 8.3.4
+Ftnlx    : Version 8318 (libcif 83016)
+Target   : x86-64
+Command  : ftn_driver.exe -hcpu=haswell -hstatic -D__CRAYXC -D__CRAY_HASWELL
+           -D__CRAYXT_COMPUTE_LINUX_TARGET -hnetwork=aries -odomvvl.o
+           -I/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HE
+           AD_test_MEs/tools/DOMAINcfg/BLD/inc -sreal64 -sinteger32 -Ovector0
+           -hfp0 -O0 -hflex_mp=intolerant -eCID
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/common/moci/modules/packages/XIOS/2.0/24708/952/inc
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/m
+           ct
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/p
+           smile.MPI1 -c -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/opt/cray/libsci/13.0.1/CRAY/83/haswell/include
+           -I/opt/cray/mpt/7.0.4/gni/mpich2-cray/83/include
+           -I/opt/cray/rca/1.0.0-2.0502.60530.1.62.ari/include
+           -I/opt/cray/alps/5.2.4-2.0502.9774.31.11.ari/include
+           -I/opt/cray/xpmem/0.1-2.0502.64982.5.3.ari/include
+           -I/opt/cray/gni-headers/4.0-1.0502.10859.7.8.ari/include
+           -I/opt/cray/dmapp/7.0.1-1.0502.11080.8.76.ari/include
+           -I/opt/cray/pmi/5.0.5-1.0000.10300.134.8.ari/include
+           -I/opt/cray/ugni/6.0-1.0502.10863.8.29.ari/include
+           -I/opt/cray/udreg/2.3.2-1.0502.10518.2.17.ari/include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/pkgconfig/../include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/wlm_detect/1.0-1.0502.64649.2.1.ari/include
+           -I/opt/cray/krca/1.0.0-2.0502.63139.4.31.ari/include
+           -I/opt/cray-hss-devel/7.2.0/include /projects/jmmp/dbruciaf/NEMO/CHEC
+           KOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/dom
+           vvl.f90
+
+ftnlx report
+------------
+Source   : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp//projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/domvvl.f90
+Date     : 04/29/2022  10:43:33
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S o u r c e   L i s t i n g
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    1.    MODULE domvvl
+    2.       !!======================================================================
+    3.       !!                       ***  MODULE domvvl   ***
+    4.       !! Ocean : 
+    5.       !!======================================================================
+    6.       !! History :  2.0  !  2006-06  (B. Levier, L. Marie)  original code
+    7.       !!            3.1  !  2009-02  (G. Madec, M. Leclair, R. Benshila)  pure z* coordinate
+    8.       !!            3.3  !  2011-10  (M. Leclair) totally rewrote domvvl:
+    9.       !!                                          vvl option includes z_star and z_tilde coordinates
+   10.       !!            3.6  !  2014-11  (P. Mathiot) add ice shelf capability
+   11.       !!----------------------------------------------------------------------
+   12.    
+   13.       !!----------------------------------------------------------------------
+   14.       !!   dom_vvl_init     : define initial vertical scale factors, depths and column thickness
+   15.       !!   dom_vvl_sf_nxt   : Compute next vertical scale factors
+   16.       !!   dom_vvl_sf_swp   : Swap vertical scale factors and update the vertical grid
+   17.       !!   dom_vvl_interpol : Interpolate vertical scale factors from one grid point to another
+   18.       !!   dom_vvl_rst      : read/write restart file
+   19.       !!   dom_vvl_ctl      : Check the vvl options
+   20.       !!----------------------------------------------------------------------
+   21.       USE oce             ! ocean dynamics and tracers
+   22.       USE phycst          ! physical constant
+   23.       USE dom_oce         ! ocean space and time domain
+                 ^                                             
+ftn-1193 ftn: CAUTION DOMVVL, File = domvvl.f90, Line = 23, Column = 8 
+  Module "PAR_KIND" is indirectly used in module "DOM_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_kind.o".  That file no
+  longer exists.
+
+                 ^                                             
+ftn-1193 ftn: CAUTION DOMVVL, File = domvvl.f90, Line = 23, Column = 8 
+  Module "PAR_OCE" is indirectly used in module "DOM_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_oce.o".  That file no
+  longer exists.
+
+   24.       !
+   25.       USE in_out_manager  ! I/O manager
+                 ^                             
+ftn-1193 ftn: CAUTION DOMVVL, File = domvvl.f90, Line = 25, Column = 8 
+  Module "NC4INTERFACE" is indirectly used in module "IN_OUT_MANAGER" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/nc4interface.o".  That file no
+  longer exists.
+
+   26.       USE iom             ! I/O manager library
+                 ^                                     
+ftn-1193 ftn: CAUTION DOMVVL, File = domvvl.f90, Line = 26, Column = 8 
+  Module "IOM_NF90" is indirectly used in module "IOM" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/iom_nf90.o".  That file no
+  longer exists.
+
+                 ^                                     
+ftn-1193 ftn: CAUTION DOMVVL, File = domvvl.f90, Line = 26, Column = 8 
+  Module "IOM_DEF" is indirectly used in module "IOM" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/iom_def.o".  That file no
+  longer exists.
+
+   27.       USE lib_mpp         ! distributed memory computing library
+   28.       USE lbclnk          ! ocean lateral boundary conditions (or mpp link)
+   29.       USE wrk_nemo        ! Memory allocation
+   30.       USE timing          ! Timing
+   31.    
+   32.       IMPLICIT NONE
+   33.       PRIVATE
+   34.    
+   35.       PUBLIC  dom_vvl_init       ! called by domain.F90
+   36.    
+   37.       !                                                      !!* Namelist nam_vvl
+   38.       LOGICAL , PUBLIC :: ln_vvl_zstar           = .FALSE.    ! zstar  vertical coordinate
+   39.       LOGICAL , PUBLIC :: ln_vvl_ztilde          = .FALSE.    ! ztilde vertical coordinate
+   40.       LOGICAL , PUBLIC :: ln_vvl_layer           = .FALSE.    ! level  vertical coordinate
+   41.       LOGICAL , PUBLIC :: ln_vvl_ztilde_as_zstar = .FALSE.    ! ztilde vertical coordinate
+   42.       LOGICAL , PUBLIC :: ln_vvl_zstar_at_eqtor  = .FALSE.    ! ztilde vertical coordinate
+   43.       LOGICAL , PUBLIC :: ln_vvl_kepe            = .FALSE.    ! kinetic/potential energy transfer
+   44.       !                                                       ! conservation: not used yet
+   45.       REAL(wp)         :: rn_ahe3                             ! thickness diffusion coefficient
+   46.       REAL(wp)         :: rn_rst_e3t                          ! ztilde to zstar restoration timescale [days]
+   47.       REAL(wp)         :: rn_lf_cutoff                        ! cutoff frequency for low-pass filter  [days]
+   48.       REAL(wp)         :: rn_zdef_max                         ! maximum fractional e3t deformation
+   49.       LOGICAL , PUBLIC :: ln_vvl_dbg = .FALSE.                ! debug control prints
+   50.    
+   51.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) :: un_td, vn_td                ! thickness diffusion transport
+   52.       REAL(wp)        , ALLOCATABLE, SAVE, DIMENSION(:,:,:) :: hdiv_lf                     ! low frequency part of hz divergence
+   53.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) :: tilde_e3t_b, tilde_e3t_n    ! baroclinic scale factors
+   54.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) :: tilde_e3t_a, dtilde_e3t_a   ! baroclinic scale factors
+   55.       REAL(wp)        , ALLOCATABLE, SAVE, DIMENSION(:,:)   :: frq_rst_e3t                 ! retoring period for scale factors
+   56.       REAL(wp)        , ALLOCATABLE, SAVE, DIMENSION(:,:)   :: frq_rst_hdv                 ! retoring period for low freq. divergence
+   57.    
+   58.       !! * Substitutions
+   59.       !!----------------------------------------------------------------------
+   60.       !!                   ***  vectopt_loop_substitute  ***
+   61.       !!----------------------------------------------------------------------
+   62.       !! ** purpose :   substitute the inner loop start/end indices with CPP macro
+   63.       !!                allow unrolling of do-loop (useful with vector processors)
+   64.       !!----------------------------------------------------------------------
+   65.       !!----------------------------------------------------------------------
+   66.       !! NEMO/OPA 3.7 , NEMO Consortium (2014)
+   67.       !! $Id: vectopt_loop_substitute.h90 4990 2014-12-15 16:42:49Z timgraham $ 
+   68.       !! Software governed by the CeCILL licence (./LICENSE)
+   69.       !!----------------------------------------------------------------------
+   70.       !!----------------------------------------------------------------------
+   71.       !! NEMO/OPA 3.7 , NEMO-Consortium (2015) 
+   72.       !! $Id: domvvl.F90 6351 2016-02-24 18:50:11Z cetlod $
+   73.       !! Software governed by the CeCILL licence     (./LICENSE)
+   74.       !!----------------------------------------------------------------------
+   75.    CONTAINS
+   76.    
+   77.       INTEGER FUNCTION dom_vvl_alloc()
+   78.          !!----------------------------------------------------------------------
+   79.          !!                ***  FUNCTION dom_vvl_alloc  ***
+   80.          !!----------------------------------------------------------------------
+   81.          IF( ln_vvl_zstar )   dom_vvl_alloc = 0
+   82.          IF( ln_vvl_ztilde .OR. ln_vvl_layer ) THEN
+   83.             ALLOCATE( tilde_e3t_b(jpi,jpj,jpk)  , tilde_e3t_n(jpi,jpj,jpk) , tilde_e3t_a(jpi,jpj,jpk) ,   &
+   84.                &      dtilde_e3t_a(jpi,jpj,jpk) , un_td  (jpi,jpj,jpk)     , vn_td  (jpi,jpj,jpk)     ,   &
+   85.                &      STAT = dom_vvl_alloc        )
+   86.             IF( lk_mpp             )   CALL mpp_sum ( dom_vvl_alloc )
+   87.             IF( dom_vvl_alloc /= 0 )   CALL ctl_warn('dom_vvl_alloc: failed to allocate arrays')
+   88.             un_td = 0._wp
+ftn-6209 ftn: VECTOR File = domvvl.f90, Line = 88 
+  A loop starting at line 88 was partially vectorized.
+
+   89.             vn_td = 0._wp
+ftn-6209 ftn: VECTOR File = domvvl.f90, Line = 89 
+  A loop starting at line 89 was partially vectorized.
+
+   90.          ENDIF
+   91.          IF( ln_vvl_ztilde ) THEN
+   92.             ALLOCATE( frq_rst_e3t(jpi,jpj) , frq_rst_hdv(jpi,jpj) , hdiv_lf(jpi,jpj,jpk) , STAT= dom_vvl_alloc )
+   93.             IF( lk_mpp             )   CALL mpp_sum ( dom_vvl_alloc )
+   94.             IF( dom_vvl_alloc /= 0 )   CALL ctl_warn('dom_vvl_alloc: failed to allocate arrays')
+   95.          ENDIF
+   96.          !
+   97.       END FUNCTION dom_vvl_alloc
+   98.    
+   99.    
+  100.       SUBROUTINE dom_vvl_init
+  101.          !!----------------------------------------------------------------------
+  102.          !!                ***  ROUTINE dom_vvl_init  ***
+  103.          !!                   
+  104.          !! ** Purpose :  Initialization of all scale factors, depths
+  105.          !!               and water column heights
+  106.          !!
+  107.          !! ** Method  :  - use restart file and/or initialize
+  108.          !!               - interpolate scale factors
+  109.          !!
+  110.          !! ** Action  : - e3t_(n/b) and tilde_e3t_(n/b)
+  111.          !!              - Regrid: e3(u/v)_n
+  112.          !!                        e3(u/v)_b       
+  113.          !!                        e3w_n           
+  114.          !!                        e3(u/v)w_b      
+  115.          !!                        e3(u/v)w_n      
+  116.          !!                        gdept_n, gdepw_n and gde3w_n
+  117.          !!              - h(t/u/v)_0
+  118.          !!              - frq_rst_e3t and frq_rst_hdv
+  119.          !!
+  120.          !! Reference  : Leclair, M., and G. Madec, 2011, Ocean Modelling.
+  121.          !!----------------------------------------------------------------------
+  122.          INTEGER ::   ji, jj, jk
+  123.          INTEGER ::   ii0, ii1, ij0, ij1
+  124.          REAL(wp)::   zcoef
+  125.          !!----------------------------------------------------------------------
+  126.          !
+  127.          IF( nn_timing == 1 )   CALL timing_start('dom_vvl_init')
+  128.          !
+  129.          IF(lwp) WRITE(numout,*)
+  130.          IF(lwp) WRITE(numout,*) 'dom_vvl_init : Variable volume activated'
+  131.          IF(lwp) WRITE(numout,*) '~~~~~~~~~~~~'
+  132.          !
+  133.          CALL dom_vvl_ctl     ! choose vertical coordinate (z_star, z_tilde or layer)
+  134.          !
+  135.          !                    ! Allocate module arrays
+  136.          IF( dom_vvl_alloc() /= 0 )   CALL ctl_stop( 'STOP', 'dom_vvl_init : unable to allocate arrays' )
+  137.          !
+  138.          !                    ! Read or initialize e3t_(b/n), tilde_e3t_(b/n) and hdiv_lf
+  139.          e3t_a(:,:,jpk) = e3t_0(:,:,jpk)  ! last level always inside the sea floor set one for all
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 139 
+  A loop starting at line 139 was not vectorized because it contains a call to a subroutine or function on line 139.
+
+  140.          !
+  141.          !                    !== Set of all other vertical scale factors  ==!  (now and before)
+  142.          !                                ! Horizontal interpolation of e3t
+  143.          CALL dom_vvl_interpol( e3t_b(:,:,:), e3u_b(:,:,:), 'U' )    ! from T to U
+  144.          CALL dom_vvl_interpol( e3t_n(:,:,:), e3u_n(:,:,:), 'U' )
+  145.          CALL dom_vvl_interpol( e3t_b(:,:,:), e3v_b(:,:,:), 'V' )    ! from T to V 
+  146.          CALL dom_vvl_interpol( e3t_n(:,:,:), e3v_n(:,:,:), 'V' )
+  147.          CALL dom_vvl_interpol( e3u_n(:,:,:), e3f_n(:,:,:), 'F' )    ! from U to F
+  148.          !                                ! Vertical interpolation of e3t,u,v 
+  149.          CALL dom_vvl_interpol( e3t_n(:,:,:), e3w_n (:,:,:), 'W'  )  ! from T to W
+  150.          CALL dom_vvl_interpol( e3t_b(:,:,:), e3w_b (:,:,:), 'W'  )
+  151.          CALL dom_vvl_interpol( e3u_n(:,:,:), e3uw_n(:,:,:), 'UW' )  ! from U to UW
+  152.          CALL dom_vvl_interpol( e3u_b(:,:,:), e3uw_b(:,:,:), 'UW' )
+  153.          CALL dom_vvl_interpol( e3v_n(:,:,:), e3vw_n(:,:,:), 'VW' )  ! from V to UW
+  154.          CALL dom_vvl_interpol( e3v_b(:,:,:), e3vw_b(:,:,:), 'VW' )
+  155.          !
+  156.          !                    !==  depth of t and w-point  ==!   (set the isf depth as it is in the initial timestep)
+  157.          gdept_n(:,:,1) = 0.5_wp * e3w_n(:,:,1)       ! reference to the ocean surface (used for MLD and light penetration)
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 157 
+  A loop starting at line 157 was not vectorized because it contains a call to a subroutine or function on line 157.
+
+  158.          gdepw_n(:,:,1) = 0.0_wp
+ftn-6263 ftn: VECTOR File = domvvl.f90, Line = 158 
+  A loop starting at line 158 was not vectorized because it contains a reference to a non-vector intrinsic on line 158.
+
+  159.          gde3w_n(:,:,1) = gdept_n(:,:,1) - sshn(:,:)  ! reference to a common level z=0 for hpg
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 159 
+  A loop starting at line 159 was not vectorized because it contains a call to a subroutine or function on line 159.
+
+  160.          gdept_b(:,:,1) = 0.5_wp * e3w_b(:,:,1)
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 160 
+  A loop starting at line 160 was not vectorized because it contains a call to a subroutine or function on line 160.
+
+  161.          gdepw_b(:,:,1) = 0.0_wp
+ftn-6263 ftn: VECTOR File = domvvl.f90, Line = 161 
+  A loop starting at line 161 was not vectorized because it contains a reference to a non-vector intrinsic on line 161.
+
+  162.          DO jk = 2, jpk                               ! vertical sum
+  163.             DO jj = 1,jpj
+  164.                DO ji = 1,jpi
+  165.                   !    zcoef = tmask - wmask    ! 0 everywhere tmask = wmask, ie everywhere expect at jk = mikt
+  166.                   !                             ! 1 everywhere from mbkt to mikt + 1 or 1 (if no isf)
+  167.                   !                             ! 0.5 where jk = mikt     
+  168.    !!gm ???????   BUG ?  gdept_n as well as gde3w_n  does not include the thickness of ISF ??
+  169.                   zcoef = ( tmask(ji,jj,jk) - wmask(ji,jj,jk) )
+  170.                   gdepw_n(ji,jj,jk) = gdepw_n(ji,jj,jk-1) + e3t_n(ji,jj,jk-1)
+  171.                   gdept_n(ji,jj,jk) =      zcoef  * ( gdepw_n(ji,jj,jk  ) + 0.5 * e3w_n(ji,jj,jk))  &
+  172.                      &                + (1-zcoef) * ( gdept_n(ji,jj,jk-1) +       e3w_n(ji,jj,jk)) 
+  173.                   gde3w_n(ji,jj,jk) = gdept_n(ji,jj,jk) - sshn(ji,jj)
+  174.                   gdepw_b(ji,jj,jk) = gdepw_b(ji,jj,jk-1) + e3t_b(ji,jj,jk-1)
+  175.                   gdept_b(ji,jj,jk) =      zcoef  * ( gdepw_b(ji,jj,jk  ) + 0.5 * e3w_b(ji,jj,jk))  &
+  176.                      &                + (1-zcoef) * ( gdept_b(ji,jj,jk-1) +       e3w_b(ji,jj,jk)) 
+  177.                END DO
+  178.             END DO
+  179.          END DO
+  180.          !
+  181.          !                    !==  thickness of the water column  !!   (ocean portion only)
+  182.          ht_n(:,:) = e3t_n(:,:,1) * tmask(:,:,1)   !!gm  BUG  :  this should be 1/2 * e3w(k=1) ....
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 182 
+  A loop starting at line 182 was not vectorized because it contains a call to a subroutine or function on line 182.
+
+  183.          hu_b(:,:) = e3u_b(:,:,1) * umask(:,:,1)
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 183 
+  A loop starting at line 183 was not vectorized because it contains a call to a subroutine or function on line 183.
+
+  184.          hu_n(:,:) = e3u_n(:,:,1) * umask(:,:,1)
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 184 
+  A loop starting at line 184 was not vectorized because it contains a call to a subroutine or function on line 184.
+
+  185.          hv_b(:,:) = e3v_b(:,:,1) * vmask(:,:,1)
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 185 
+  A loop starting at line 185 was not vectorized because it contains a call to a subroutine or function on line 185.
+
+  186.          hv_n(:,:) = e3v_n(:,:,1) * vmask(:,:,1)
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 186 
+  A loop starting at line 186 was not vectorized because it contains a call to a subroutine or function on line 186.
+
+  187.          DO jk = 2, jpkm1
+  188.             ht_n(:,:) = ht_n(:,:) + e3t_n(:,:,jk) * tmask(:,:,jk)
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 188 
+  A loop starting at line 188 was not vectorized because it contains a call to a subroutine or function on line 188.
+
+  189.             hu_b(:,:) = hu_b(:,:) + e3u_b(:,:,jk) * umask(:,:,jk)
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 189 
+  A loop starting at line 189 was not vectorized because it contains a call to a subroutine or function on line 189.
+
+  190.             hu_n(:,:) = hu_n(:,:) + e3u_n(:,:,jk) * umask(:,:,jk)
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 190 
+  A loop starting at line 190 was not vectorized because it contains a call to a subroutine or function on line 190.
+
+  191.             hv_b(:,:) = hv_b(:,:) + e3v_b(:,:,jk) * vmask(:,:,jk)
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 191 
+  A loop starting at line 191 was not vectorized because it contains a call to a subroutine or function on line 191.
+
+  192.             hv_n(:,:) = hv_n(:,:) + e3v_n(:,:,jk) * vmask(:,:,jk)
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 192 
+  A loop starting at line 192 was not vectorized because it contains a call to a subroutine or function on line 192.
+
+  193.          END DO
+  194.          !
+  195.          !                    !==  inverse of water column thickness   ==!   (u- and v- points)
+  196.          r1_hu_b(:,:) = ssumask(:,:) / ( hu_b(:,:) + 1._wp - ssumask(:,:) )    ! _i mask due to ISF
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 196 
+  A loop starting at line 196 was not vectorized because it contains a call to a subroutine or function on line 196.
+
+  197.          r1_hu_n(:,:) = ssumask(:,:) / ( hu_n(:,:) + 1._wp - ssumask(:,:) )
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 197 
+  A loop starting at line 197 was not vectorized because it contains a call to a subroutine or function on line 197.
+
+  198.          r1_hv_b(:,:) = ssvmask(:,:) / ( hv_b(:,:) + 1._wp - ssvmask(:,:) )
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 198 
+  A loop starting at line 198 was not vectorized because it contains a call to a subroutine or function on line 198.
+
+  199.          r1_hv_n(:,:) = ssvmask(:,:) / ( hv_n(:,:) + 1._wp - ssvmask(:,:) )
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 199 
+  A loop starting at line 199 was not vectorized because it contains a call to a subroutine or function on line 199.
+
+  200.    
+  201.          !                    !==   z_tilde coordinate case  ==!   (Restoring frequencies)
+  202.          IF( ln_vvl_ztilde ) THEN
+  203.    !!gm : idea: add here a READ in a file of custumized restoring frequency
+  204.             !                                   ! Values in days provided via the namelist
+  205.             !                                   ! use rsmall to avoid possible division by zero errors with faulty settings
+  206.             frq_rst_e3t(:,:) = 2._wp * rpi / ( MAX( rn_rst_e3t  , rsmall ) * 86400.0_wp )
+ftn-6263 ftn: VECTOR File = domvvl.f90, Line = 206 
+  A loop starting at line 206 was not vectorized because it contains a reference to a non-vector intrinsic on line 206.
+
+  207.             frq_rst_hdv(:,:) = 2._wp * rpi / ( MAX( rn_lf_cutoff, rsmall ) * 86400.0_wp )
+ftn-6263 ftn: VECTOR File = domvvl.f90, Line = 207 
+  A loop starting at line 207 was not vectorized because it contains a reference to a non-vector intrinsic on line 207.
+
+  208.             !
+  209.             IF( ln_vvl_ztilde_as_zstar ) THEN   ! z-star emulation using z-tile
+  210.                frq_rst_e3t(:,:) = 0._wp               !Ignore namelist settings
+ftn-6263 ftn: VECTOR File = domvvl.f90, Line = 210 
+  A loop starting at line 210 was not vectorized because it contains a reference to a non-vector intrinsic on line 210.
+
+  211.                frq_rst_hdv(:,:) = 1._wp / rdt
+ftn-6263 ftn: VECTOR File = domvvl.f90, Line = 211 
+  A loop starting at line 211 was not vectorized because it contains a reference to a non-vector intrinsic on line 211.
+
+  212.             ENDIF
+  213.             IF ( ln_vvl_zstar_at_eqtor ) THEN   ! use z-star in vicinity of the Equator
+  214.                DO jj = 1, jpj
+  215.                   DO ji = 1, jpi
+  216.    !!gm  case |gphi| >= 6 degrees is useless   initialized just above by default
+  217.                      IF( ABS(gphit(ji,jj)) >= 6.) THEN
+  218.                         ! values outside the equatorial band and transition zone (ztilde)
+  219.                         frq_rst_e3t(ji,jj) =  2.0_wp * rpi / ( MAX( rn_rst_e3t  , rsmall ) * 86400.e0_wp )
+  220.                         frq_rst_hdv(ji,jj) =  2.0_wp * rpi / ( MAX( rn_lf_cutoff, rsmall ) * 86400.e0_wp )
+  221.                      ELSEIF( ABS(gphit(ji,jj)) <= 2.5) THEN    ! Equator strip ==> z-star
+  222.                         ! values inside the equatorial band (ztilde as zstar)
+  223.                         frq_rst_e3t(ji,jj) =  0.0_wp
+  224.                         frq_rst_hdv(ji,jj) =  1.0_wp / rdt
+  225.                      ELSE                                      ! transition band (2.5 to 6 degrees N/S)
+  226.                         !                                      ! (linearly transition from z-tilde to z-star)
+  227.                         frq_rst_e3t(ji,jj) = 0.0_wp + (frq_rst_e3t(ji,jj)-0.0_wp)*0.5_wp   &
+  228.                            &            * (  1.0_wp - COS( rad*(ABS(gphit(ji,jj))-2.5_wp)  &
+  229.                            &                                          * 180._wp / 3.5_wp ) )
+  230.                         frq_rst_hdv(ji,jj) = (1.0_wp / rdt)                                &
+  231.                            &            + (  frq_rst_hdv(ji,jj)-(1.e0_wp / rdt) )*0.5_wp   &
+  232.                            &            * (  1._wp  - COS( rad*(ABS(gphit(ji,jj))-2.5_wp)  &
+  233.                            &                                          * 180._wp / 3.5_wp ) )
+  234.                      ENDIF
+  235.                   END DO
+  236.                END DO
+  237.                IF( cp_cfg == "orca" .AND. jp_cfg == 3 ) THEN   ! ORCA2: Suppress ztilde in the Foxe Basin for ORCA2
+  238.                   ii0 = 103   ;   ii1 = 111       
+  239.                   ij0 = 128   ;   ij1 = 135   ;   
+  240.                   frq_rst_e3t( mi0(ii0):mi1(ii1) , mj0(ij0):mj1(ij1) ) =  0.0_wp
+ftn-6263 ftn: VECTOR File = domvvl.f90, Line = 240 
+  A loop starting at line 240 was not vectorized because it contains a reference to a non-vector intrinsic on line 240.
+
+  241.                   frq_rst_hdv( mi0(ii0):mi1(ii1) , mj0(ij0):mj1(ij1) ) =  1.e0_wp / rdt
+ftn-6263 ftn: VECTOR File = domvvl.f90, Line = 241 
+  A loop starting at line 241 was not vectorized because it contains a reference to a non-vector intrinsic on line 241.
+
+  242.                ENDIF
+  243.             ENDIF
+  244.          ENDIF
+  245.          !
+  246.          IF( nn_timing == 1 )  CALL timing_stop('dom_vvl_init')
+  247.          !
+  248.       END SUBROUTINE dom_vvl_init
+  249.    
+  250.    
+  251.       SUBROUTINE dom_vvl_interpol( pe3_in, pe3_out, pout )
+  252.          !!---------------------------------------------------------------------
+  253.          !!                  ***  ROUTINE dom_vvl__interpol  ***
+  254.          !!
+  255.          !! ** Purpose :   interpolate scale factors from one grid point to another
+  256.          !!
+  257.          !! ** Method  :   e3_out = e3_0 + interpolation(e3_in - e3_0)
+  258.          !!                - horizontal interpolation: grid cell surface averaging
+  259.          !!                - vertical interpolation: simple averaging
+  260.          !!----------------------------------------------------------------------
+  261.          REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(in   ) ::  pe3_in    ! input e3 to be interpolated
+  262.          REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::  pe3_out   ! output interpolated e3
+  263.          CHARACTER(LEN=*)                , INTENT(in   ) ::  pout      ! grid point of out scale factors
+  264.          !                                                             !   =  'U', 'V', 'W, 'F', 'UW' or 'VW'
+  265.          !
+  266.          INTEGER ::   ji, jj, jk                                       ! dummy loop indices
+  267.          REAL(wp) ::  zlnwd                                            ! =1./0. when ln_wd = T/F
+  268.          !!----------------------------------------------------------------------
+  269.          !
+  270.          IF( nn_timing == 1 )   CALL timing_start('dom_vvl_interpol')
+  271.          !
+  272.          zlnwd = 0.0_wp
+  273.          !
+  274.          SELECT CASE ( pout )    !==  type of interpolation  ==!
+  275.             !
+  276.          CASE( 'U' )                   !* from T- to U-point : hor. surface weighted mean
+  277.             DO jk = 1, jpk
+  278.                DO jj = 1, jpjm1
+  279.                   DO ji = 1, jpim1   ! vector opt.
+  280.                      pe3_out(ji,jj,jk) = 0.5_wp * (  umask(ji,jj,jk) * (1.0_wp - zlnwd) + zlnwd ) * r1_e1e2u(ji,jj)   &
+  281.                         &                       * (   e1e2t(ji  ,jj) * ( pe3_in(ji  ,jj,jk) - e3t_0(ji  ,jj,jk) )     &
+  282.                         &                           + e1e2t(ji+1,jj) * ( pe3_in(ji+1,jj,jk) - e3t_0(ji+1,jj,jk) ) )
+  283.                   END DO
+  284.                END DO
+  285.             END DO
+  286.             CALL lbc_lnk( pe3_out(:,:,:), 'U', 1._wp )
+  287.             pe3_out(:,:,:) = pe3_out(:,:,:) + e3u_0(:,:,:)
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 287 
+  A loop starting at line 287 was not vectorized because it contains a call to a subroutine or function on line 287.
+
+  288.             !
+  289.          CASE( 'V' )                   !* from T- to V-point : hor. surface weighted mean
+  290.             DO jk = 1, jpk
+  291.                DO jj = 1, jpjm1
+  292.                   DO ji = 1, jpim1   ! vector opt.
+  293.                      pe3_out(ji,jj,jk) = 0.5_wp * ( vmask(ji,jj,jk)  * (1.0_wp - zlnwd) + zlnwd ) * r1_e1e2v(ji,jj)   &
+  294.                         &                       * (   e1e2t(ji,jj  ) * ( pe3_in(ji,jj  ,jk) - e3t_0(ji,jj  ,jk) )     &
+  295.                         &                           + e1e2t(ji,jj+1) * ( pe3_in(ji,jj+1,jk) - e3t_0(ji,jj+1,jk) ) )
+  296.                   END DO
+  297.                END DO
+  298.             END DO
+  299.             CALL lbc_lnk( pe3_out(:,:,:), 'V', 1._wp )
+  300.             pe3_out(:,:,:) = pe3_out(:,:,:) + e3v_0(:,:,:)
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 300 
+  A loop starting at line 300 was not vectorized because it contains a call to a subroutine or function on line 300.
+
+  301.             !
+  302.          CASE( 'F' )                   !* from U-point to F-point : hor. surface weighted mean
+  303.             DO jk = 1, jpk
+  304.                DO jj = 1, jpjm1
+  305.                   DO ji = 1, jpim1   ! vector opt.
+  306.                      pe3_out(ji,jj,jk) = 0.5_wp * (  umask(ji,jj,jk) * umask(ji,jj+1,jk) * (1.0_wp - zlnwd) + zlnwd ) &
+  307.                         &                       *    r1_e1e2f(ji,jj)                                                  &
+  308.                         &                       * (   e1e2u(ji,jj  ) * ( pe3_in(ji,jj  ,jk) - e3u_0(ji,jj  ,jk) )     &
+  309.                         &                           + e1e2u(ji,jj+1) * ( pe3_in(ji,jj+1,jk) - e3u_0(ji,jj+1,jk) ) )
+  310.                   END DO
+  311.                END DO
+  312.             END DO
+  313.             CALL lbc_lnk( pe3_out(:,:,:), 'F', 1._wp )
+  314.             pe3_out(:,:,:) = pe3_out(:,:,:) + e3f_0(:,:,:)
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 314 
+  A loop starting at line 314 was not vectorized because it contains a call to a subroutine or function on line 314.
+
+  315.             !
+  316.          CASE( 'W' )                   !* from T- to W-point : vertical simple mean
+  317.             !
+  318.             pe3_out(:,:,1) = e3w_0(:,:,1) + pe3_in(:,:,1) - e3t_0(:,:,1)
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 318 
+  A loop starting at line 318 was not vectorized because it contains a call to a subroutine or function on line 318.
+
+  319.             ! - ML - The use of mask in this formulea enables the special treatment of the last w-point without indirect adressing
+  320.    !!gm BUG? use here wmask in case of ISF ?  to be checked
+  321.             DO jk = 2, jpk
+  322.                pe3_out(:,:,jk) = e3w_0(:,:,jk) + ( 1.0_wp - 0.5_wp * ( tmask(:,:,jk) * (1.0_wp - zlnwd) + zlnwd ) )   &
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 322 
+  A loop starting at line 322 was not vectorized because it contains a call to a subroutine or function on line 322.
+
+  323.                   &                            * ( pe3_in(:,:,jk-1) - e3t_0(:,:,jk-1) )                               &
+  324.                   &                            +            0.5_wp * ( tmask(:,:,jk) * (1.0_wp - zlnwd) + zlnwd )     &
+  325.                   &                            * ( pe3_in(:,:,jk  ) - e3t_0(:,:,jk  ) )
+  326.             END DO
+  327.             !
+  328.          CASE( 'UW' )                  !* from U- to UW-point : vertical simple mean
+  329.             !
+  330.             pe3_out(:,:,1) = e3uw_0(:,:,1) + pe3_in(:,:,1) - e3u_0(:,:,1)
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 330 
+  A loop starting at line 330 was not vectorized because it contains a call to a subroutine or function on line 330.
+
+  331.             ! - ML - The use of mask in this formaula enables the special treatment of the last w- point without indirect adressing
+  332.    !!gm BUG? use here wumask in case of ISF ?  to be checked
+  333.             DO jk = 2, jpk
+  334.                pe3_out(:,:,jk) = e3uw_0(:,:,jk) + ( 1.0_wp - 0.5_wp * ( umask(:,:,jk) * (1.0_wp - zlnwd) + zlnwd ) )  &
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 334 
+  A loop starting at line 334 was not vectorized because it contains a call to a subroutine or function on line 334.
+
+  335.                   &                             * ( pe3_in(:,:,jk-1) - e3u_0(:,:,jk-1) )                              &
+  336.                   &                             +            0.5_wp * ( umask(:,:,jk) * (1.0_wp - zlnwd) + zlnwd )    &
+  337.                   &                             * ( pe3_in(:,:,jk  ) - e3u_0(:,:,jk  ) )
+  338.             END DO
+  339.             !
+  340.          CASE( 'VW' )                  !* from V- to VW-point : vertical simple mean
+  341.             !
+  342.             pe3_out(:,:,1) = e3vw_0(:,:,1) + pe3_in(:,:,1) - e3v_0(:,:,1)
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 342 
+  A loop starting at line 342 was not vectorized because it contains a call to a subroutine or function on line 342.
+
+  343.             ! - ML - The use of mask in this formaula enables the special treatment of the last w- point without indirect adressing
+  344.    !!gm BUG? use here wvmask in case of ISF ?  to be checked
+  345.             DO jk = 2, jpk
+  346.                pe3_out(:,:,jk) = e3vw_0(:,:,jk) + ( 1.0_wp - 0.5_wp * ( vmask(:,:,jk) * (1.0_wp - zlnwd) + zlnwd ) )  &
+ftn-6262 ftn: VECTOR File = domvvl.f90, Line = 346 
+  A loop starting at line 346 was not vectorized because it contains a call to a subroutine or function on line 346.
+
+  347.                   &                             * ( pe3_in(:,:,jk-1) - e3v_0(:,:,jk-1) )                              &
+  348.                   &                             +            0.5_wp * ( vmask(:,:,jk) * (1.0_wp - zlnwd) + zlnwd )    &
+  349.                   &                             * ( pe3_in(:,:,jk  ) - e3v_0(:,:,jk  ) )
+  350.             END DO
+  351.          END SELECT
+  352.          !
+  353.          IF( nn_timing == 1 )   CALL timing_stop('dom_vvl_interpol')
+  354.          !
+  355.       END SUBROUTINE dom_vvl_interpol
+  356.    
+  357.    
+  358.       SUBROUTINE dom_vvl_ctl
+  359.          !!---------------------------------------------------------------------
+  360.          !!                  ***  ROUTINE dom_vvl_ctl  ***
+  361.          !!                
+  362.          !! ** Purpose :   Control the consistency between namelist options
+  363.          !!                for vertical coordinate
+  364.          !!----------------------------------------------------------------------
+  365.          INTEGER ::   ioptio, ios
+  366.          !!
+  367.          NAMELIST/nam_vvl/ ln_vvl_zstar, ln_vvl_ztilde, ln_vvl_layer, ln_vvl_ztilde_as_zstar, &
+  368.             &              ln_vvl_zstar_at_eqtor      , rn_ahe3     , rn_rst_e3t            , &
+  369.             &              rn_lf_cutoff               , rn_zdef_max , ln_vvl_dbg                ! not yet implemented: ln_vvl_kepe
+  370.          !!---------------------------------------------------------------------- 
+  371.          !
+  372.          REWIND( numnam_ref )              ! Namelist nam_vvl in reference namelist : 
+  373.          READ  ( numnam_ref, nam_vvl, IOSTAT = ios, ERR = 901)
+  374.    901   IF( ios /= 0 ) CALL ctl_nam ( ios , 'nam_vvl in reference namelist', lwp )
+  375.          !
+  376.          REWIND( numnam_cfg )              ! Namelist nam_vvl in configuration namelist : Parameters of the run
+  377.          READ  ( numnam_cfg, nam_vvl, IOSTAT = ios, ERR = 902 )
+  378.    902   IF( ios /= 0 ) CALL ctl_nam ( ios , 'nam_vvl in configuration namelist', lwp )
+  379.          IF(lwm) WRITE ( numond, nam_vvl )
+  380.          !
+  381.          IF(lwp) THEN                    ! Namelist print
+  382.             WRITE(numout,*)
+  383.             WRITE(numout,*) 'dom_vvl_ctl : choice/control of the variable vertical coordinate'
+  384.             WRITE(numout,*) '~~~~~~~~~~~'
+  385.             WRITE(numout,*) '           Namelist nam_vvl : chose a vertical coordinate'
+  386.             WRITE(numout,*) '              zstar                      ln_vvl_zstar   = ', ln_vvl_zstar
+  387.             WRITE(numout,*) '              ztilde                     ln_vvl_ztilde  = ', ln_vvl_ztilde
+  388.             WRITE(numout,*) '              layer                      ln_vvl_layer   = ', ln_vvl_layer
+  389.             WRITE(numout,*) '              ztilde as zstar   ln_vvl_ztilde_as_zstar  = ', ln_vvl_ztilde_as_zstar
+  390.             WRITE(numout,*) '      ztilde near the equator    ln_vvl_zstar_at_eqtor  = ', ln_vvl_zstar_at_eqtor
+  391.             ! WRITE(numout,*) '           Namelist nam_vvl : chose kinetic-to-potential energy conservation'
+  392.             ! WRITE(numout,*) '                                         ln_vvl_kepe    = ', ln_vvl_kepe
+  393.             WRITE(numout,*) '           Namelist nam_vvl : thickness diffusion coefficient'
+  394.             WRITE(numout,*) '                                         rn_ahe3        = ', rn_ahe3
+  395.             WRITE(numout,*) '           Namelist nam_vvl : maximum e3t deformation fractional change'
+  396.             WRITE(numout,*) '                                         rn_zdef_max    = ', rn_zdef_max
+  397.             IF( ln_vvl_ztilde_as_zstar ) THEN
+  398.                WRITE(numout,*) '           ztilde running in zstar emulation mode; '
+  399.                WRITE(numout,*) '           ignoring namelist timescale parameters and using:'
+  400.                WRITE(numout,*) '                 hard-wired : z-tilde to zstar restoration timescale (days)'
+  401.                WRITE(numout,*) '                                         rn_rst_e3t     =    0.0'
+  402.                WRITE(numout,*) '                 hard-wired : z-tilde cutoff frequency of low-pass filter (days)'
+  403.                WRITE(numout,*) '                                         rn_lf_cutoff   =    1.0/rdt'
+  404.             ELSE
+  405.                WRITE(numout,*) '           Namelist nam_vvl : z-tilde to zstar restoration timescale (days)'
+  406.                WRITE(numout,*) '                                         rn_rst_e3t     = ', rn_rst_e3t
+  407.                WRITE(numout,*) '           Namelist nam_vvl : z-tilde cutoff frequency of low-pass filter (days)'
+  408.                WRITE(numout,*) '                                         rn_lf_cutoff   = ', rn_lf_cutoff
+  409.             ENDIF
+  410.             WRITE(numout,*) '           Namelist nam_vvl : debug prints'
+  411.             WRITE(numout,*) '                                         ln_vvl_dbg     = ', ln_vvl_dbg
+  412.          ENDIF
+  413.          !
+  414.          ioptio = 0                      ! Parameter control
+  415.          IF( ln_vvl_ztilde_as_zstar )   ln_vvl_ztilde = .true.
+  416.          IF( ln_vvl_zstar           )   ioptio = ioptio + 1
+  417.          IF( ln_vvl_ztilde          )   ioptio = ioptio + 1
+  418.          IF( ln_vvl_layer           )   ioptio = ioptio + 1
+  419.          !
+  420.          IF( ioptio /= 1 )   CALL ctl_stop( 'Choose ONE vertical coordinate in namelist nam_vvl' )
+  421.          !
+  422.          IF(lwp) THEN                   ! Print the choice
+  423.             WRITE(numout,*)
+  424.             IF( ln_vvl_zstar           ) WRITE(numout,*) '              zstar vertical coordinate is used'
+  425.             IF( ln_vvl_ztilde          ) WRITE(numout,*) '              ztilde vertical coordinate is used'
+  426.             IF( ln_vvl_layer           ) WRITE(numout,*) '              layer vertical coordinate is used'
+  427.             IF( ln_vvl_ztilde_as_zstar ) WRITE(numout,*) '              to emulate a zstar coordinate'
+  428.             ! - ML - Option not developed yet
+  429.             ! IF(       ln_vvl_kepe ) WRITE(numout,*) '              kinetic to potential energy transfer : option used'
+  430.             ! IF( .NOT. ln_vvl_kepe ) WRITE(numout,*) '              kinetic to potential energy transfer : option not used'
+  431.          ENDIF
+  432.          !
+  433.          !
+  434.       END SUBROUTINE dom_vvl_ctl
+ftn-5003 ftn: NOTE File = domvvl.f90, Line = 434 
+  Local variable "RN_RST_E3T" is used but not assigned a value.
+
+ftn-5003 ftn: NOTE File = domvvl.f90, Line = 434 
+  Local variable "RN_ZDEF_MAX" is used but not assigned a value.
+
+ftn-5003 ftn: NOTE File = domvvl.f90, Line = 434 
+  Local variable "LN_VVL_LAYER" is used but not assigned a value.
+
+ftn-5003 ftn: NOTE File = domvvl.f90, Line = 434 
+  Local variable "RN_LF_CUTOFF" is used but not assigned a value.
+
+ftn-5003 ftn: NOTE File = domvvl.f90, Line = 434 
+  Local variable "RN_AHE3" is used but not assigned a value.
+
+ftn-5003 ftn: NOTE File = domvvl.f90, Line = 434 
+  Local variable "LN_VVL_ZTILDE_AS_ZSTAR" is used but not assigned a value.
+
+ftn-5003 ftn: NOTE File = domvvl.f90, Line = 434 
+  Local variable "LN_VVL_DBG" is used but not assigned a value.
+
+ftn-5003 ftn: NOTE File = domvvl.f90, Line = 434 
+  Local variable "LN_VVL_ZSTAR_AT_EQTOR" is used but not assigned a value.
+
+ftn-5003 ftn: NOTE File = domvvl.f90, Line = 434 
+  Local variable "LN_VVL_ZSTAR" is used but not assigned a value.
+
+  435.    
+  436.       !!======================================================================
+  437.    END MODULE domvvl
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                         E x t e r n a l   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Name  Messages
+----  --------
+ABS(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_VVL_INIT in DOMVVL (Line 217, file domvvl.f90)
+                   DOM_VVL_INIT in DOMVVL (Line 221, file domvvl.f90)
+                   DOM_VVL_INIT in DOMVVL (Line 228, file domvvl.f90)
+                   DOM_VVL_INIT in DOMVVL (Line 232, file domvvl.f90)
+
+Name  Messages
+----  --------
+AGRIF_CFIXED in DOM_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+AGRIF_ROOT in DOM_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+COS(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_VVL_INIT in DOMVVL (Line 228, file domvvl.f90)
+                   DOM_VVL_INIT in DOMVVL (Line 232, file domvvl.f90)
+
+Name  Messages
+----  --------
+CTL_NAM in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_VVL_CTL in DOMVVL (Line 374, file domvvl.f90)
+                   DOM_VVL_CTL in DOMVVL (Line 378, file domvvl.f90)
+
+Name  Messages
+----  --------
+CTL_OPN in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+CTL_STOP in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_VVL_INIT in DOMVVL (Line 136, file domvvl.f90)
+                   DOM_VVL_CTL in DOMVVL (Line 420, file domvvl.f90)
+
+Name  Messages
+----  --------
+CTL_WARN in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_VVL_ALLOC in DOMVVL (Line 87, file domvvl.f90)
+                   DOM_VVL_ALLOC in DOMVVL (Line 94, file domvvl.f90)
+
+Name  Messages
+----  --------
+DOMVVL
+      Defined as:  Module (line 1, file domvvl.f90)
+
+        Uses:      PHYCST
+                   DOM_OCE
+                   PAR_KIND  (indirectly)
+                   PAR_OCE  (indirectly)
+                   IN_OUT_MANAGER
+                   PAR_KIND  (indirectly)
+                   NC4INTERFACE  (indirectly)
+                   PAR_OCE  (indirectly)
+                   IOM
+                   NC4INTERFACE  (indirectly)
+                   PAR_KIND  (indirectly)
+                   PAR_OCE  (indirectly)
+                   LIB_MPP  (indirectly)
+                   LIB_MPP
+                   IN_OUT_MANAGER  (indirectly)
+                   IOM_NF90  (indirectly)
+                   IOM_DEF  (indirectly)
+                   LBCLNK
+                   LBCLNK  (indirectly)
+                   DOM_OCE  (indirectly)
+                   LIB_MPP  (indirectly)
+                   WRK_NEMO
+                   TIMING
+
+Name  Messages
+----  --------
+DOM_OCE
+      Defined as:  No definitions.
+
+      Used By:     DOMVVL
+                   DOMVVL  (indirectly)
+
+Name  Messages
+----  --------
+DOM_OCE_ALLOC in DOM_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+DOM_VVL_ALLOC in DOMVVL
+      Defined as:  Function (line 77, file domvvl.f90)
+
+      Interface:   None
+
+      Called By:   DOM_VVL_INIT in DOMVVL (Line 136, file domvvl.f90)
+
+      Calls:       CTL_WARN in LIB_MPP (Line 87, file domvvl.f90)
+                   CTL_WARN in LIB_MPP (Line 94, file domvvl.f90)
+                   MPPSUM_INT in LIB_MPP (Line 86, file domvvl.f90)
+                   MPPSUM_INT in LIB_MPP (Line 93, file domvvl.f90)
+
+Name  Messages
+----  --------
+DOM_VVL_CTL in DOMVVL
+      Defined as:  Subroutine (line 358, file domvvl.f90)
+
+      Interface:   None
+
+      Called By:   DOM_VVL_INIT in DOMVVL (Line 133, file domvvl.f90)
+
+      Calls:       CTL_NAM in LIB_MPP (Line 374, file domvvl.f90)
+                   CTL_NAM in LIB_MPP (Line 378, file domvvl.f90)
+                   CTL_STOP in LIB_MPP (Line 420, file domvvl.f90)
+
+Name  Messages
+----  --------
+DOM_VVL_INIT in DOMVVL
+      Defined as:  Subroutine (line 35, file domvvl.f90)
+
+      Interface:   None
+
+      Calls:       DOM_VVL_ALLOC in DOMVVL (Line 136, file domvvl.f90)
+                   DOM_VVL_INTERPOL in DOMVVL (Line 143, file domvvl.f90)
+                   DOM_VVL_INTERPOL in DOMVVL (Line 144, file domvvl.f90)
+                   DOM_VVL_INTERPOL in DOMVVL (Line 145, file domvvl.f90)
+                   DOM_VVL_INTERPOL in DOMVVL (Line 146, file domvvl.f90)
+                   DOM_VVL_INTERPOL in DOMVVL (Line 147, file domvvl.f90)
+                   DOM_VVL_INTERPOL in DOMVVL (Line 149, file domvvl.f90)
+                   DOM_VVL_INTERPOL in DOMVVL (Line 150, file domvvl.f90)
+                   DOM_VVL_INTERPOL in DOMVVL (Line 151, file domvvl.f90)
+                   DOM_VVL_INTERPOL in DOMVVL (Line 152, file domvvl.f90)
+                   DOM_VVL_INTERPOL in DOMVVL (Line 153, file domvvl.f90)
+                   DOM_VVL_INTERPOL in DOMVVL (Line 154, file domvvl.f90)
+                   DOM_VVL_CTL in DOMVVL (Line 133, file domvvl.f90)
+                   CTL_STOP in LIB_MPP (Line 136, file domvvl.f90)
+                   TIMING_START in TIMING (Line 127, file domvvl.f90)
+                   TIMING_STOP in TIMING (Line 246, file domvvl.f90)
+                   MAX(Intrinsic) (Line 206, file domvvl.f90)
+                   MAX(Intrinsic) (Line 207, file domvvl.f90)
+                   MAX(Intrinsic) (Line 219, file domvvl.f90)
+                   MAX(Intrinsic) (Line 220, file domvvl.f90)
+                   ABS(Intrinsic) (Line 217, file domvvl.f90)
+                   ABS(Intrinsic) (Line 221, file domvvl.f90)
+                   ABS(Intrinsic) (Line 228, file domvvl.f90)
+                   ABS(Intrinsic) (Line 232, file domvvl.f90)
+                   COS(Intrinsic) (Line 228, file domvvl.f90)
+                   COS(Intrinsic) (Line 232, file domvvl.f90)
+
+Name  Messages
+----  --------
+DOM_VVL_INTERPOL in DOMVVL
+      Defined as:  Subroutine (line 251, file domvvl.f90)
+
+      Interface:   None
+
+      Called By:   DOM_VVL_INIT in DOMVVL (Line 143, file domvvl.f90)
+                   DOM_VVL_INIT in DOMVVL (Line 144, file domvvl.f90)
+                   DOM_VVL_INIT in DOMVVL (Line 145, file domvvl.f90)
+                   DOM_VVL_INIT in DOMVVL (Line 146, file domvvl.f90)
+                   DOM_VVL_INIT in DOMVVL (Line 147, file domvvl.f90)
+                   DOM_VVL_INIT in DOMVVL (Line 149, file domvvl.f90)
+                   DOM_VVL_INIT in DOMVVL (Line 150, file domvvl.f90)
+                   DOM_VVL_INIT in DOMVVL (Line 151, file domvvl.f90)
+                   DOM_VVL_INIT in DOMVVL (Line 152, file domvvl.f90)
+                   DOM_VVL_INIT in DOMVVL (Line 153, file domvvl.f90)
+                   DOM_VVL_INIT in DOMVVL (Line 154, file domvvl.f90)
+
+      Calls:       MPP_LNK_3D in LIB_MPP (Line 286, file domvvl.f90)
+                   MPP_LNK_3D in LIB_MPP (Line 299, file domvvl.f90)
+                   MPP_LNK_3D in LIB_MPP (Line 313, file domvvl.f90)
+                   TIMING_START in TIMING (Line 270, file domvvl.f90)
+                   TIMING_STOP in TIMING (Line 353, file domvvl.f90)
+
+Name  Messages
+----  --------
+GET_NF90_SYMBOL in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GET_UNIT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IN_OUT_MANAGER
+      Defined as:  No definitions.
+
+      Used By:     DOMVVL
+                   DOMVVL  (indirectly)
+
+Name  Messages
+----  --------
+IOM
+      Defined as:  No definitions.
+
+      Used By:     DOMVVL
+
+Name  Messages
+----  --------
+IOM_CLOSE in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_CONTEXT_FINALIZE in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_DEF
+      Defined as:  No definitions.
+
+      Used By:     DOMVVL  (indirectly)
+
+Name  Messages
+----  --------
+IOM_G0D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_G0D_INTATT in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_G1D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_G2D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_G3D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_GETTIME in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_INIT in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90
+      Defined as:  No definitions.
+
+      Used By:     DOMVVL  (indirectly)
+
+Name  Messages
+----  --------
+IOM_NF90_CLOSE in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_G0D in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_G123D in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_GETTIME in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_INTATT in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_OPEN in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_RP0123D in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_VARID in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_OPEN in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_P0D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_P1D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_P2D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_P3D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_RP0D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_RP1D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_RP2D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_RP3D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_SETKT in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_SWAP in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_USE in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_VARID in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+LBCLNK
+      Defined as:  No definitions.
+
+      Used By:     DOMVVL
+                   DOMVVL  (indirectly)
+
+Name  Messages
+----  --------
+LIB_MPP
+      Defined as:  No definitions.
+
+      Used By:     DOMVVL  (indirectly)
+                   DOMVVL
+                   DOMVVL  (indirectly)
+
+Name  Messages
+----  --------
+MAX(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_VVL_INIT in DOMVVL (Line 206, file domvvl.f90)
+                   DOM_VVL_INIT in DOMVVL (Line 207, file domvvl.f90)
+                   DOM_VVL_INIT in DOMVVL (Line 219, file domvvl.f90)
+                   DOM_VVL_INIT in DOMVVL (Line 220, file domvvl.f90)
+
+Name  Messages
+----  --------
+MPPBCAST_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPGATHER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_REAL_MULTIPLE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPRECV in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSCATTER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSEND in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSTOP in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_REALDD in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_INT in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_VVL_ALLOC in DOMVVL (Line 86, file domvvl.f90)
+                   DOM_VVL_ALLOC in DOMVVL (Line 93, file domvvl.f90)
+
+Name  Messages
+----  --------
+MPPSUM_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_REALDD in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSYNC in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_COMM_FREE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_ICE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_NORTH in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_ZNL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_E in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_ICB in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_9 in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_E in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_ICB in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_MULTIPLE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_3D in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_VVL_INTERPOL in DOMVVL (Line 286, file domvvl.f90)
+                   DOM_VVL_INTERPOL in DOMVVL (Line 299, file domvvl.f90)
+                   DOM_VVL_INTERPOL in DOMVVL (Line 313, file domvvl.f90)
+
+Name  Messages
+----  --------
+MPP_LNK_3D_GATHER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_BDY_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_BDY_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_SUM_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_SUM_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MAXLOC2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MAXLOC3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MINLOC2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MINLOC3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MYNODE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NC4INTERFACE
+      Defined as:  No definitions.
+
+      Used By:     DOMVVL  (indirectly)
+                   DOMVVL  (indirectly)
+
+Name  Messages
+----  --------
+OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+Name  Messages
+----  --------
+OCE_ALLOC in OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+PAR_KIND
+      Defined as:  No definitions.
+
+      Used By:     DOMVVL  (indirectly)
+                   DOMVVL  (indirectly)
+                   DOMVVL  (indirectly)
+
+Name  Messages
+----  --------
+PAR_OCE
+      Defined as:  No definitions.
+
+      Used By:     DOMVVL  (indirectly)
+                   DOMVVL  (indirectly)
+                   DOMVVL  (indirectly)
+
+Name  Messages
+----  --------
+PHYCST
+      Defined as:  No definitions.
+
+      Used By:     DOMVVL
+
+Name  Messages
+----  --------
+PHY_CST in PHYCST
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SET_NF90_DEF_VAR_CHUNKING in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SET_NF90_DEF_VAR_DEFLATE in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING
+      Defined as:  No definitions.
+
+      Used By:     DOMVVL
+
+Name  Messages
+----  --------
+TIMING_FINALIZE in TIMING
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING_INIT in TIMING
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING_RESET in TIMING
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING_START in TIMING
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_VVL_INIT in DOMVVL (Line 127, file domvvl.f90)
+                   DOM_VVL_INTERPOL in DOMVVL (Line 270, file domvvl.f90)
+
+Name  Messages
+----  --------
+TIMING_STOP in TIMING
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_VVL_INIT in DOMVVL (Line 246, file domvvl.f90)
+                   DOM_VVL_INTERPOL in DOMVVL (Line 353, file domvvl.f90)
+
+Name  Messages
+----  --------
+WRK_ALLOC_1DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_ALLOC_1DR in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_ALLOC_2DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_ALLOC_2DR in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_ALLOC_3DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_ALLOC_3DR in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_ALLOC_4DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_ALLOC_4DR in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_DEALLOC_1DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_DEALLOC_1DR in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_DEALLOC_2DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_DEALLOC_2DR in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_DEALLOC_3DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_DEALLOC_3DR in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_DEALLOC_4DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_DEALLOC_4DR in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_LIST in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_NEMO
+      Defined as:  No definitions.
+
+      Used By:     DOMVVL
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

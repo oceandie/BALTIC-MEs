@@ -1,0 +1,2485 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S u m m a r y   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Compilation
+-----------
+File     : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/nemogcm.f90
+Compiled : 04/29/22  10:44:33
+Compiler : Version 8.3.4
+Ftnlx    : Version 8318 (libcif 83016)
+Target   : x86-64
+Command  : ftn_driver.exe -hcpu=haswell -hstatic -D__CRAYXC -D__CRAY_HASWELL
+           -D__CRAYXT_COMPUTE_LINUX_TARGET -hnetwork=aries -onemogcm.o
+           -I/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HE
+           AD_test_MEs/tools/DOMAINcfg/BLD/inc -sreal64 -sinteger32 -Ovector0
+           -hfp0 -O0 -hflex_mp=intolerant -eCID
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/common/moci/modules/packages/XIOS/2.0/24708/952/inc
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/m
+           ct
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/p
+           smile.MPI1 -c -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/opt/cray/libsci/13.0.1/CRAY/83/haswell/include
+           -I/opt/cray/mpt/7.0.4/gni/mpich2-cray/83/include
+           -I/opt/cray/rca/1.0.0-2.0502.60530.1.62.ari/include
+           -I/opt/cray/alps/5.2.4-2.0502.9774.31.11.ari/include
+           -I/opt/cray/xpmem/0.1-2.0502.64982.5.3.ari/include
+           -I/opt/cray/gni-headers/4.0-1.0502.10859.7.8.ari/include
+           -I/opt/cray/dmapp/7.0.1-1.0502.11080.8.76.ari/include
+           -I/opt/cray/pmi/5.0.5-1.0000.10300.134.8.ari/include
+           -I/opt/cray/ugni/6.0-1.0502.10863.8.29.ari/include
+           -I/opt/cray/udreg/2.3.2-1.0502.10518.2.17.ari/include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/pkgconfig/../include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/wlm_detect/1.0-1.0502.64649.2.1.ari/include
+           -I/opt/cray/krca/1.0.0-2.0502.63139.4.31.ari/include
+           -I/opt/cray-hss-devel/7.2.0/include /projects/jmmp/dbruciaf/NEMO/CHEC
+           KOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/nem
+           ogcm.f90
+
+ftnlx report
+------------
+Source   : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp//projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/nemogcm.f90
+Date     : 04/29/2022  10:44:34
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S o u r c e   L i s t i n g
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    1.    MODULE nemogcm
+    2.       !!======================================================================
+    3.       !!                       ***  MODULE nemogcm   ***
+    4.       !! Ocean system   : NEMO GCM (ocean dynamics, on-line tracers, biochemistry and sea-ice)
+    5.       !!======================================================================
+    6.       !! History :  OPA  ! 1990-10  (C. Levy, G. Madec)  Original code
+    7.       !!            7.0  ! 1991-11  (M. Imbard, C. Levy, G. Madec)
+    8.       !!            7.1  ! 1993-03  (M. Imbard, C. Levy, G. Madec, O. Marti, M. Guyon, A. Lazar,
+    9.       !!                             P. Delecluse, C. Perigaud, G. Caniaux, B. Colot, C. Maes) release 7.1
+   10.       !!             -   ! 1992-06  (L.Terray)  coupling implementation
+   11.       !!             -   ! 1993-11  (M.A. Filiberti) IGLOO sea-ice
+   12.       !!            8.0  ! 1996-03  (M. Imbard, C. Levy, G. Madec, O. Marti, M. Guyon, A. Lazar,
+   13.       !!                             P. Delecluse, L.Terray, M.A. Filiberti, J. Vialar, A.M. Treguier, M. Levy) release 8.0
+   14.       !!            8.1  ! 1997-06  (M. Imbard, G. Madec)
+   15.       !!            8.2  ! 1999-11  (M. Imbard, H. Goosse)  LIM sea-ice model
+   16.       !!                 ! 1999-12  (V. Thierry, A-M. Treguier, M. Imbard, M-A. Foujols)  OPEN-MP
+   17.       !!                 ! 2000-07  (J-M Molines, M. Imbard)  Open Boundary Conditions  (CLIPPER)
+   18.       !!   NEMO     1.0  ! 2002-08  (G. Madec)  F90: Free form and modules
+   19.       !!             -   ! 2004-06  (R. Redler, NEC CCRLE, Germany) add OASIS[3/4] coupled interfaces
+   20.       !!             -   ! 2004-08  (C. Talandier) New trends organization
+   21.       !!             -   ! 2005-06  (C. Ethe) Add the 1D configuration possibility
+   22.       !!             -   ! 2005-11  (V. Garnier) Surface pressure gradient organization
+   23.       !!             -   ! 2006-03  (L. Debreu, C. Mazauric)  Agrif implementation
+   24.       !!             -   ! 2006-04  (G. Madec, R. Benshila)  Step reorganization
+   25.       !!             -   ! 2007-07  (J. Chanut, A. Sellar) Unstructured open boundaries (BDY)
+   26.       !!            3.2  ! 2009-08  (S. Masson)  open/write in the listing file in mpp
+   27.       !!            3.3  ! 2010-05  (K. Mogensen, A. Weaver, M. Martin, D. Lea) Assimilation interface
+   28.       !!             -   ! 2010-10  (C. Ethe, G. Madec) reorganisation of initialisation phase
+   29.       !!            3.3.1! 2011-01  (A. R. Porter, STFC Daresbury) dynamical allocation
+   30.       !!            3.4  ! 2011-10  (A. C. Coward, NOCS & J. Donners, PRACE) add nemo_northcomms
+   31.       !!             -   ! 2011-11  (C. Harris) decomposition changes for running with CICE
+   32.       !!            3.6  ! 2012-05  (C. Calone, J. Simeon, G. Madec, C. Ethe) Add grid coarsening 
+   33.       !!             -   ! 2013-06  (I. Epicoco, S. Mocavero, CMCC) nemo_northcomms: setup avoiding MPI communication 
+   34.       !!             -   ! 2014-12  (G. Madec) remove KPP scheme and cross-land advection (cla)
+   35.       !!----------------------------------------------------------------------
+   36.    
+   37.       !!----------------------------------------------------------------------
+   38.       !!   nemo_gcm      : solve ocean dynamics, tracer, biogeochemistry and/or sea-ice
+   39.       !!   nemo_init     : initialization of the NEMO system
+   40.       !!   nemo_ctl      : initialisation of the contol print
+   41.       !!   nemo_closefile: close remaining open files
+   42.       !!   nemo_alloc    : dynamical allocation
+   43.       !!   nemo_partition: calculate MPP domain decomposition
+   44.       !!   factorise     : calculate the factors of the no. of MPI processes
+   45.       !!----------------------------------------------------------------------
+   46.       USE step_oce       ! module used in the ocean time stepping module (step.F90)
+                 ^                                                                         
+ftn-1193 ftn: CAUTION NEMOGCM, File = nemogcm.f90, Line = 46, Column = 8 
+  Module "IOM_NF90" is indirectly used in module "STEP_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/iom_nf90.o".  That file no
+  longer exists.
+
+                 ^                                                                         
+ftn-1193 ftn: CAUTION NEMOGCM, File = nemogcm.f90, Line = 46, Column = 8 
+  Module "IOM_DEF" is indirectly used in module "STEP_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/iom_def.o".  That file no
+  longer exists.
+
+                 ^                                                                         
+ftn-1193 ftn: CAUTION NEMOGCM, File = nemogcm.f90, Line = 46, Column = 8 
+  Module "NC4INTERFACE" is indirectly used in module "STEP_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/nc4interface.o".  That file no
+  longer exists.
+
+                 ^                                                                         
+ftn-1193 ftn: CAUTION NEMOGCM, File = nemogcm.f90, Line = 46, Column = 8 
+  Module "PAR_KIND" is indirectly used in module "STEP_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_kind.o".  That file no
+  longer exists.
+
+                 ^                                                                         
+ftn-1193 ftn: CAUTION NEMOGCM, File = nemogcm.f90, Line = 46, Column = 8 
+  Module "PAR_OCE" is indirectly used in module "STEP_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_oce.o".  That file no
+  longer exists.
+
+                 ^                                                                         
+ftn-1193 ftn: CAUTION NEMOGCM, File = nemogcm.f90, Line = 46, Column = 8 
+  Module "TIMING" is indirectly used in module "STEP_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/timing.o".  That file no
+  longer exists.
+
+                 ^                                                                         
+ftn-1193 ftn: CAUTION NEMOGCM, File = nemogcm.f90, Line = 46, Column = 8 
+  Module "LBCLNK" is indirectly used in module "STEP_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/lbclnk.o".  That file no
+  longer exists.
+
+                 ^                                                                         
+ftn-1193 ftn: CAUTION NEMOGCM, File = nemogcm.f90, Line = 46, Column = 8 
+  Module "IOM" is indirectly used in module "STEP_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/iom.o".  That file no longer
+  exists.
+
+                 ^                                                                         
+ftn-1193 ftn: CAUTION NEMOGCM, File = nemogcm.f90, Line = 46, Column = 8 
+  Module "IN_OUT_MANAGER" is indirectly used in module "STEP_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/in_out_manager.o".  That file
+  no longer exists.
+
+                 ^                                                                         
+ftn-1193 ftn: CAUTION NEMOGCM, File = nemogcm.f90, Line = 46, Column = 8 
+  Module "PRTCTL" is indirectly used in module "STEP_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/prtctl.o".  That file no
+  longer exists.
+
+                 ^                                                                         
+ftn-1193 ftn: CAUTION NEMOGCM, File = nemogcm.f90, Line = 46, Column = 8 
+  Module "EOSBN2" is indirectly used in module "STEP_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/eosbn2.o".  That file no
+  longer exists.
+
+                 ^                                                                         
+ftn-1193 ftn: CAUTION NEMOGCM, File = nemogcm.f90, Line = 46, Column = 8 
+  Module "DAYMOD" is indirectly used in module "STEP_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/daymod.o".  That file no
+  longer exists.
+
+                 ^                                                                         
+ftn-1193 ftn: CAUTION NEMOGCM, File = nemogcm.f90, Line = 46, Column = 8 
+  Module "DOM_OCE" is indirectly used in module "STEP_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/dom_oce.o".  That file no
+  longer exists.
+
+                 ^                                                                         
+ftn-1193 ftn: CAUTION NEMOGCM, File = nemogcm.f90, Line = 46, Column = 8 
+  Module "OCE" is indirectly used in module "STEP_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/oce.o".  That file no longer
+  exists.
+
+   47.       USE domcfg         ! domain configuration               (dom_cfg routine)
+   48.       USE mppini         ! shared/distributed memory setting (mpp_init routine)
+   49.       USE domain         ! domain initialization             (dom_init routine)
+   50.       USE phycst         ! physical constant                  (par_cst routine)
+   51.       USE lib_fortran    ! Fortran utilities (allows no signed zero when 'key_nosignedzero' defined)
+   52.       USE lib_mpp        ! distributed memory computing
+   53.    
+   54.       USE lbcnfd , ONLY  : isendto, nsndto, nfsloop, nfeloop   ! Setup of north fold exchanges 
+   55.    
+   56.       IMPLICIT NONE
+   57.       PRIVATE
+   58.    
+   59.       PUBLIC   nemo_gcm    ! called by model.F90
+   60.       PUBLIC   nemo_init   ! needed by AGRIF
+   61.       PUBLIC   nemo_alloc  ! needed by TAM
+   62.    
+   63.       CHARACTER(lc) ::   cform_aaa="( /, 'AAAAAAAA', / ) "     ! flag for output listing
+   64.    
+   65.       !!----------------------------------------------------------------------
+   66.       !! NEMO/OPA 3.7 , NEMO Consortium (2015)
+   67.       !! $Id: nemogcm.F90 6152 2015-12-21 22:33:57Z acc $
+   68.       !! Software governed by the CeCILL licence     (./LICENSE)
+   69.       !!----------------------------------------------------------------------
+   70.    CONTAINS
+   71.    
+   72.       SUBROUTINE nemo_gcm
+   73.          !!----------------------------------------------------------------------
+   74.          !!                     ***  ROUTINE nemo_gcm  ***
+   75.          !!
+   76.          !! ** Purpose :   NEMO solves the primitive equations on an orthogonal
+   77.          !!              curvilinear mesh on the sphere.
+   78.          !!
+   79.          !! ** Method  : - model general initialization
+   80.          !!              - launch the time-stepping (stp routine)
+   81.          !!              - finalize the run by closing files and communications
+   82.          !!
+   83.          !! References : Madec, Delecluse, Imbard, and Levy, 1997:  internal report, IPSL.
+   84.          !!              Madec, 2008, internal report, IPSL.
+   85.          !!----------------------------------------------------------------------
+   86.          INTEGER ::   istp       ! time step index
+   87.          !!----------------------------------------------------------------------
+   88.          !
+   89.          !                            !-----------------------!
+   90.          CALL nemo_init               !==  Initialisations  ==!
+   91.          !                            !-----------------------!
+   92.    
+   93.          ! check that all process are still there... If some process have an error,
+   94.          ! they will never enter in step and other processes will wait until the end of the cpu time!
+   95.          IF( lk_mpp )   CALL mpp_max( nstop )
+   96.    
+   97.          IF(lwp) WRITE(numout,cform_aaa)   ! Flag AAAAAAA
+   98.    
+   99.          !                            !-----------------------!
+  100.          !                            !==  finalize the run  ==!
+  101.          !                            !------------------------!
+  102.          !
+  103.          IF( nstop /= 0 .AND. lwp ) THEN   ! error print
+  104.             WRITE(numout,cform_err)
+  105.             WRITE(numout,*) nstop, ' error have been found'
+  106.          ENDIF
+  107.          !
+  108.          IF( nn_timing == 1 )   CALL timing_finalize
+  109.          !
+  110.          CALL nemo_closefile
+  111.          !
+  112.          !
+  113.       END SUBROUTINE nemo_gcm
+ftn-5002 ftn: NOTE File = nemogcm.f90, Line = 113 
+  Local variable "ISTP" is declared but neither defined nor used.
+
+  114.    
+  115.    
+  116.       SUBROUTINE nemo_init
+  117.          !!----------------------------------------------------------------------
+  118.          !!                     ***  ROUTINE nemo_init  ***
+  119.          !!
+  120.          !! ** Purpose :   initialization of the NEMO GCM
+  121.          !!----------------------------------------------------------------------
+  122.          INTEGER ::   ji            ! dummy loop indices
+  123.          INTEGER ::   ilocal_comm   ! local integer
+  124.          INTEGER ::   ios
+  125.          CHARACTER(len=80), DIMENSION(16) ::   cltxt
+  126.          !
+  127.          NAMELIST/namctl/ ln_ctl  , nn_print, nn_ictls, nn_ictle,   &
+  128.             &             nn_isplt, nn_jsplt, nn_jctls, nn_jctle,   &
+  129.             &             nn_bench, nn_timing, nn_diacfl
+  130.          NAMELIST/namcfg/ ln_e3_dep,                                &
+  131.             &             cp_cfg, cp_cfz, jp_cfg, jpidta, jpjdta, jpkdta, jpiglo, jpjglo, &
+  132.             &             jpizoom, jpjzoom, jperio, ln_use_jattr
+  133.          !!----------------------------------------------------------------------
+  134.          !
+  135.          cltxt = ''
+  136.          !
+  137.          !                             ! Open reference namelist and configuration namelist files
+  138.          CALL ctl_opn( numnam_ref, 'namelist_ref', 'OLD', 'FORMATTED', 'SEQUENTIAL', -1, 6, .FALSE. )
+  139.          CALL ctl_opn( numnam_cfg, 'namelist_cfg', 'OLD', 'FORMATTED', 'SEQUENTIAL', -1, 6, .FALSE. )
+  140.          !
+  141.          REWIND( numnam_ref )              ! Namelist namctl in reference namelist : Control prints & Benchmark
+  142.          READ  ( numnam_ref, namctl, IOSTAT = ios, ERR = 901 )
+  143.    901   IF( ios /= 0 ) CALL ctl_nam ( ios , 'namctl in reference namelist', .TRUE. )
+  144.    
+  145.          REWIND( numnam_cfg )              ! Namelist namctl in confguration namelist : Control prints & Benchmark
+  146.          READ  ( numnam_cfg, namctl, IOSTAT = ios, ERR = 902 )
+  147.    902   IF( ios /= 0 ) CALL ctl_nam ( ios , 'namctl in configuration namelist', .TRUE. )
+  148.    
+  149.          !
+  150.          REWIND( numnam_ref )              ! Namelist namcfg in reference namelist : Control prints & Benchmark
+  151.          READ  ( numnam_ref, namcfg, IOSTAT = ios, ERR = 903 )
+  152.    903   IF( ios /= 0 ) CALL ctl_nam ( ios , 'namcfg in reference namelist', .TRUE. )
+  153.    
+  154.          REWIND( numnam_cfg )              ! Namelist namcfg in confguration namelist : Control prints & Benchmark
+  155.          READ  ( numnam_cfg, namcfg, IOSTAT = ios, ERR = 904 )
+  156.    904   IF( ios /= 0 ) CALL ctl_nam ( ios , 'namcfg in configuration namelist', .TRUE. )   
+  157.    
+  158.    ! Force values for AGRIF zoom (cf. agrif_user.F90)
+  159.          !
+  160.          !                             !--------------------------------------------!
+  161.          !                             !  set communicator & select the local node  !
+  162.          !                             !  NB: mynode also opens output.namelist.dyn !
+  163.          !                             !      on unit number numond on first proc   !
+  164.          !                             !--------------------------------------------!
+  165.          ! Nodes selection (control print return in cltxt)
+  166.          ilocal_comm = 0
+  167.          narea = mynode( cltxt, 'output.namelist.dyn', numnam_ref, numnam_cfg, numond , nstop )
+  168.          narea = narea + 1                                     ! mynode return the rank of proc (0 --> jpnij -1 )
+  169.    
+  170.          lwm = (narea == 1)                                    ! control of output namelists
+  171.          lwp = (narea == 1) .OR. ln_ctl                        ! control of all listing output print
+  172.    
+  173.          IF(lwm) THEN
+  174.             ! write merged namelists from earlier to output namelist now that the
+  175.             ! file has been opened in call to mynode. nammpp has already been
+  176.             ! written in mynode (if lk_mpp_mpi)
+  177.             WRITE( numond, namctl )
+  178.             WRITE( numond, namcfg )
+  179.          ENDIF
+  180.    
+  181.          ! If dimensions of processor grid weren't specified in the namelist file
+  182.          ! then we calculate them here now that we have our communicator size
+  183.          IF( jpni < 1 .OR. jpnj < 1 ) THEN
+  184.             IF( Agrif_Root() )   CALL nemo_partition( mppsize )
+  185.          ENDIF
+  186.    
+  187.          ! Calculate domain dimensions given calculated jpni and jpnj
+  188.          ! This used to be done in par_oce.F90 when they were parameters rather than variables
+  189.          IF( Agrif_Root() ) THEN
+  190.             jpi = ( jpiglo     -2*jpreci + (jpni-1) ) / jpni + 2*jpreci    ! first  dim.
+  191.             jpj = ( jpjglo     -2*jprecj + (jpnj-1) ) / jpnj + 2*jprecj    ! second dim.
+  192.          ENDIF         
+  193.             jpk = jpkdta                                             ! third dim
+  194.             jpim1 = jpi-1                                            ! inner domain indices
+  195.             jpjm1 = jpj-1                                            !   "           "
+  196.             jpkm1 = jpk-1                                            !   "           "
+  197.             jpij  = jpi*jpj                                          !  jpi x j
+  198.    
+  199.          IF(lwp) THEN                            ! open listing units
+  200.             !
+  201.             CALL ctl_opn( numout, 'ocean.output', 'REPLACE', 'FORMATTED', 'SEQUENTIAL', -1, 6, .FALSE., narea )
+  202.             !
+  203.             WRITE(numout,*)
+  204.             WRITE(numout,*) '   CNRS - NERC - Met OFFICE - MERCATOR-ocean - INGV - CMCC'
+  205.             WRITE(numout,*) '                       NEMO team'
+  206.             WRITE(numout,*) '            Ocean General Circulation Model'
+  207.             WRITE(numout,*) '                  version 3.7  (2015) '
+  208.             WRITE(numout,*)
+  209.             WRITE(numout,*)
+  210.             DO ji = 1, SIZE(cltxt)
+  211.                IF( TRIM(cltxt(ji)) /= '' )   WRITE(numout,*) cltxt(ji)      ! control print of mynode
+  212.             END DO
+  213.             WRITE(numout,cform_aaa)                                         ! Flag AAAAAAA
+  214.             !
+  215.          ENDIF
+  216.    
+  217.          ! Now we know the dimensions of the grid and numout has been set we can
+  218.          ! allocate arrays
+  219.          CALL nemo_alloc()
+  220.    
+  221.          !                             !-------------------------------!
+  222.          !                             !  NEMO general initialization  !
+  223.          !                             !-------------------------------!
+  224.    
+  225.          CALL nemo_ctl                          ! Control prints & Benchmark
+  226.    
+  227.          !                                      ! Domain decomposition
+  228.          IF( jpni*jpnj == jpnij ) THEN   ;   CALL mpp_init      ! standard cutting out
+  229.          ELSE                            ;   CALL mpp_init2     ! eliminate land processors
+  230.          ENDIF
+  231.          !
+  232.          IF( nn_timing == 1 )  CALL timing_init
+  233.          !
+  234.          !                                      ! General initialization
+  235.                                CALL     phy_cst    ! Physical constants
+  236.                                CALL     eos_init   ! Equation of state
+  237.                                CALL     dom_cfg    ! Domain configuration
+  238.                                CALL     dom_init   ! Domain
+  239.          IF( ln_ctl        )   CALL prt_ctl_init   ! Print control
+  240.          !
+  241.       END SUBROUTINE nemo_init
+ftn-5001 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "ILOCAL_COMM" is assigned a value but never used.
+
+ftn-5002 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "LN_E3_DEP" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "JP_CFG" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "CP_CFZ" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "LN_USE_JATTR" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "NN_BENCH" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "NN_DIACFL" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "NN_ICTLE" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "NN_ICTLS" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "NN_ISPLT" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "NN_JCTLE" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "NN_JCTLS" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "NN_JSPLT" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "NN_PRINT" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "JPJZOOM" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "CP_CFG" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "JPERIO" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "JPIDTA" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "JPJDTA" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "JPIZOOM" is declared but neither defined nor used.
+
+ftn-5003 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "JPIGLO" is used but not assigned a value.
+
+ftn-5003 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "JPKDTA" is used but not assigned a value.
+
+ftn-5003 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "NN_TIMING" is used but not assigned a value.
+
+ftn-5003 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "JPJGLO" is used but not assigned a value.
+
+ftn-5003 ftn: NOTE File = nemogcm.f90, Line = 241 
+  Local variable "LN_CTL" is used but not assigned a value.
+
+  242.    
+  243.    
+  244.       SUBROUTINE nemo_ctl
+  245.          !!----------------------------------------------------------------------
+  246.          !!                     ***  ROUTINE nemo_ctl  ***
+  247.          !!
+  248.          !! ** Purpose :   control print setting
+  249.          !!
+  250.          !! ** Method  : - print namctl information and check some consistencies
+  251.          !!----------------------------------------------------------------------
+  252.          !
+  253.          IF(lwp) THEN                  ! control print
+  254.             WRITE(numout,*)
+  255.             WRITE(numout,*) 'nemo_ctl: Control prints & Benchmark'
+  256.             WRITE(numout,*) '~~~~~~~ '
+  257.             WRITE(numout,*) '   Namelist namctl'
+  258.             WRITE(numout,*) '      run control (for debugging)     ln_ctl     = ', ln_ctl
+  259.             WRITE(numout,*) '      level of print                  nn_print   = ', nn_print
+  260.             WRITE(numout,*) '      Start i indice for SUM control  nn_ictls   = ', nn_ictls
+  261.             WRITE(numout,*) '      End i indice for SUM control    nn_ictle   = ', nn_ictle
+  262.             WRITE(numout,*) '      Start j indice for SUM control  nn_jctls   = ', nn_jctls
+  263.             WRITE(numout,*) '      End j indice for SUM control    nn_jctle   = ', nn_jctle
+  264.             WRITE(numout,*) '      number of proc. following i     nn_isplt   = ', nn_isplt
+  265.             WRITE(numout,*) '      number of proc. following j     nn_jsplt   = ', nn_jsplt
+  266.             WRITE(numout,*) '      benchmark parameter (0/1)       nn_bench   = ', nn_bench
+  267.             WRITE(numout,*) '      timing activated    (0/1)       nn_timing  = ', nn_timing
+  268.          ENDIF
+  269.          !
+  270.          nprint    = nn_print          ! convert DOCTOR namelist names into OLD names
+  271.          nictls    = nn_ictls
+  272.          nictle    = nn_ictle
+  273.          njctls    = nn_jctls
+  274.          njctle    = nn_jctle
+  275.          isplt     = nn_isplt
+  276.          jsplt     = nn_jsplt
+  277.          nbench    = nn_bench
+  278.    
+  279.          IF(lwp) THEN                  ! control print
+  280.             WRITE(numout,*)
+  281.             WRITE(numout,*) 'namcfg  : configuration initialization through namelist read'
+  282.             WRITE(numout,*) '~~~~~~~ '
+  283.             WRITE(numout,*) '   Namelist namcfg'
+  284.             WRITE(numout,*) '      vertical scale factors =T: e3.=dk[depth]       ln_e3_dep = ', ln_e3_dep
+  285.             WRITE(numout,*) '                             =F: old definition                 '
+  286.             WRITE(numout,*) '      configuration name                               cp_cfg  = ', TRIM(cp_cfg)
+  287.             WRITE(numout,*) '      configuration zoom name                          cp_cfz  = ', TRIM(cp_cfz)
+  288.             WRITE(numout,*) '      configuration resolution                         jp_cfg  = ', jp_cfg
+  289.             WRITE(numout,*) '      1st lateral dimension ( >= jpiglo )              jpidta  = ', jpidta
+  290.             WRITE(numout,*) '      2nd    "         "    ( >= jpjglo )              jpjdta  = ', jpjdta
+  291.             WRITE(numout,*) '      3nd    "         "                               jpkdta  = ', jpkdta
+  292.             WRITE(numout,*) '      1st dimension of global domain in i              jpiglo  = ', jpiglo
+  293.             WRITE(numout,*) '      2nd    -                  -    in j              jpjglo  = ', jpjglo
+  294.             WRITE(numout,*) '      left bottom i index of the zoom (in data domain) jpizoom = ', jpizoom
+  295.             WRITE(numout,*) '      left bottom j index of the zoom (in data domain) jpizoom = ', jpjzoom
+  296.             WRITE(numout,*) '      lateral cond. type (between 0 and 6)             jperio  = ', jperio   
+  297.             WRITE(numout,*) '      use file attribute if exists as i/p j-start ln_use_jattr = ', ln_use_jattr
+  298.             !
+  299.             IF(.NOT.ln_e3_dep ) THEN
+  300.                WRITE(numout,cform_war)
+  301.                WRITE(numout,*)
+  302.                WRITE(numout,*) '      ===>>>>    Obsolescent definition of e3 scale factors is used'
+  303.                WRITE(numout,*)
+  304.             ENDIF
+  305.          ENDIF
+  306.          !                             ! Parameter control
+  307.          !
+  308.          IF( ln_ctl ) THEN                 ! sub-domain area indices for the control prints
+  309.             IF( lk_mpp .AND. jpnij > 1 ) THEN
+  310.                isplt = jpni   ;   jsplt = jpnj   ;   ijsplt = jpni*jpnj   ! the domain is forced to the real split domain
+  311.             ELSE
+  312.                IF( isplt == 1 .AND. jsplt == 1  ) THEN
+  313.                   CALL ctl_warn( ' - isplt & jsplt are equal to 1',   &
+  314.                      &           ' - the print control will be done over the whole domain' )
+  315.                ENDIF
+  316.                ijsplt = isplt * jsplt            ! total number of processors ijsplt
+  317.             ENDIF
+  318.             IF(lwp) WRITE(numout,*)'          - The total number of processors over which the'
+  319.             IF(lwp) WRITE(numout,*)'            print control will be done is ijsplt : ', ijsplt
+  320.             !
+  321.             !                              ! indices used for the SUM control
+  322.             IF( nictls+nictle+njctls+njctle == 0 )   THEN    ! print control done over the default area
+  323.                lsp_area = .FALSE.
+  324.             ELSE                                             ! print control done over a specific  area
+  325.                lsp_area = .TRUE.
+  326.                IF( nictls < 1 .OR. nictls > jpiglo )   THEN
+  327.                   CALL ctl_warn( '          - nictls must be 1<=nictls>=jpiglo, it is forced to 1' )
+  328.                   nictls = 1
+  329.                ENDIF
+  330.                IF( nictle < 1 .OR. nictle > jpiglo )   THEN
+  331.                   CALL ctl_warn( '          - nictle must be 1<=nictle>=jpiglo, it is forced to jpiglo' )
+  332.                   nictle = jpiglo
+  333.                ENDIF
+  334.                IF( njctls < 1 .OR. njctls > jpjglo )   THEN
+  335.                   CALL ctl_warn( '          - njctls must be 1<=njctls>=jpjglo, it is forced to 1' )
+  336.                   njctls = 1
+  337.                ENDIF
+  338.                IF( njctle < 1 .OR. njctle > jpjglo )   THEN
+  339.                   CALL ctl_warn( '          - njctle must be 1<=njctle>=jpjglo, it is forced to jpjglo' )
+  340.                   njctle = jpjglo
+  341.                ENDIF
+  342.             ENDIF
+  343.          ENDIF
+  344.          !
+  345.          IF( 1_wp /= SIGN(1._wp,-0._wp)  )   CALL ctl_stop( 'nemo_ctl: The intrinsec SIGN function follows ',  &
+  346.             &                                               'f2003 standard. '                              ,  &
+  347.             &                                               'Compile with key_nosignedzero enabled' )
+  348.          !
+  349.       END SUBROUTINE nemo_ctl
+  350.    
+  351.    
+  352.       SUBROUTINE nemo_closefile
+  353.          !!----------------------------------------------------------------------
+  354.          !!                     ***  ROUTINE nemo_closefile  ***
+  355.          !!
+  356.          !! ** Purpose :   Close the files
+  357.          !!----------------------------------------------------------------------
+  358.          !
+  359.          IF( lk_mpp )   CALL mppsync
+  360.          !
+  361.          CALL iom_close                                 ! close all input/output files managed by iom_*
+  362.          !
+  363.          IF( numstp          /= -1 )   CLOSE( numstp          )   ! time-step file
+  364.          IF( numsol          /= -1 )   CLOSE( numsol          )   ! solver file
+  365.          IF( numnam_ref      /= -1 )   CLOSE( numnam_ref      )   ! oce reference namelist
+  366.          IF( numnam_cfg      /= -1 )   CLOSE( numnam_cfg      )   ! oce configuration namelist
+  367.          IF( lwm.AND.numond  /= -1 )   CLOSE( numond          )   ! oce output namelist
+  368.          IF( numnam_ice_ref  /= -1 )   CLOSE( numnam_ice_ref  )   ! ice reference namelist
+  369.          IF( numnam_ice_cfg  /= -1 )   CLOSE( numnam_ice_cfg  )   ! ice configuration namelist
+  370.          IF( lwm.AND.numoni  /= -1 )   CLOSE( numoni          )   ! ice output namelist
+  371.          IF( numevo_ice      /= -1 )   CLOSE( numevo_ice      )   ! ice variables (temp. evolution)
+  372.          IF( numout          /=  6 )   CLOSE( numout          )   ! standard model output file
+  373.          IF( numdct_vol      /= -1 )   CLOSE( numdct_vol      )   ! volume transports
+  374.          IF( numdct_heat     /= -1 )   CLOSE( numdct_heat     )   ! heat transports
+  375.          IF( numdct_salt     /= -1 )   CLOSE( numdct_salt     )   ! salt transports
+  376.          !
+  377.          numout = 6                                     ! redefine numout in case it is used after this point...
+  378.          !
+  379.       END SUBROUTINE nemo_closefile
+  380.    
+  381.    
+  382.       SUBROUTINE nemo_alloc
+  383.          !!----------------------------------------------------------------------
+  384.          !!                     ***  ROUTINE nemo_alloc  ***
+  385.          !!
+  386.          !! ** Purpose :   Allocate all the dynamic arrays of the OPA modules
+  387.          !!
+  388.          !! ** Method  :
+  389.          !!----------------------------------------------------------------------
+  390.          USE dom_oce   , ONLY: dom_oce_alloc
+  391.          !
+  392.          INTEGER :: ierr
+  393.          !!----------------------------------------------------------------------
+  394.          !
+  395.          ierr =        oce_alloc       ()          ! ocean
+  396.          ierr = ierr + dom_oce_alloc   ()          ! ocean domain
+  397.          !
+  398.          IF( lk_mpp    )   CALL mpp_sum( ierr )
+  399.          IF( ierr /= 0 )   CALL ctl_stop( 'STOP', 'nemo_alloc : unable to allocate standard ocean arrays' )
+  400.          !
+  401.       END SUBROUTINE nemo_alloc
+  402.    
+  403.    
+  404.       SUBROUTINE nemo_partition( num_pes )
+  405.          !!----------------------------------------------------------------------
+  406.          !!                 ***  ROUTINE nemo_partition  ***
+  407.          !!
+  408.          !! ** Purpose :
+  409.          !!
+  410.          !! ** Method  :
+  411.          !!----------------------------------------------------------------------
+  412.          INTEGER, INTENT(in) ::   num_pes   ! The number of MPI processes we have
+  413.          !
+  414.          INTEGER, PARAMETER :: nfactmax = 20
+  415.          INTEGER :: nfact ! The no. of factors returned
+  416.          INTEGER :: ierr  ! Error flag
+  417.          INTEGER :: ji
+  418.          INTEGER :: idiff, mindiff, imin ! For choosing pair of factors that are closest in value
+  419.          INTEGER, DIMENSION(nfactmax) :: ifact ! Array of factors
+  420.          !!----------------------------------------------------------------------
+  421.          !
+  422.          ierr = 0
+  423.          !
+  424.          CALL factorise( ifact, nfactmax, nfact, num_pes, ierr )
+  425.          !
+  426.          IF( nfact <= 1 ) THEN
+  427.             WRITE (numout, *) 'WARNING: factorisation of number of PEs failed'
+  428.             WRITE (numout, *) '       : using grid of ',num_pes,' x 1'
+  429.             jpnj = 1
+  430.             jpni = num_pes
+  431.          ELSE
+  432.             ! Search through factors for the pair that are closest in value
+  433.             mindiff = 1000000
+  434.             imin    = 1
+  435.             DO ji = 1, nfact-1, 2
+  436.                idiff = ABS( ifact(ji) - ifact(ji+1) )
+  437.                IF( idiff < mindiff ) THEN
+  438.                   mindiff = idiff
+  439.                   imin = ji
+  440.                ENDIF
+  441.             END DO
+  442.             jpnj = ifact(imin)
+  443.             jpni = ifact(imin + 1)
+  444.          ENDIF
+  445.          !
+  446.          jpnij = jpni*jpnj
+  447.          !
+  448.       END SUBROUTINE nemo_partition
+  449.    
+  450.    
+  451.       SUBROUTINE factorise( kfax, kmaxfax, knfax, kn, kerr )
+  452.          !!----------------------------------------------------------------------
+  453.          !!                     ***  ROUTINE factorise  ***
+  454.          !!
+  455.          !! ** Purpose :   return the prime factors of n.
+  456.          !!                knfax factors are returned in array kfax which is of
+  457.          !!                maximum dimension kmaxfax.
+  458.          !! ** Method  :
+  459.          !!----------------------------------------------------------------------
+  460.          INTEGER                    , INTENT(in   ) ::   kn, kmaxfax
+  461.          INTEGER                    , INTENT(  out) ::   kerr, knfax
+  462.          INTEGER, DIMENSION(kmaxfax), INTENT(  out) ::   kfax
+  463.          !
+  464.          INTEGER :: ifac, jl, inu
+  465.          INTEGER, PARAMETER :: ntest = 14
+  466.          INTEGER, DIMENSION(ntest) ::   ilfax
+  467.          !!----------------------------------------------------------------------
+  468.          !
+  469.          ! lfax contains the set of allowed factors.
+  470.          ilfax(:) = (/(2**jl,jl=ntest,1,-1)/)
+ftn-6204 ftn: VECTOR File = nemogcm.f90, Line = 470 
+  A loop starting at line 470 was vectorized.
+
+  471.          !
+  472.          ! Clear the error flag and initialise output vars
+  473.          kerr  = 0
+  474.          kfax  = 1
+ftn-6204 ftn: VECTOR File = nemogcm.f90, Line = 474 
+  A loop starting at line 474 was vectorized.
+
+  475.          knfax = 0
+  476.          !
+  477.          ! Find the factors of n.
+  478.          IF( kn == 1 )   GOTO 20
+  479.    
+  480.          ! nu holds the unfactorised part of the number.
+  481.          ! knfax holds the number of factors found.
+  482.          ! l points to the allowed factor list.
+  483.          ! ifac holds the current factor.
+  484.          !
+  485.          inu   = kn
+  486.          knfax = 0
+  487.          !
+  488.          DO jl = ntest, 1, -1
+  489.             !
+  490.             ifac = ilfax(jl)
+  491.             IF( ifac > inu )   CYCLE
+  492.    
+  493.             ! Test whether the factor will divide.
+  494.    
+  495.             IF( MOD(inu,ifac) == 0 ) THEN
+  496.                !
+  497.                knfax = knfax + 1            ! Add the factor to the list
+  498.                IF( knfax > kmaxfax ) THEN
+  499.                   kerr = 6
+  500.                   write (*,*) 'FACTOR: insufficient space in factor array ', knfax
+  501.                   return
+  502.                ENDIF
+  503.                kfax(knfax) = ifac
+  504.                ! Store the other factor that goes with this one
+  505.                knfax = knfax + 1
+  506.                kfax(knfax) = inu / ifac
+  507.                !WRITE (*,*) 'ARPDBG, factors ',knfax-1,' & ',knfax,' are ', kfax(knfax-1),' and ',kfax(knfax)
+  508.             ENDIF
+  509.             !
+  510.          END DO
+  511.          !
+  512.       20 CONTINUE      ! Label 20 is the exit point from the factor search loop.
+  513.          !
+  514.       END SUBROUTINE factorise
+  515.    
+  516.    
+  517.       SUBROUTINE nemo_northcomms
+  518.          !!----------------------------------------------------------------------
+  519.          !!                     ***  ROUTINE  nemo_northcomms  ***
+  520.          !! ** Purpose :   Setup for north fold exchanges with explicit 
+  521.          !!                point-to-point messaging
+  522.          !!
+  523.          !! ** Method :   Initialization of the northern neighbours lists.
+  524.          !!----------------------------------------------------------------------
+  525.          !!    1.0  ! 2011-10  (A. C. Coward, NOCS & J. Donners, PRACE)
+  526.          !!    2.0  ! 2013-06 Setup avoiding MPI communication (I. Epicoco, S. Mocavero, CMCC) 
+  527.          !!----------------------------------------------------------------------
+  528.          INTEGER  ::   sxM, dxM, sxT, dxT, jn
+  529.          INTEGER  ::   njmppmax
+  530.          !!----------------------------------------------------------------------
+  531.          !
+  532.          njmppmax = MAXVAL( njmppt )
+ftn-6297 ftn: VECTOR File = nemogcm.f90, Line = 532 
+  A loop starting at line 532 was not vectorized because a recurrence was found at line 532.
+
+  533.          !
+  534.          !initializes the north-fold communication variables
+  535.          isendto(:) = 0
+ftn-6271 ftn: VECTOR File = nemogcm.f90, Line = 535 
+  A loop starting at line 535 was not vectorized because its trip count is too small.
+
+  536.          nsndto     = 0
+  537.          !
+  538.          !if I am a process in the north
+  539.          IF ( njmpp == njmppmax ) THEN
+  540.              !sxM is the first point (in the global domain) needed to compute the
+  541.              !north-fold for the current process
+  542.              sxM = jpiglo - nimppt(narea) - nlcit(narea) + 1
+  543.              !dxM is the last point (in the global domain) needed to compute the
+  544.              !north-fold for the current process
+  545.              dxM = jpiglo - nimppt(narea) + 2
+  546.    
+  547.              !loop over the other north-fold processes to find the processes
+  548.              !managing the points belonging to the sxT-dxT range
+  549.      
+  550.              DO jn = 1, jpni
+  551.                    !sxT is the first point (in the global domain) of the jn
+  552.                    !process
+  553.                    sxT = nfiimpp(jn, jpnj)
+  554.                    !dxT is the last point (in the global domain) of the jn
+  555.                    !process
+  556.                    dxT = nfiimpp(jn, jpnj) + nfilcit(jn, jpnj) - 1
+  557.                    IF ((sxM .gt. sxT) .AND. (sxM .lt. dxT)) THEN
+  558.                       nsndto = nsndto + 1
+  559.                         isendto(nsndto) = jn
+  560.                    ELSEIF ((sxM .le. sxT) .AND. (dxM .ge. dxT)) THEN
+  561.                       nsndto = nsndto + 1
+  562.                         isendto(nsndto) = jn
+  563.                    ELSEIF ((dxM .lt. dxT) .AND. (sxT .lt. dxM)) THEN
+  564.                       nsndto = nsndto + 1
+  565.                         isendto(nsndto) = jn
+  566.                    END IF
+  567.              END DO
+  568.              nfsloop = 1
+  569.              nfeloop = nlci
+  570.              DO jn = 2,jpni-1
+  571.               IF(nfipproc(jn,jpnj) .eq. (narea - 1)) THEN
+  572.                  IF (nfipproc(jn - 1 ,jpnj) .eq. -1) THEN
+  573.                     nfsloop = nldi
+  574.                  ENDIF
+  575.                  IF (nfipproc(jn + 1,jpnj) .eq. -1) THEN
+  576.                     nfeloop = nlei
+  577.                  ENDIF
+  578.               ENDIF
+  579.            END DO
+  580.    
+  581.          ENDIF
+  582.          l_north_nogather = .TRUE.
+  583.       END SUBROUTINE nemo_northcomms
+  584.    
+  585.    
+  586.       !!======================================================================
+  587.    END MODULE nemogcm
+  588.    
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                         E x t e r n a l   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Name  Messages
+----  --------
+ABS(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_PARTITION in NEMOGCM (Line 436, file nemogcm.f90)
+
+Name  Messages
+----  --------
+AGRIF_CFIXED in DOM_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+AGRIF_ROOT in DOM_OCE
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_INIT in NEMOGCM (Line 184, file nemogcm.f90)
+                   NEMO_INIT in NEMOGCM (Line 189, file nemogcm.f90)
+
+Name  Messages
+----  --------
+BN2 in EOSBN2
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+CTL_NAM in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_INIT in NEMOGCM (Line 143, file nemogcm.f90)
+                   NEMO_INIT in NEMOGCM (Line 147, file nemogcm.f90)
+                   NEMO_INIT in NEMOGCM (Line 152, file nemogcm.f90)
+                   NEMO_INIT in NEMOGCM (Line 156, file nemogcm.f90)
+
+Name  Messages
+----  --------
+CTL_OPN in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_INIT in NEMOGCM (Line 138, file nemogcm.f90)
+                   NEMO_INIT in NEMOGCM (Line 139, file nemogcm.f90)
+                   NEMO_INIT in NEMOGCM (Line 201, file nemogcm.f90)
+
+Name  Messages
+----  --------
+CTL_STOP in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_CTL in NEMOGCM (Line 345, file nemogcm.f90)
+                   NEMO_ALLOC in NEMOGCM (Line 399, file nemogcm.f90)
+
+Name  Messages
+----  --------
+CTL_WARN in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_CTL in NEMOGCM (Line 313, file nemogcm.f90)
+                   NEMO_CTL in NEMOGCM (Line 327, file nemogcm.f90)
+                   NEMO_CTL in NEMOGCM (Line 331, file nemogcm.f90)
+                   NEMO_CTL in NEMOGCM (Line 335, file nemogcm.f90)
+                   NEMO_CTL in NEMOGCM (Line 339, file nemogcm.f90)
+
+Name  Messages
+----  --------
+DAY in DAYMOD
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+DAYMOD
+      Defined as:  No definitions.
+
+      Used By:     NEMOGCM  (indirectly)
+
+Name  Messages
+----  --------
+DAY_INIT in DAYMOD
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+DAY_MTH in DAYMOD
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+DDPDD in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+DOMAIN
+      Defined as:  No definitions.
+
+      Used By:     NEMOGCM
+
+Name  Messages
+----  --------
+DOMCFG
+      Defined as:  No definitions.
+
+      Used By:     NEMOGCM
+
+Name  Messages
+----  --------
+DOM_CFG in DOMCFG
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_INIT in NEMOGCM (Line 237, file nemogcm.f90)
+
+Name  Messages
+----  --------
+DOM_INIT in DOMAIN
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_INIT in NEMOGCM (Line 238, file nemogcm.f90)
+
+Name  Messages
+----  --------
+DOM_OCE
+      Defined as:  No definitions.
+
+      Used By:     NEMOGCM  (indirectly)
+                   NEMOGCM
+
+Name  Messages
+----  --------
+DOM_OCE_ALLOC in DOM_OCE
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_ALLOC in NEMOGCM (Line 396, file nemogcm.f90)
+
+Name  Messages
+----  --------
+EOSBN2
+      Defined as:  No definitions.
+
+      Used By:     NEMOGCM  (indirectly)
+
+Name  Messages
+----  --------
+EOS_FZP_0D in EOSBN2
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+EOS_FZP_2D in EOSBN2
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+EOS_INIT in EOSBN2
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_INIT in NEMOGCM (Line 236, file nemogcm.f90)
+
+Name  Messages
+----  --------
+EOS_INSITU in EOSBN2
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+EOS_INSITU_2D in EOSBN2
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+EOS_INSITU_POT in EOSBN2
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+EOS_PEN in EOSBN2
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+EOS_PT_FROM_CT in EOSBN2
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FACTORISE in NEMOGCM
+      Defined as:  Subroutine (line 451, file nemogcm.f90)
+
+      Interface:   None
+
+      Called By:   NEMO_PARTITION in NEMOGCM (Line 424, file nemogcm.f90)
+
+      Calls:       MOD(Intrinsic) (Line 495, file nemogcm.f90)
+
+Name  Messages
+----  --------
+GET_NF90_SYMBOL in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GET_UNIT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_MAX_2D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_MAX_2D_A in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_MAX_3D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_MAX_3D_A in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_MIN_2D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_MIN_2D_A in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_MIN_3D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_MIN_3D_A in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_SUM_1D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_SUM_2D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_SUM_2D_A in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_SUM_3D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_SUM_3D_A in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_SUM_FULL_2D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_SUM_FULL_3D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IN_OUT_MANAGER
+      Defined as:  No definitions.
+
+      Used By:     NEMOGCM  (indirectly)
+
+Name  Messages
+----  --------
+IOM
+      Defined as:  No definitions.
+
+      Used By:     NEMOGCM  (indirectly)
+
+Name  Messages
+----  --------
+IOM_CLOSE in IOM
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_CLOSEFILE in NEMOGCM (Line 361, file nemogcm.f90)
+
+Name  Messages
+----  --------
+IOM_CONTEXT_FINALIZE in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_DEF
+      Defined as:  No definitions.
+
+      Used By:     NEMOGCM  (indirectly)
+
+Name  Messages
+----  --------
+IOM_G0D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_G0D_INTATT in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_G1D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_G2D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_G3D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_GETTIME in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_INIT in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90
+      Defined as:  No definitions.
+
+      Used By:     NEMOGCM  (indirectly)
+
+Name  Messages
+----  --------
+IOM_NF90_CLOSE in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_G0D in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_G123D in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_GETTIME in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_INTATT in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_OPEN in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_RP0123D in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_VARID in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_OPEN in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_P0D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_P1D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_P2D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_P3D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_RP0D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_RP1D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_RP2D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_RP3D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_SETKT in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_SWAP in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_USE in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_VARID in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+LBCLNK
+      Defined as:  No definitions.
+
+      Used By:     NEMOGCM  (indirectly)
+
+Name  Messages
+----  --------
+LBCNFD
+      Defined as:  No definitions.
+
+      Used By:     NEMOGCM
+
+Name  Messages
+----  --------
+LIB_FORTRAN
+      Defined as:  No definitions.
+
+      Used By:     NEMOGCM
+
+Name  Messages
+----  --------
+LIB_MPP
+      Defined as:  No definitions.
+
+      Used By:     NEMOGCM  (indirectly)
+                   NEMOGCM
+
+Name  Messages
+----  --------
+MAXVAL(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_NORTHCOMMS in NEMOGCM (Line 532, file nemogcm.f90)
+
+Name  Messages
+----  --------
+MOD(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FACTORISE in NEMOGCM (Line 495, file nemogcm.f90)
+
+Name  Messages
+----  --------
+MPPBCAST_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPGATHER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPINI
+      Defined as:  No definitions.
+
+      Used By:     NEMOGCM
+
+Name  Messages
+----  --------
+MPPMAX_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_INT in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_GCM in NEMOGCM (Line 95, file nemogcm.f90)
+
+Name  Messages
+----  --------
+MPPMAX_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_REAL_MULTIPLE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPRECV in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSCATTER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSEND in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSTOP in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_REALDD in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_INT in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_ALLOC in NEMOGCM (Line 398, file nemogcm.f90)
+
+Name  Messages
+----  --------
+MPPSUM_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_REALDD in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSYNC in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_CLOSEFILE in NEMOGCM (Line 359, file nemogcm.f90)
+
+Name  Messages
+----  --------
+MPP_COMM_FREE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INIT in MPPINI
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_INIT in NEMOGCM (Line 228, file nemogcm.f90)
+
+Name  Messages
+----  --------
+MPP_INIT2 in MPPINI
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_INIT in NEMOGCM (Line 229, file nemogcm.f90)
+
+Name  Messages
+----  --------
+MPP_INI_ICE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_NORTH in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_ZNL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_E in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_ICB in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_9 in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_E in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_ICB in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_MULTIPLE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_3D_GATHER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_BDY_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_BDY_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_SUM_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_SUM_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MAXLOC2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MAXLOC3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MINLOC2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MINLOC3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MYNODE in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_INIT in NEMOGCM (Line 167, file nemogcm.f90)
+
+Name  Messages
+----  --------
+NC4INTERFACE
+      Defined as:  No definitions.
+
+      Used By:     NEMOGCM  (indirectly)
+
+Name  Messages
+----  --------
+NEMOGCM
+      Defined as:  Module (line 1, file nemogcm.f90)
+
+        Uses:      LIB_MPP  (indirectly)
+                   LIB_MPP
+                   IOM_NF90  (indirectly)
+                   IOM_DEF  (indirectly)
+                   NC4INTERFACE  (indirectly)
+                   PAR_KIND  (indirectly)
+                   PAR_OCE  (indirectly)
+                   TIMING  (indirectly)
+                   LBCLNK  (indirectly)
+                   IOM  (indirectly)
+                   IN_OUT_MANAGER  (indirectly)
+                   PRTCTL  (indirectly)
+                   EOSBN2  (indirectly)
+                   DAYMOD  (indirectly)
+                   DOM_OCE  (indirectly)
+                   OCE  (indirectly)
+                   DOMCFG
+                   MPPINI
+                   DOMAIN
+                   PHYCST
+                   LIB_FORTRAN
+                   LBCNFD
+                   DOM_OCE
+
+Name  Messages
+----  --------
+NEMO_ALLOC in NEMOGCM
+      Defined as:  Subroutine (line 61, file nemogcm.f90)
+
+      Interface:   None
+
+      Called By:   NEMO_INIT in NEMOGCM (Line 219, file nemogcm.f90)
+
+      Calls:       CTL_STOP in LIB_MPP (Line 399, file nemogcm.f90)
+                   MPPSUM_INT in LIB_MPP (Line 398, file nemogcm.f90)
+                   OCE_ALLOC in OCE (Line 395, file nemogcm.f90)
+                   DOM_OCE_ALLOC in DOM_OCE (Line 396, file nemogcm.f90)
+
+Name  Messages
+----  --------
+NEMO_CLOSEFILE in NEMOGCM
+      Defined as:  Subroutine (line 352, file nemogcm.f90)
+
+      Interface:   None
+
+      Called By:   NEMO_GCM in NEMOGCM (Line 110, file nemogcm.f90)
+
+      Calls:       IOM_CLOSE in IOM (Line 361, file nemogcm.f90)
+                   MPPSYNC in LIB_MPP (Line 359, file nemogcm.f90)
+
+Name  Messages
+----  --------
+NEMO_CTL in NEMOGCM
+      Defined as:  Subroutine (line 244, file nemogcm.f90)
+
+      Interface:   None
+
+      Called By:   NEMO_INIT in NEMOGCM (Line 225, file nemogcm.f90)
+
+      Calls:       CTL_STOP in LIB_MPP (Line 345, file nemogcm.f90)
+                   CTL_WARN in LIB_MPP (Line 313, file nemogcm.f90)
+                   CTL_WARN in LIB_MPP (Line 327, file nemogcm.f90)
+                   CTL_WARN in LIB_MPP (Line 331, file nemogcm.f90)
+                   CTL_WARN in LIB_MPP (Line 335, file nemogcm.f90)
+                   CTL_WARN in LIB_MPP (Line 339, file nemogcm.f90)
+                   SIGN_SCALAR in LIB_FORTRAN (Line 345, file nemogcm.f90)
+                   TRIM(Intrinsic) (Line 286, file nemogcm.f90)
+                   TRIM(Intrinsic) (Line 287, file nemogcm.f90)
+
+Name  Messages
+----  --------
+NEMO_GCM in NEMOGCM
+      Defined as:  Subroutine (line 59, file nemogcm.f90)
+
+      Interface:   None
+
+      Calls:       NEMO_INIT in NEMOGCM (Line 90, file nemogcm.f90)
+                   NEMO_CLOSEFILE in NEMOGCM (Line 110, file nemogcm.f90)
+                   MPPMAX_INT in LIB_MPP (Line 95, file nemogcm.f90)
+                   TIMING_FINALIZE in TIMING (Line 108, file nemogcm.f90)
+
+Name  Messages
+----  --------
+NEMO_INIT in NEMOGCM
+      Defined as:  Subroutine (line 60, file nemogcm.f90)
+
+      Interface:   None
+
+      Called By:   NEMO_GCM in NEMOGCM (Line 90, file nemogcm.f90)
+
+      Calls:       NEMO_ALLOC in NEMOGCM (Line 219, file nemogcm.f90)
+                   NEMO_CTL in NEMOGCM (Line 225, file nemogcm.f90)
+                   NEMO_PARTITION in NEMOGCM (Line 184, file nemogcm.f90)
+                   AGRIF_ROOT in DOM_OCE (Line 184, file nemogcm.f90)
+                   AGRIF_ROOT in DOM_OCE (Line 189, file nemogcm.f90)
+                   CTL_NAM in LIB_MPP (Line 143, file nemogcm.f90)
+                   CTL_NAM in LIB_MPP (Line 147, file nemogcm.f90)
+                   CTL_NAM in LIB_MPP (Line 152, file nemogcm.f90)
+                   CTL_NAM in LIB_MPP (Line 156, file nemogcm.f90)
+                   CTL_OPN in LIB_MPP (Line 138, file nemogcm.f90)
+                   CTL_OPN in LIB_MPP (Line 139, file nemogcm.f90)
+                   CTL_OPN in LIB_MPP (Line 201, file nemogcm.f90)
+                   DOM_CFG in DOMCFG (Line 237, file nemogcm.f90)
+                   DOM_INIT in DOMAIN (Line 238, file nemogcm.f90)
+                   EOS_INIT in EOSBN2 (Line 236, file nemogcm.f90)
+                   MPP_INIT in MPPINI (Line 228, file nemogcm.f90)
+                   MPP_INIT2 in MPPINI (Line 229, file nemogcm.f90)
+                   MYNODE in LIB_MPP (Line 167, file nemogcm.f90)
+                   PHY_CST in PHYCST (Line 235, file nemogcm.f90)
+                   PRT_CTL_INIT in PRTCTL (Line 239, file nemogcm.f90)
+                   TIMING_INIT in TIMING (Line 232, file nemogcm.f90)
+                   SIZE(Intrinsic) (Line 210, file nemogcm.f90)
+                   TRIM(Intrinsic) (Line 211, file nemogcm.f90)
+
+Name  Messages
+----  --------
+NEMO_NORTHCOMMS in NEMOGCM
+      Defined as:  Subroutine (line 517, file nemogcm.f90)
+
+      Interface:   None
+
+      Calls:       MAXVAL(Intrinsic) (Line 532, file nemogcm.f90)
+
+Name  Messages
+----  --------
+NEMO_PARTITION in NEMOGCM
+      Defined as:  Subroutine (line 404, file nemogcm.f90)
+
+      Interface:   None
+
+      Called By:   NEMO_INIT in NEMOGCM (Line 184, file nemogcm.f90)
+
+      Calls:       FACTORISE in NEMOGCM (Line 424, file nemogcm.f90)
+                   ABS(Intrinsic) (Line 436, file nemogcm.f90)
+
+Name  Messages
+----  --------
+OCE
+      Defined as:  No definitions.
+
+      Used By:     NEMOGCM  (indirectly)
+
+Name  Messages
+----  --------
+OCE_ALLOC in OCE
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_ALLOC in NEMOGCM (Line 395, file nemogcm.f90)
+
+Name  Messages
+----  --------
+PAR_KIND
+      Defined as:  No definitions.
+
+      Used By:     NEMOGCM  (indirectly)
+
+Name  Messages
+----  --------
+PAR_OCE
+      Defined as:  No definitions.
+
+      Used By:     NEMOGCM  (indirectly)
+
+Name  Messages
+----  --------
+PHYCST
+      Defined as:  No definitions.
+
+      Used By:     NEMOGCM
+
+Name  Messages
+----  --------
+PHY_CST in PHYCST
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_INIT in NEMOGCM (Line 235, file nemogcm.f90)
+
+Name  Messages
+----  --------
+PRTCTL
+      Defined as:  No definitions.
+
+      Used By:     NEMOGCM  (indirectly)
+
+Name  Messages
+----  --------
+PRT_CTL in PRTCTL
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+PRT_CTL_INFO in PRTCTL
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+PRT_CTL_INIT in PRTCTL
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_INIT in NEMOGCM (Line 239, file nemogcm.f90)
+
+Name  Messages
+----  --------
+RAB_0D in EOSBN2
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+RAB_2D in EOSBN2
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+RAB_3D in EOSBN2
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SET_NF90_DEF_VAR_CHUNKING in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SET_NF90_DEF_VAR_DEFLATE in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIGN(Intrinsic)
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIGN_ARRAY_1D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIGN_ARRAY_1D_A in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIGN_ARRAY_1D_B in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIGN_ARRAY_2D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIGN_ARRAY_2D_A in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIGN_ARRAY_2D_B in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIGN_ARRAY_3D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIGN_ARRAY_3D_A in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIGN_ARRAY_3D_B in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIGN_SCALAR in LIB_FORTRAN
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_CTL in NEMOGCM (Line 345, file nemogcm.f90)
+
+Name  Messages
+----  --------
+SIZE(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_INIT in NEMOGCM (Line 210, file nemogcm.f90)
+
+Name  Messages
+----  --------
+STEP_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+Name  Messages
+----  --------
+SUB_DOM in PRTCTL
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING
+      Defined as:  No definitions.
+
+      Used By:     NEMOGCM  (indirectly)
+
+Name  Messages
+----  --------
+TIMING_FINALIZE in TIMING
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_GCM in NEMOGCM (Line 108, file nemogcm.f90)
+
+Name  Messages
+----  --------
+TIMING_INIT in TIMING
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_INIT in NEMOGCM (Line 232, file nemogcm.f90)
+
+Name  Messages
+----  --------
+TIMING_RESET in TIMING
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING_START in TIMING
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING_STOP in TIMING
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TRIM(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   NEMO_INIT in NEMOGCM (Line 211, file nemogcm.f90)
+                   NEMO_CTL in NEMOGCM (Line 286, file nemogcm.f90)
+                   NEMO_CTL in NEMOGCM (Line 287, file nemogcm.f90)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

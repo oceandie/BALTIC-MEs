@@ -1,0 +1,181 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S u m m a r y   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Compilation
+-----------
+File     : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/nc4interface.f90
+Compiled : 04/29/22  10:43:07
+Compiler : Version 8.3.4
+Ftnlx    : Version 8318 (libcif 83016)
+Target   : x86-64
+Command  : ftn_driver.exe -hcpu=haswell -hstatic -D__CRAYXC -D__CRAY_HASWELL
+           -D__CRAYXT_COMPUTE_LINUX_TARGET -hnetwork=aries -onc4interface.o
+           -I/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HE
+           AD_test_MEs/tools/DOMAINcfg/BLD/inc -sreal64 -sinteger32 -Ovector0
+           -hfp0 -O0 -hflex_mp=intolerant -eCID
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/common/moci/modules/packages/XIOS/2.0/24708/952/inc
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/m
+           ct
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/p
+           smile.MPI1 -c -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/opt/cray/libsci/13.0.1/CRAY/83/haswell/include
+           -I/opt/cray/mpt/7.0.4/gni/mpich2-cray/83/include
+           -I/opt/cray/rca/1.0.0-2.0502.60530.1.62.ari/include
+           -I/opt/cray/alps/5.2.4-2.0502.9774.31.11.ari/include
+           -I/opt/cray/xpmem/0.1-2.0502.64982.5.3.ari/include
+           -I/opt/cray/gni-headers/4.0-1.0502.10859.7.8.ari/include
+           -I/opt/cray/dmapp/7.0.1-1.0502.11080.8.76.ari/include
+           -I/opt/cray/pmi/5.0.5-1.0000.10300.134.8.ari/include
+           -I/opt/cray/ugni/6.0-1.0502.10863.8.29.ari/include
+           -I/opt/cray/udreg/2.3.2-1.0502.10518.2.17.ari/include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/pkgconfig/../include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/wlm_detect/1.0-1.0502.64649.2.1.ari/include
+           -I/opt/cray/krca/1.0.0-2.0502.63139.4.31.ari/include
+           -I/opt/cray-hss-devel/7.2.0/include /projects/jmmp/dbruciaf/NEMO/CHEC
+           KOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/nc4
+           interface.f90
+
+ftnlx report
+------------
+Source   : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp//projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/nc4interface.f90
+Date     : 04/29/2022  10:43:08
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S o u r c e   L i s t i n g
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    1.    MODULE nc4interface
+    2.    !-
+    3.    !-
+    4.    ! This software is governed by the CeCILL license
+    5.    ! See IOIPSL/IOIPSL_License_CeCILL.txt
+    6.    !---------------------------------------------------------------------
+    7.    
+    8.          !!--------------------------------------------------------------------
+    9.          !! NOT 'key_netcdf4' Defines dummy routines for netcdf4
+   10.          !!                   calls when compiling without netcdf4 libraries
+   11.          !!--------------------------------------------------------------------
+   12.      !- netcdf4 chunking control structure
+   13.      !- (optional on histbeg and histend calls)
+   14.    !$AGRIF_DO_NOT_TREAT
+   15.      TYPE, PUBLIC :: snc4_ctl
+   16.         SEQUENCE
+   17.         INTEGER :: ni
+   18.         INTEGER :: nj
+   19.         INTEGER :: nk
+   20.         LOGICAL :: luse
+   21.      END TYPE snc4_ctl
+   22.    !$AGRIF_END_DO_NOT_TREAT
+   23.    
+   24.    CONTAINS
+   25.    !===
+   26.       SUBROUTINE GET_NF90_SYMBOL(sym_name, ivalue)
+   27.          CHARACTER(len=*),      INTENT(in)  :: sym_name
+   28.          INTEGER,               INTENT(out) :: ivalue
+   29.          ivalue = -999
+   30.       END SUBROUTINE GET_NF90_SYMBOL
+ftn-5004 ftn: NOTE File = nc4interface.f90, Line = 30 
+  Dummy Argument "SYM_NAME" is not referenced or defined.
+
+   31.       INTEGER FUNCTION SET_NF90_DEF_VAR_CHUNKING(idum1, idum2, idum3, iarr1)
+   32.          !!--------------------------------------------------------------------
+   33.          !!                   ***  SUBROUTINE NF90_DEF_VAR_CHUNKING  ***
+   34.          !!
+   35.          !! ** Purpose :   Dummy NetCDF4 routine to enable compiling with NetCDF3 libraries
+   36.          !!--------------------------------------------------------------------
+   37.          INTEGER,               INTENT(in) :: idum1, idum2, idum3
+   38.          INTEGER, DIMENSION(4), INTENT(in) :: iarr1
+   39.          WRITE(*,*) 'Warning: Attempt to chunk output variable without NetCDF4 support'
+   40.          SET_NF90_DEF_VAR_CHUNKING = -1
+   41.       END FUNCTION SET_NF90_DEF_VAR_CHUNKING
+ftn-5004 ftn: NOTE File = nc4interface.f90, Line = 41 
+  Dummy Argument "IDUM2" is not referenced or defined.
+
+ftn-5004 ftn: NOTE File = nc4interface.f90, Line = 41 
+  Dummy Argument "IARR1" is not referenced or defined.
+
+ftn-5004 ftn: NOTE File = nc4interface.f90, Line = 41 
+  Dummy Argument "IDUM1" is not referenced or defined.
+
+ftn-5004 ftn: NOTE File = nc4interface.f90, Line = 41 
+  Dummy Argument "IDUM3" is not referenced or defined.
+
+   42.    
+   43.       INTEGER FUNCTION SET_NF90_DEF_VAR_DEFLATE(idum1, idum2, idum3, idum4, idum5)
+   44.          !!--------------------------------------------------------------------
+   45.          !!                   ***  SUBROUTINE NF90_DEF_VAR_DEFLATE  ***
+   46.          !!
+   47.          !! ** Purpose :   Dummy NetCDF4 routine to enable compiling with NetCDF3 libraries
+   48.          !!--------------------------------------------------------------------
+   49.          INTEGER,               INTENT(in) :: idum1, idum2, idum3, idum4, idum5
+   50.          WRITE(*,*) 'Warning: Attempt to compress output variable without NetCDF4 support'
+   51.          SET_NF90_DEF_VAR_DEFLATE = -1
+   52.       END FUNCTION SET_NF90_DEF_VAR_DEFLATE
+ftn-5004 ftn: NOTE File = nc4interface.f90, Line = 52 
+  Dummy Argument "IDUM2" is not referenced or defined.
+
+ftn-5004 ftn: NOTE File = nc4interface.f90, Line = 52 
+  Dummy Argument "IDUM5" is not referenced or defined.
+
+ftn-5004 ftn: NOTE File = nc4interface.f90, Line = 52 
+  Dummy Argument "IDUM1" is not referenced or defined.
+
+ftn-5004 ftn: NOTE File = nc4interface.f90, Line = 52 
+  Dummy Argument "IDUM3" is not referenced or defined.
+
+ftn-5004 ftn: NOTE File = nc4interface.f90, Line = 52 
+  Dummy Argument "IDUM4" is not referenced or defined.
+
+   53.    
+   54.    !------------------
+   55.    END MODULE nc4interface
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                         E x t e r n a l   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Name  Messages
+----  --------
+GET_NF90_SYMBOL in NC4INTERFACE
+      Defined as:  Subroutine (line 26, file nc4interface.f90)
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NC4INTERFACE
+      Defined as:  Module (line 1, file nc4interface.f90)
+
+                   Does not use any module and is not used by any procedure.
+
+Name  Messages
+----  --------
+SET_NF90_DEF_VAR_CHUNKING in NC4INTERFACE
+      Defined as:  Function (line 31, file nc4interface.f90)
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SET_NF90_DEF_VAR_DEFLATE in NC4INTERFACE
+      Defined as:  Function (line 43, file nc4interface.f90)
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

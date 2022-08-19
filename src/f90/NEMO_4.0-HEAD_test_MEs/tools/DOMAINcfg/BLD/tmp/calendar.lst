@@ -1,0 +1,1753 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S u m m a r y   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Compilation
+-----------
+File     : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/calendar.f90
+Compiled : 04/29/22  10:44:12
+Compiler : Version 8.3.4
+Ftnlx    : Version 8318 (libcif 83016)
+Target   : x86-64
+Command  : ftn_driver.exe -hcpu=haswell -hstatic -D__CRAYXC -D__CRAY_HASWELL
+           -D__CRAYXT_COMPUTE_LINUX_TARGET -hnetwork=aries -ocalendar.o
+           -I/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HE
+           AD_test_MEs/tools/DOMAINcfg/BLD/inc -sreal64 -sinteger32 -Ovector0
+           -hfp0 -O0 -hflex_mp=intolerant -eCID
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/common/moci/modules/packages/XIOS/2.0/24708/952/inc
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/m
+           ct
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/p
+           smile.MPI1 -c -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/opt/cray/libsci/13.0.1/CRAY/83/haswell/include
+           -I/opt/cray/mpt/7.0.4/gni/mpich2-cray/83/include
+           -I/opt/cray/rca/1.0.0-2.0502.60530.1.62.ari/include
+           -I/opt/cray/alps/5.2.4-2.0502.9774.31.11.ari/include
+           -I/opt/cray/xpmem/0.1-2.0502.64982.5.3.ari/include
+           -I/opt/cray/gni-headers/4.0-1.0502.10859.7.8.ari/include
+           -I/opt/cray/dmapp/7.0.1-1.0502.11080.8.76.ari/include
+           -I/opt/cray/pmi/5.0.5-1.0000.10300.134.8.ari/include
+           -I/opt/cray/ugni/6.0-1.0502.10863.8.29.ari/include
+           -I/opt/cray/udreg/2.3.2-1.0502.10518.2.17.ari/include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/pkgconfig/../include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/wlm_detect/1.0-1.0502.64649.2.1.ari/include
+           -I/opt/cray/krca/1.0.0-2.0502.63139.4.31.ari/include
+           -I/opt/cray-hss-devel/7.2.0/include /projects/jmmp/dbruciaf/NEMO/CHEC
+           KOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/cal
+           endar.f90
+
+ftnlx report
+------------
+Source   : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp//projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/calendar.f90
+Date     : 04/29/2022  10:44:13
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S o u r c e   L i s t i n g
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    1.    MODULE calendar
+    2.    !-
+    3.    !$Id: calendar.f90 2459 2010-12-07 11:17:48Z smasson $
+    4.    !-
+    5.    ! This software is governed by the CeCILL license
+    6.    ! See IOIPSL/IOIPSL_License_CeCILL.txt
+    7.    !---------------------------------------------------------------------
+    8.    !- This is the calendar which going to be used to do all
+    9.    !- calculations on time. Three types of calendars are possible :
+   10.    !-
+   11.    !-  - gregorian :
+   12.    !-      The normal calendar. The time origin for the
+   13.    !-      julian day in this case is 24 Nov -4713
+   14.    !-      (other names : 'standard','proleptic_gregorian')
+   15.    !-  - noleap :
+   16.    !-      A 365 day year without leap years.
+   17.    !-      The origin for the julian days is in this case 1 Jan 0
+   18.    !-      (other names : '365_day','365d')
+   19.    !-  - all_leap :
+   20.    !-      A 366 day year with leap years.
+   21.    !-      The origin for the julian days is in this case ????
+   22.    !-      (other names : '366_day','366d'
+   23.    !-  - julian :
+   24.    !-      same as gregorian, but with all leap century years
+   25.    !-  - xxxd :
+   26.    !-      Year of xxx days with month of equal length.
+   27.    !-      The origin for the julian days is then also 1 Jan 0
+   28.    !-
+   29.    !- As one can see it is difficult to go from one calendar to the other.
+   30.    !- All operations involving julian days will be wrong.
+   31.    !- This calendar will lock as soon as possible
+   32.    !- the length of the year and forbid any further modification.
+   33.    !-
+   34.    !- For the non leap-year calendar the method is still brute force.
+   35.    !- We need to find an Integer series which takes care of the length
+   36.    !- of the various month. (Jan)
+   37.    !-
+   38.    !-   one_day  : one day in seconds
+   39.    !-   one_year : one year in days
+   40.    !---------------------------------------------------------------------
+   41.      USE stringop,ONLY  : strlowercase
+   42.      USE errioipsl,ONLY : ipslerr
+   43.    !-
+   44.      PRIVATE
+   45.      PUBLIC :: ymds2ju,ju2ymds,tlen2itau,isittime,ioconf_calendar, &
+   46.     &          ioget_calendar,ioget_mon_len,ioget_year_len,itau2date, &
+   47.     &          ioget_timestamp,ioconf_startdate,itau2ymds, &
+   48.     &          time_diff,time_add,lock_calendar
+   49.    !-
+   50.      INTERFACE ioget_calendar
+   51.        MODULE PROCEDURE &
+   52.     &    ioget_calendar_real1,ioget_calendar_real2,ioget_calendar_str
+   53.      END INTERFACE
+   54.    !-
+   55.      INTERFACE ioconf_startdate
+   56.         MODULE PROCEDURE &
+   57.     &    ioconf_startdate_simple,ioconf_startdate_internal, &
+   58.     &    ioconf_startdate_ymds
+   59.      END INTERFACE
+   60.    !-
+   61.      REAL,PARAMETER :: one_day = 86400.0
+   62.      LOGICAL,SAVE :: lock_startdate = .FALSE.
+   63.    !-
+   64.      CHARACTER(LEN=30),SAVE :: time_stamp='XXXXXXXXXXXXXXXX'
+   65.    !-
+   66.    !- Description of calendar
+   67.    !-
+   68.      CHARACTER(LEN=20),SAVE :: calendar_used="gregorian"
+   69.      LOGICAL,SAVE :: lock_one_year = .FALSE.
+   70.      REAL,SAVE :: one_year = 365.2425
+   71.      INTEGER,SAVE :: mon_len(12)=(/31,28,31,30,31,30,31,31,30,31,30,31/)
+   72.    !-
+   73.      CHARACTER(LEN=3),PARAMETER :: &
+   74.     &  cal(12) = (/'JAN','FEB','MAR','APR','MAY','JUN', &
+   75.     &              'JUL','AUG','SEP','OCT','NOV','DEC'/)
+   76.    !-
+   77.      REAL,SAVE :: start_day,start_sec
+   78.    !-
+   79.    CONTAINS
+   80.    !-
+   81.    !===
+   82.    !-
+   83.    SUBROUTINE lock_calendar (new_status,old_status)
+   84.    !!--------------------------------------------------------------------
+   85.    !! The "lock_calendar" routine
+   86.    !! allows to lock or unlock the calendar,
+   87.    !! and to know the current status of the calendar.
+   88.    !! Be careful !
+   89.    !!
+   90.    !! SUBROUTINE lock_calendar (new_status,old_status)
+   91.    !!
+   92.    !! Optional INPUT argument
+   93.    !!
+   94.    !! (L) new_status : new status of the calendar
+   95.    !!
+   96.    !! Optional OUTPUT argument
+   97.    !!
+   98.    !! (L) old_status : current status of the calendar
+   99.    !!--------------------------------------------------------------------
+  100.      IMPLICIT NONE
+  101.    !-
+  102.      LOGICAL,OPTIONAL,INTENT(IN)  :: new_status
+  103.      LOGICAL,OPTIONAL,INTENT(OUT) :: old_status
+  104.    !---------------------------------------------------------------------
+  105.      IF (PRESENT(old_status)) THEN
+  106.        old_status = lock_one_year
+  107.      ENDIF
+  108.      IF (PRESENT(new_status)) THEN
+  109.        lock_one_year = new_status
+  110.      ENDIF
+  111.    !---------------------------
+  112.    END SUBROUTINE lock_calendar
+  113.    !-
+  114.    !===
+  115.    !-
+  116.    SUBROUTINE ymds2ju (year,month,day,sec,julian)
+  117.    !---------------------------------------------------------------------
+  118.      IMPLICIT NONE
+  119.    !-
+  120.      INTEGER,INTENT(IN) :: year,month,day
+  121.      REAL,INTENT(IN)    :: sec
+  122.    !-
+  123.      REAL,INTENT(OUT) :: julian
+  124.    !-
+  125.      INTEGER :: julian_day
+  126.      REAL    :: julian_sec
+  127.    !---------------------------------------------------------------------
+  128.      CALL ymds2ju_internal (year,month,day,sec,julian_day,julian_sec)
+  129.    !-
+  130.      julian = julian_day+julian_sec/one_day
+  131.    !---------------------
+  132.    END SUBROUTINE ymds2ju
+  133.    !-
+  134.    !===
+  135.    !-
+  136.    SUBROUTINE ymds2ju_internal (year,month,day,sec,julian_day,julian_sec)
+  137.    !---------------------------------------------------------------------
+  138.    !- Converts year, month, day and seconds into a julian day
+  139.    !-
+  140.    !- In 1968 in a letter to the editor of Communications of the ACM
+  141.    !- (CACM, volume 11, number 10, October 1968, p.657) Henry F. Fliegel
+  142.    !- and Thomas C. Van Flandern presented such an algorithm.
+  143.    !-
+  144.    !- See also : http://www.magnet.ch/serendipity/hermetic/cal_stud/jdn.htm
+  145.    !-
+  146.    !- In the case of the Gregorian calendar we have chosen to use
+  147.    !- the Lilian day numbers. This is the day counter which starts
+  148.    !- on the 15th October 1582.
+  149.    !- This is the day at which Pope Gregory XIII introduced the
+  150.    !- Gregorian calendar.
+  151.    !- Compared to the true Julian calendar, which starts some
+  152.    !- 7980 years ago, the Lilian days are smaler and are dealt with
+  153.    !- easily on 32 bit machines. With the true Julian days you can only
+  154.    !- the fraction of the day in the real part to a precision of
+  155.    !- a 1/4 of a day with 32 bits.
+  156.    !---------------------------------------------------------------------
+  157.      IMPLICIT NONE
+  158.    !-
+  159.      INTEGER,INTENT(IN) :: year,month,day
+  160.      REAL,INTENT(IN)    :: sec
+  161.    !-
+  162.      INTEGER,INTENT(OUT) :: julian_day
+  163.      REAL,INTENT(OUT)    :: julian_sec
+  164.    !-
+  165.      INTEGER :: jd,m,y,d,ml
+  166.    !---------------------------------------------------------------------
+  167.      lock_one_year = .TRUE.
+  168.    !-
+  169.      m = month
+  170.      y = year
+  171.      d = day
+  172.    !-
+  173.    !- We deduce the calendar from the length of the year as it
+  174.    !- is faster than an INDEX on the calendar variable.
+  175.    !-
+  176.      IF ( (one_year > 365.0).AND.(one_year < 366.0) ) THEN
+  177.    !-- "Gregorian"
+  178.        jd = (1461*(y+4800+INT((m-14)/12)))/4 &
+  179.     &      +(367*(m-2-12*(INT((m-14)/12))))/12 &
+  180.     &      -(3*((y+4900+INT((m-14)/12))/100))/4 &
+  181.     &      +d-32075
+  182.        jd = jd-2299160
+  183.      ELSE IF (    (ABS(one_year-365.0) <= EPSILON(one_year))  &
+  184.     &         .OR.(ABS(one_year-366.0) <= EPSILON(one_year)) ) THEN
+  185.    !-- "No leap" or "All leap"
+  186.        ml = SUM(mon_len(1:m-1))
+ftn-6263 ftn: VECTOR File = calendar.f90, Line = 186 
+  A loop starting at line 186 was not vectorized because it contains a reference to a non-vector intrinsic on line 186.
+
+  187.        jd = y*NINT(one_year)+ml+(d-1)
+  188.      ELSE
+  189.    !-- Calendar with regular month
+  190.        ml = NINT(one_year/12.)
+  191.        jd = y*NINT(one_year)+(m-1)*ml+(d-1)
+  192.      ENDIF
+  193.    !-
+  194.      julian_day = jd
+  195.      julian_sec = sec
+  196.    !------------------------------
+  197.    END SUBROUTINE ymds2ju_internal
+  198.    !-
+  199.    !===
+  200.    !-
+  201.    SUBROUTINE ju2ymds (julian,year,month,day,sec)
+  202.    !---------------------------------------------------------------------
+  203.      IMPLICIT NONE
+  204.    !-
+  205.      REAL,INTENT(IN) :: julian
+  206.    !-
+  207.      INTEGER,INTENT(OUT) :: year,month,day
+  208.      REAL,INTENT(OUT)    :: sec
+  209.    !-
+  210.      INTEGER :: julian_day
+  211.      REAL    :: julian_sec
+  212.    !---------------------------------------------------------------------
+  213.      julian_day = INT(julian)
+  214.      julian_sec = (julian-julian_day)*one_day
+  215.    !-
+  216.      CALL ju2ymds_internal(julian_day,julian_sec,year,month,day,sec)
+  217.    !---------------------
+  218.    END SUBROUTINE ju2ymds
+  219.    !-
+  220.    !===
+  221.    !-
+  222.    SUBROUTINE ju2ymds_internal (julian_day,julian_sec,year,month,day,sec)
+  223.    !---------------------------------------------------------------------
+  224.    !- This subroutine computes from the julian day the year,
+  225.    !- month, day and seconds
+  226.    !-
+  227.    !- In 1968 in a letter to the editor of Communications of the ACM
+  228.    !- (CACM, volume 11, number 10, October 1968, p.657) Henry F. Fliegel
+  229.    !- and Thomas C. Van Flandern presented such an algorithm.
+  230.    !-
+  231.    !- See also : http://www.magnet.ch/serendipity/hermetic/cal_stud/jdn.htm
+  232.    !-
+  233.    !- In the case of the Gregorian calendar we have chosen to use
+  234.    !- the Lilian day numbers. This is the day counter which starts
+  235.    !- on the 15th October 1582. This is the day at which Pope
+  236.    !- Gregory XIII introduced the Gregorian calendar.
+  237.    !- Compared to the true Julian calendar, which starts some 7980
+  238.    !- years ago, the Lilian days are smaler and are dealt with easily
+  239.    !- on 32 bit machines. With the true Julian days you can only the
+  240.    !- fraction of the day in the real part to a precision of a 1/4 of
+  241.    !- a day with 32 bits.
+  242.    !---------------------------------------------------------------------
+  243.      IMPLICIT NONE
+  244.    !-
+  245.      INTEGER,INTENT(IN) :: julian_day
+  246.      REAL,INTENT(IN)    :: julian_sec
+  247.    !-
+  248.      INTEGER,INTENT(OUT) :: year,month,day
+  249.      REAL,INTENT(OUT)    :: sec
+  250.    !-
+  251.      INTEGER :: l,n,i,jd,j,d,m,y,ml
+  252.      INTEGER :: add_day
+  253.      REAL :: eps_day
+  254.    !---------------------------------------------------------------------
+  255.      eps_day = SPACING(one_day)
+  256.      lock_one_year = .TRUE.
+  257.    !-
+  258.      jd = julian_day
+  259.      sec = julian_sec
+  260.      IF (sec > (one_day-eps_day)) THEN
+  261.        add_day = INT(sec/one_day)
+  262.        sec = sec-add_day*one_day
+  263.        jd = jd+add_day
+  264.      ENDIF
+  265.      IF (sec < -eps_day) THEN
+  266.        sec = sec+one_day
+  267.        jd = jd-1
+  268.      ENDIF
+  269.    !-
+  270.      IF ( (one_year > 365.0).AND.(one_year < 366.0) ) THEN
+  271.    !-- Gregorian
+  272.        jd = jd+2299160
+  273.    !-
+  274.        l = jd+68569
+  275.        n = (4*l)/146097
+  276.        l = l-(146097*n+3)/4
+  277.        i = (4000*(l+1))/1461001
+  278.        l = l-(1461*i)/4+31
+  279.        j = (80*l)/2447
+  280.        d = l-(2447*j)/80
+  281.        l = j/11
+  282.        m = j+2-(12*l)
+  283.        y = 100*(n-49)+i+l
+  284.      ELSE IF (    (ABS(one_year-365.0) <= EPSILON(one_year)) &
+  285.     &         .OR.(ABS(one_year-366.0) <= EPSILON(one_year)) ) THEN
+  286.    !-- No leap or All leap
+  287.        y = jd/NINT(one_year)
+  288.        l = jd-y*NINT(one_year)
+  289.        m = 1
+  290.        ml = 0
+  291.        DO WHILE (ml+mon_len(m) <= l)
+  292.          ml = ml+mon_len(m)
+  293.          m = m+1
+  294.        ENDDO
+  295.        d = l-ml+1
+  296.      ELSE
+  297.    !-- others
+  298.        ml = NINT(one_year/12.)
+  299.        y = jd/NINT(one_year)
+  300.        l = jd-y*NINT(one_year)
+  301.        m = (l/ml)+1
+  302.        d = l-(m-1)*ml+1
+  303.      ENDIF
+  304.    !-
+  305.      day = d
+  306.      month = m
+  307.      year = y
+  308.    !------------------------------
+  309.    END SUBROUTINE ju2ymds_internal
+  310.    !-
+  311.    !===
+  312.    !-
+  313.    SUBROUTINE tlen2itau (input_str,dt,date,itau)
+  314.    !---------------------------------------------------------------------
+  315.    !- This subroutine transforms a string containing a time length
+  316.    !- into a number of time steps.
+  317.    !- To do this operation the date (in julian days is needed as the
+  318.    !- length of the month varies.
+  319.    !- The following convention is used :
+  320.    !-   n   : n time steps
+  321.    !-   nS  : n seconds is transformed into itaus
+  322.    !-   nH  : n hours
+  323.    !-   nD  : n days
+  324.    !-   nM  : n month
+  325.    !-   nY  : n years
+  326.    !- Combinations are also possible
+  327.    !-   nYmD : nyears plus m days !
+  328.    !---------------------------------------------------------------------
+  329.      IMPLICIT NONE
+  330.    !-
+  331.      CHARACTER(LEN=*),INTENT(IN) :: input_str
+  332.      REAL,INTENT(IN)             :: dt,date
+  333.    !-
+  334.      INTEGER,INTENT(OUT)         :: itau
+  335.    !-
+  336.      INTEGER           :: y_pos,m_pos,d_pos,h_pos,s_pos
+  337.      INTEGER           :: read_time
+  338.      CHARACTER(LEN=13) :: fmt
+  339.      CHARACTER(LEN=80) :: tmp_str
+  340.    !-
+  341.      INTEGER :: year,month,day
+  342.      REAL    :: sec,date_new,dd,ss
+  343.    !---------------------------------------------------------------------
+  344.      itau = 0
+  345.      CALL ju2ymds (date,year,month,day,sec)
+  346.    !-
+  347.      y_pos = MAX(INDEX(input_str,'y'),INDEX(input_str,'Y'))
+  348.      m_pos = MAX(INDEX(input_str,'m'),INDEX(input_str,'M'))
+  349.      d_pos = MAX(INDEX(input_str,'d'),INDEX(input_str,'D'))
+  350.      h_pos = MAX(INDEX(input_str,'h'),INDEX(input_str,'H'))
+  351.      s_pos = MAX(INDEX(input_str,'s'),INDEX(input_str,'S'))
+  352.    !-
+  353.      IF (MAX(y_pos,m_pos,d_pos,s_pos) > 0) THEN
+  354.        tmp_str = input_str
+  355.        DO WHILE ( MAX(y_pos,m_pos,d_pos,s_pos) > 0)
+  356.    !---- WRITE(*,*) tmp_str
+  357.    !---- WRITE(*,*) y_pos,m_pos,d_pos,s_pos
+  358.          IF (y_pos > 0) THEN
+  359.            WRITE(fmt,'("(I",I10.10,")")') y_pos-1
+  360.            READ(tmp_str(1:y_pos-1),fmt) read_time
+  361.            CALL ymds2ju (year+read_time,month,day,sec,date_new)
+  362.            dd = date_new-date
+  363.            ss = INT(dd)*one_day+dd-INT(dd)
+  364.            itau = itau+NINT(ss/dt)
+  365.            tmp_str = tmp_str(y_pos+1:LEN_TRIM(tmp_str))
+  366.          ELSE IF (m_pos > 0) THEN
+  367.            WRITE(fmt,'("(I",I10.10,")")') m_pos-1
+  368.            READ(tmp_str(1:m_pos-1),fmt) read_time
+  369.            CALL ymds2ju (year,month+read_time,day,sec,date_new)
+  370.            dd = date_new-date
+  371.            ss = INT(dd)*one_day+dd-INT(dd)
+  372.            itau = itau+NINT(ss/dt)
+  373.            tmp_str = tmp_str(m_pos+1:LEN_TRIM(tmp_str))
+  374.          ELSE IF (d_pos > 0) THEN
+  375.            WRITE(fmt,'("(I",I10.10,")")') d_pos-1
+  376.            READ(tmp_str(1:d_pos-1),fmt) read_time
+  377.            itau = itau+NINT(read_time*one_day/dt)
+  378.            tmp_str = tmp_str(d_pos+1:LEN_TRIM(tmp_str))
+  379.          ELSE IF (h_pos > 0) THEN
+  380.            WRITE(fmt,'("(I",I10.10,")")') h_pos-1
+  381.            READ(tmp_str(1:h_pos-1),fmt) read_time
+  382.            itau = itau+NINT(read_time*60.*60./dt)
+  383.            tmp_str = tmp_str(d_pos+1:LEN_TRIM(tmp_str))
+  384.          ELSE IF  (s_pos > 0) THEN
+  385.            WRITE(fmt,'("(I",I10.10,")")') s_pos-1
+  386.            READ(tmp_str(1:s_pos-1),fmt) read_time
+  387.            itau = itau+NINT(read_time/dt)
+  388.            tmp_str = tmp_str(s_pos+1:LEN_TRIM(tmp_str))
+  389.          ENDIF
+  390.    !-
+  391.          y_pos = MAX(INDEX(tmp_str,'y'),INDEX(tmp_str,'Y'))
+  392.          m_pos = MAX(INDEX(tmp_str,'m'),INDEX(tmp_str,'M'))
+  393.          d_pos = MAX(INDEX(tmp_str,'d'),INDEX(tmp_str,'D'))
+  394.          h_pos = MAX(INDEX(tmp_str,'h'),INDEX(tmp_str,'H'))
+  395.          s_pos = MAX(INDEX(tmp_str,'s'),INDEX(tmp_str,'S'))
+  396.        ENDDO
+  397.      ELSE
+  398.        WRITE(fmt,'("(I",I10.10,")")') LEN_TRIM(input_str)
+  399.        READ(input_str(1:LEN_TRIM(input_str)),fmt) itau
+  400.      ENDIF
+  401.    !-----------------------
+  402.    END SUBROUTINE tlen2itau
+  403.    !-
+  404.    !===
+  405.    !-
+  406.    REAL FUNCTION itau2date (itau,date0,deltat)
+  407.    !---------------------------------------------------------------------
+  408.    !- This function transforms itau into a date. The date with which
+  409.    !- the time axis is going to be labeled
+  410.    !-
+  411.    !- INPUT
+  412.    !-   itau   : current time step
+  413.    !-   date0  : Date at which itau was equal to 0
+  414.    !-   deltat : time step between itau s
+  415.    !-
+  416.    !- OUTPUT
+  417.    !-   itau2date : Date for the given itau
+  418.    !---------------------------------------------------------------------
+  419.      IMPLICIT NONE
+  420.    !-
+  421.      INTEGER  :: itau
+  422.      REAL     :: date0,deltat
+  423.    !---------------------------------------------------------------------
+  424.      itau2date = REAL(itau)*deltat/one_day+date0
+  425.    !---------------------
+  426.    END FUNCTION itau2date
+  427.    !-
+  428.    !===
+  429.    !-
+  430.    SUBROUTINE itau2ymds (itau,deltat,year,month,day,sec)
+  431.    !---------------------------------------------------------------------
+  432.    !- This subroutine transforms itau into a date. The date with which
+  433.    !- the time axis is going to be labeled
+  434.    !-
+  435.    !- INPUT
+  436.    !-   itau   : current time step
+  437.    !-   deltat : time step between itau s
+  438.    !-
+  439.    !- OUTPUT
+  440.    !-   year  : year
+  441.    !-   month : month
+  442.    !-   day   : day
+  443.    !-   sec   : seconds since midnight
+  444.    !---------------------------------------------------------------------
+  445.      IMPLICIT NONE
+  446.    !-
+  447.      INTEGER,INTENT(IN) :: itau
+  448.      REAL,INTENT(IN)    :: deltat
+  449.    !-
+  450.      INTEGER,INTENT(OUT) :: year,month,day
+  451.      REAL,INTENT(OUT)    :: sec
+  452.    !-
+  453.      INTEGER :: julian_day
+  454.      REAL    :: julian_sec
+  455.    !---------------------------------------------------------------------
+  456.      IF (.NOT.lock_startdate) THEN
+  457.        CALL ipslerr (2,'itau2ymds', &
+  458.     &   'You try to call this function, itau2ymds, but you didn''t', &
+  459.     &   ' call ioconf_startdate to initialize date0 in calendar.', &
+  460.     &   ' Please call ioconf_startdate before itau2ymds.')
+  461.      ENDIF
+  462.      julian_day = start_day
+  463.      julian_sec = start_sec+REAL(itau)*deltat
+  464.      CALL ju2ymds_internal (julian_day,julian_sec,year,month,day,sec)
+  465.    !-----------------------
+  466.    END SUBROUTINE itau2ymds
+  467.    !-
+  468.    !===
+  469.    !-
+  470.    REAL FUNCTION dtchdate (itau,date0,old_dt,new_dt)
+  471.    !---------------------------------------------------------------------
+  472.    !- This function changes the date so that the simulation can
+  473.    !- continue with the same itau but a different dt.
+  474.    !-
+  475.    !- INPUT
+  476.    !-   itau   : current time step
+  477.    !-   date0  : Date at which itau was equal to 0
+  478.    !-   old_dt : Old time step between itaus
+  479.    !-   new_dt : New time step between itaus
+  480.    !-
+  481.    !- OUTPUT
+  482.    !-   dtchdate : Date for the given itau
+  483.    !---------------------------------------------------------------------
+  484.      IMPLICIT NONE
+  485.    !-
+  486.      INTEGER,INTENT(IN) :: itau
+  487.      REAL,INTENT(IN)    :: date0,old_dt,new_dt
+  488.    !-
+  489.      REAL :: rtime
+  490.    !---------------------------------------------------------------------
+  491.      rtime = itau2date (itau,date0,old_dt)
+  492.      dtchdate = rtime-REAL(itau)*new_dt/one_day
+  493.    !--------------------
+  494.    END FUNCTION dtchdate
+  495.    !-
+  496.    !===
+  497.    !-
+  498.    SUBROUTINE isittime &
+  499.     &  (itau,date0,dt,freq,last_action,last_check,do_action)
+  500.    !---------------------------------------------------------------------
+  501.    !- This subroutine checks the time as come for a given action.
+  502.    !- This is computed from the current time-step(itau).
+  503.    !- Thus we need to have the time delta (dt), the frequency
+  504.    !- of the action (freq) and the last time it was done
+  505.    !- (last_action in units of itau).
+  506.    !- In order to extrapolate when will be the next check we need
+  507.    !- the time step of the last call (last_check).
+  508.    !-
+  509.    !- The test is done on the following condition :
+  510.    !- the distance from the current time to the time for the next
+  511.    !- action is smaller than the one from the next expected
+  512.    !- check to the next action.
+  513.    !- When the test is done on the time steps simplifications make
+  514.    !- it more difficult to read in the code.
+  515.    !- For the real time case it is easier to understand !
+  516.    !---------------------------------------------------------------------
+  517.      IMPLICIT NONE
+  518.    !-
+  519.      INTEGER,INTENT(IN) :: itau
+  520.      REAL,INTENT(IN)    :: dt,freq
+  521.      INTEGER,INTENT(IN) :: last_action,last_check
+  522.      REAL,INTENT(IN)    :: date0
+  523.    !-
+  524.      LOGICAL,INTENT(OUT)  :: do_action
+  525.    !-
+  526.      REAL :: dt_action,dt_check
+  527.      REAL :: date_last_act,date_next_check,date_next_act, &
+  528.     &        date_now,date_mp1,date_mpf
+  529.      INTEGER :: year,month,monthp1,day,next_check_itau,next_act_itau
+  530.      INTEGER :: yearp,dayp
+  531.      REAL :: sec,secp
+  532.      LOGICAL :: check = .FALSE.
+  533.    !---------------------------------------------------------------------
+  534.      IF (check) THEN
+  535.        WRITE(*,*) &
+  536.     &    "isittime 1.0 ",itau,date0,dt,freq,last_action,last_check
+  537.      ENDIF
+  538.    !-
+  539.      IF (last_check >= 0) THEN
+  540.        dt_action = (itau-last_action)*dt
+  541.        dt_check = (itau-last_check)*dt
+  542.        next_check_itau = itau+(itau-last_check)
+  543.    !-
+  544.    !-- We are dealing with frequencies in seconds and thus operation
+  545.    !-- can be done on the time steps.
+  546.    !-
+  547.        IF (freq > 0) THEN
+  548.          IF (ABS(dt_action-freq) <= ABS(dt_action+dt_check-freq)) THEN
+  549.            do_action = .TRUE.
+  550.          ELSE
+  551.            do_action = .FALSE.
+  552.          ENDIF
+  553.    !-
+  554.    !---- Here we deal with frequencies in month and work on julian days.
+  555.    !-
+  556.        ELSE
+  557.          date_now = itau2date (itau,date0,dt)
+  558.          date_last_act = itau2date (last_action,date0,dt)
+  559.          CALL ju2ymds (date_last_act,year,month,day,sec)
+  560.          monthp1 = month-freq
+  561.          yearp = year
+  562.    !-
+  563.    !---- Here we compute what logically should be the next month
+  564.    !-
+  565.          DO WHILE (monthp1 >= 13)
+  566.            yearp = yearp+1
+  567.            monthp1 = monthp1-12
+  568.          END DO
+  569.          CALL ymds2ju (yearp,monthp1,day,sec,date_mpf)
+  570.    !-
+  571.    !---- But it could be that because of a shorter month or a bad
+  572.    !---- starting date that we end up further than we should be.
+  573.    !---- Thus we compute the first day of the next month.
+  574.    !---- We can not be beyond this date and if we are close
+  575.    !---- then we will take it as it is better.
+  576.    !-
+  577.          monthp1 = month+ABS(freq)
+  578.          yearp=year
+  579.          DO WHILE (monthp1 >= 13)
+  580.            yearp = yearp+1
+  581.            monthp1 = monthp1-12
+  582.          END DO
+  583.          dayp = 1
+  584.          secp = 0.0
+  585.          CALL ymds2ju (yearp,monthp1,dayp,secp,date_mp1)
+  586.    !-
+  587.    !---- If date_mp1 is smaller than date_mpf or only less than 4 days
+  588.    !---- larger then we take it. This needed to ensure that short month
+  589.    !---- like February do not mess up the thing !
+  590.    !-
+  591.          IF (date_mp1-date_mpf < 4.) THEN
+  592.            date_next_act = date_mp1
+  593.          ELSE
+  594.            date_next_act = date_mpf
+  595.          ENDIF
+  596.          date_next_check = itau2date (next_check_itau,date0,dt)
+  597.    !-
+  598.    !---- Transform the dates into time-steps for the needed precisions.
+  599.    !-
+  600.          next_act_itau = &
+  601.     &      last_action+INT((date_next_act-date_last_act)*(one_day/dt))
+  602.    !-----
+  603.          IF (   ABS(itau-next_act_itau) &
+  604.     &        <= ABS( next_check_itau-next_act_itau)) THEN
+  605.            do_action = .TRUE.
+  606.            IF (check) THEN
+  607.              WRITE(*,*) &
+  608.     &         'ACT-TIME : itau, next_act_itau, next_check_itau : ', &
+  609.     &         itau,next_act_itau,next_check_itau
+  610.              CALL ju2ymds (date_now,year,month,day,sec)
+  611.              WRITE(*,*) 'ACT-TIME : y, m, d, s : ',year,month,day,sec
+  612.              WRITE(*,*) &
+  613.     &         'ACT-TIME : date_mp1, date_mpf : ',date_mp1,date_mpf
+  614.            ENDIF
+  615.          ELSE
+  616.            do_action = .FALSE.
+  617.          ENDIF
+  618.        ENDIF
+  619.    !-
+  620.        IF (check) THEN
+  621.          WRITE(*,*) "isittime 2.0 ", &
+  622.     &     date_next_check,date_next_act,ABS(dt_action-freq), &
+  623.     &     ABS(dt_action+dt_check-freq),dt_action,dt_check, &
+  624.     &     next_check_itau,do_action
+  625.        ENDIF
+  626.      ELSE
+  627.        do_action=.FALSE.
+  628.      ENDIF
+  629.    !----------------------
+  630.    END SUBROUTINE isittime
+  631.    !-
+  632.    !===
+  633.    !-
+  634.    SUBROUTINE ioconf_calendar (str)
+  635.    !---------------------------------------------------------------------
+  636.    !- This routine allows to configure the calendar to be used.
+  637.    !- This operation is only allowed once and the first call to
+  638.    !- ymds2ju or ju2ymsd will lock the current configuration.
+  639.    !- the argument to ioconf_calendar can be any of the following :
+  640.    !-  - gregorian : This is the gregorian calendar (default here)
+  641.    !-  - noleap    : A calendar without leap years = 365 days
+  642.    !-  - xxxd      : A calendar of xxx days (has to be a modulo of 12)
+  643.    !-                with 12 month of equal length
+  644.    !---------------------------------------------------------------------
+  645.      IMPLICIT NONE
+  646.    !-
+  647.      CHARACTER(LEN=*),INTENT(IN) :: str
+  648.    !-
+  649.      INTEGER :: leng,ipos
+  650.      CHARACTER(LEN=20) :: str_w
+  651.    !---------------------------------------------------------------------
+  652.    !-
+  653.    ! Clean up the string !
+  654.    !-
+  655.      str_w = str
+  656.      CALL strlowercase (str_w)
+  657.    !-
+  658.      IF (.NOT.lock_one_year) THEN
+  659.    !---
+  660.        lock_one_year=.TRUE.
+  661.    !---
+  662.        SELECT CASE(TRIM(str_w))
+  663.        CASE('gregorian','standard','proleptic_gregorian')
+  664.          calendar_used = 'gregorian'
+  665.          one_year = 365.2425
+  666.          mon_len(:)=(/31,28,31,30,31,30,31,31,30,31,30,31/)
+ftn-6204 ftn: VECTOR File = calendar.f90, Line = 666 
+  A loop starting at line 666 was vectorized.
+
+  667.        CASE('noleap','365_day','365d')
+  668.          calendar_used = 'noleap'
+  669.          one_year = 365.0
+  670.          mon_len(:)=(/31,28,31,30,31,30,31,31,30,31,30,31/)
+ftn-6204 ftn: VECTOR File = calendar.f90, Line = 670 
+  A loop starting at line 670 was vectorized.
+
+  671.        CASE('all_leap','366_day','366d')
+  672.          calendar_used = 'all_leap'
+  673.          one_year = 366.0
+  674.          mon_len(:)=(/31,29,31,30,31,30,31,31,30,31,30,31/)
+ftn-6204 ftn: VECTOR File = calendar.f90, Line = 674 
+  A loop starting at line 674 was vectorized.
+
+  675.        CASE('360_day','360d')
+  676.          calendar_used = '360d'
+  677.          one_year = 360.0
+  678.          mon_len(:)=(/30,30,30,30,30,30,30,30,30,30,30,30/)
+ftn-6204 ftn: VECTOR File = calendar.f90, Line = 678 
+  A loop starting at line 678 was vectorized.
+
+  679.        CASE('julian')
+  680.          calendar_used = 'julian'
+  681.          one_year = 365.25
+  682.          mon_len(:)=(/31,28,31,30,31,30,31,31,30,31,30,31/)
+ftn-6204 ftn: VECTOR File = calendar.f90, Line = 682 
+  A loop starting at line 682 was vectorized.
+
+  683.        CASE DEFAULT
+  684.          ipos = INDEX(str_w,'d')
+  685.          IF (ipos == 4) THEN
+  686.            READ(str_w(1:3),'(I3)') leng
+  687.            IF ( (MOD(leng,12) == 0).AND.(leng > 1) ) THEN
+  688.              calendar_used = str_w
+  689.              one_year = leng
+  690.              mon_len(:) = leng/12
+ftn-6204 ftn: VECTOR File = calendar.f90, Line = 690 
+  A loop starting at line 690 was vectorized.
+
+  691.            ELSE
+  692.              CALL ipslerr (3,'ioconf_calendar', &
+  693.     &         'The length of the year as to be a modulo of 12', &
+  694.     &         'so that it can be divided into 12 month of equal length', &
+  695.     &         TRIM(str_w))
+  696.            ENDIF
+  697.          ELSE
+  698.            CALL ipslerr (3,'ioconf_calendar', &
+  699.     &       'Unrecognized input, please check the man pages.', &
+  700.     &       TRIM(str_w),' ')
+  701.          ENDIF
+  702.        END SELECT
+  703.      ELSE IF (TRIM(str_w) /= TRIM(calendar_used)) THEN
+  704.        WRITE(str_w,'(f10.4)') one_year
+  705.        CALL ipslerr (2,'ioconf_calendar', &
+  706.     &   'The calendar was already used or configured to : '// &
+  707.     &    TRIM(calendar_used)//'.', &
+  708.     &   'You are not allowed to change it to : '//TRIM(str)//'.', &
+  709.     &   'The following length of year is used : '//TRIM(ADJUSTL(str_w)))
+  710.      ENDIF
+  711.    !-----------------------------
+  712.    END SUBROUTINE ioconf_calendar
+  713.    !-
+  714.    !===
+  715.    !-
+  716.    SUBROUTINE ioconf_startdate_simple (julian)
+  717.    !---------------------------------------------------------------------
+  718.      IMPLICIT NONE
+  719.    !-
+  720.      REAL,INTENT(IN) :: julian
+  721.    !-
+  722.      INTEGER :: julian_day
+  723.      REAL    :: julian_sec
+  724.    !---------------------------------------------------------------------
+  725.      julian_day = INT(julian)
+  726.      julian_sec = (julian-julian_day)*one_day
+  727.    !-
+  728.      CALL ioconf_startdate_internal (julian_day,julian_sec)
+  729.    !-------------------------------------
+  730.    END SUBROUTINE ioconf_startdate_simple
+  731.    !-
+  732.    !===
+  733.    !-
+  734.    SUBROUTINE ioconf_startdate_ymds (year,month,day,sec)
+  735.    !---------------------------------------------------------------------
+  736.      IMPLICIT NONE
+  737.    !-
+  738.      INTEGER,INTENT(IN) :: year,month,day
+  739.      REAL,INTENT(IN)    :: sec
+  740.    !-
+  741.      INTEGER :: julian_day
+  742.      REAL    :: julian_sec
+  743.    !---------------------------------------------------------------------
+  744.      CALL ymds2ju_internal (year,month,day,sec,julian_day,julian_sec)
+  745.    !-
+  746.      CALL ioconf_startdate_internal (julian_day,julian_sec)
+  747.    !-----------------------------------
+  748.    END SUBROUTINE ioconf_startdate_ymds
+  749.    !-
+  750.    !===
+  751.    !-
+  752.    SUBROUTINE ioconf_startdate_internal (julian_day,julian_sec)
+  753.    !---------------------------------------------------------------------
+  754.    ! This subroutine allows to set the startdate for later
+  755.    ! use. It allows the applications to access the date directly from
+  756.    ! the timestep. In order to avoid any problems the start date will
+  757.    ! be locked and can not be changed once set.
+  758.    !---------------------------------------------------------------------
+  759.      IMPLICIT NONE
+  760.    !-
+  761.      INTEGER,INTENT(IN)  :: julian_day
+  762.      REAL,INTENT(IN)     :: julian_sec
+  763.    !-
+  764.      CHARACTER(len=70) :: str70a,str70b
+  765.    !---------------------------------------------------------------------
+  766.      IF (.NOT.lock_startdate) THEN
+  767.        start_day = julian_day
+  768.        start_sec = julian_sec
+  769.        lock_startdate = .TRUE.
+  770.      ELSE
+  771.        WRITE(str70a,'("The date you tried to set : ",f10.4)') &
+  772.     &   julian_day,julian_sec/one_day
+  773.        WRITE(str70b, &
+  774.     &   '("The date which was already set in the calendar : ",f10.4)') &
+  775.     &   start_day+start_sec/one_day
+  776.        CALL ipslerr (2,'ioconf_startdate', &
+  777.     &   'The start date has already been set and you tried to change it', &
+  778.     &   str70a,str70b)
+  779.      ENDIF
+  780.    !---------------------------------------
+  781.    END SUBROUTINE ioconf_startdate_internal
+  782.    !-
+  783.    !===
+  784.    !-
+  785.    SUBROUTINE ioget_calendar_str (str)
+  786.    !---------------------------------------------------------------------
+  787.    !- This subroutine returns the name of the calendar used here.
+  788.    !- Three options exist :
+  789.    !-  - gregorian : This is the gregorian calendar (default here)
+  790.    !-  - noleap    : A calendar without leap years = 365 days
+  791.    !-  - xxxd      : A calendar of xxx days (has to be a modulo of 12)
+  792.    !-                with 12 month of equal length
+  793.    !-
+  794.    !- This routine will lock the calendar.
+  795.    !- You do not want it to change after your inquiry.
+  796.    !---------------------------------------------------------------------
+  797.      IMPLICIT NONE
+  798.    !-
+  799.      CHARACTER(LEN=*),INTENT(OUT) :: str
+  800.    !---------------------------------------------------------------------
+  801.      lock_one_year = .TRUE.
+  802.    !-
+  803.      str = calendar_used
+  804.    !--------------------------------
+  805.    END SUBROUTINE ioget_calendar_str
+  806.    !-
+  807.    !===
+  808.    !-
+  809.    SUBROUTINE ioget_calendar_real1 (long_year)
+  810.    !---------------------------------------------------------------------
+  811.    !- This subroutine returns the name of the calendar used here.
+  812.    !- Three options exist :
+  813.    !-  - gregorian : This is the gregorian calendar (default here)
+  814.    !-  - noleap    : A calendar without leap years = 365 days
+  815.    !-  - xxxd      : A calendar of xxx days (has to be a modulo of 12)
+  816.    !-                with 12 month of equal length
+  817.    !-
+  818.    !- This routine will lock the calendar.
+  819.    !- You do not want it to change after your inquiry.
+  820.    !---------------------------------------------------------------------
+  821.      IMPLICIT NONE
+  822.    !-
+  823.      REAL,INTENT(OUT) :: long_year
+  824.    !---------------------------------------------------------------------
+  825.      long_year = one_year
+  826.      lock_one_year = .TRUE.
+  827.    !----------------------------------
+  828.    END SUBROUTINE ioget_calendar_real1
+  829.    !-
+  830.    !===
+  831.    !-
+  832.    SUBROUTINE ioget_calendar_real2 (long_year,long_day)
+  833.    !---------------------------------------------------------------------
+  834.    !- This subroutine returns the name of the calendar used here.
+  835.    !- Three options exist :
+  836.    !-  - gregorian : This is the gregorian calendar (default here)
+  837.    !-  - noleap    : A calendar without leap years = 365 days
+  838.    !-  - xxxd      : A calendar of xxx days (has to be a modulo of 12)
+  839.    !-                with 12 month of equal length
+  840.    !-
+  841.    !- This routine will lock the calendar.
+  842.    !- You do not want it to change after your inquiry.
+  843.    !---------------------------------------------------------------------
+  844.      IMPLICIT NONE
+  845.    !-
+  846.      REAL,INTENT(OUT) :: long_year,long_day
+  847.    !---------------------------------------------------------------------
+  848.      long_year = one_year
+  849.      long_day  = one_day
+  850.      lock_one_year = .TRUE.
+  851.    !----------------------------------
+  852.    END SUBROUTINE ioget_calendar_real2
+  853.    !-
+  854.    !===
+  855.    !-
+  856.    INTEGER FUNCTION ioget_mon_len (year,month)
+  857.    !!--------------------------------------------------------------------
+  858.    !! The "ioget_mon_len" function returns
+  859.    !! the number of days in a "month" of a "year",
+  860.    !! in the current calendar.
+  861.    !!
+  862.    !! INTEGER FUNCTION ioget_mon_len (year,month)
+  863.    !!
+  864.    !! INPUT
+  865.    !!
+  866.    !! (I) year  : year
+  867.    !! (I) month : month in the year (1 --> 12)
+  868.    !!
+  869.    !! OUTPUT
+  870.    !!
+  871.    !! (I) ioget_mon_len : number of days in the month
+  872.    !!--------------------------------------------------------------------
+  873.      IMPLICIT NONE
+  874.    !-
+  875.      INTEGER,INTENT(IN) :: year,month
+  876.    !-
+  877.      INTEGER :: ml
+  878.    !---------------------------------------------------------------------
+  879.      IF ( (month >= 1).AND.(month <= 12) ) THEN
+  880.        IF ( (one_year > 365.0).AND.(one_year < 366.0) ) THEN
+  881.    !---- "Gregorian" or "Julian"
+  882.          ml = mon_len(month)
+  883.          IF (month == 2) THEN
+  884.            IF (ABS(one_year-365.2425) <= EPSILON(one_year) ) THEN
+  885.    !-------- "Gregorian"
+  886.              IF (    ((MOD(year,4) == 0).AND.(MOD(year,100) /= 0)) &
+  887.                  .OR.(MOD(year,400) == 0) ) THEN
+  888.                ml = ml+1
+  889.              ENDIF
+  890.            ELSE
+  891.    !-------- "Julian"
+  892.              IF (MOD(year,4) == 0) THEN
+  893.                ml = ml+1
+  894.              ENDIF
+  895.            ENDIF
+  896.          ENDIF
+  897.          ioget_mon_len = ml
+  898.        ELSE
+  899.    !---- "No leap" or "All leap" or "Calendar with regular month"
+  900.          ioget_mon_len = mon_len(month)
+  901.        ENDIF
+  902.      ELSE
+  903.        CALL ipslerr (3,'ioget_mon_len', &
+  904.     &    'The number of the month','must be between','1 and 12')
+  905.      ENDIF
+  906.    !-------------------------
+  907.    END FUNCTION ioget_mon_len
+  908.    !-
+  909.    !===
+  910.    !-
+  911.    INTEGER FUNCTION ioget_year_len (year)
+  912.    !!--------------------------------------------------------------------
+  913.    !! The "ioget_year_len" function returns
+  914.    !! the number of days in "year", in the current calendar.
+  915.    !!
+  916.    !! INTEGER FUNCTION ioget_year_len (year)
+  917.    !!
+  918.    !! INPUT
+  919.    !!
+  920.    !! (I) year  : year
+  921.    !!
+  922.    !! OUTPUT
+  923.    !!
+  924.    !! (I) ioget_year_len : number of days in the year
+  925.    !!--------------------------------------------------------------------
+  926.      IMPLICIT NONE
+  927.    !-
+  928.      INTEGER,INTENT(IN) :: year
+  929.    !-
+  930.      INTEGER :: yl
+  931.    !---------------------------------------------------------------------
+  932.      SELECT CASE(TRIM(calendar_used))
+  933.      CASE('gregorian')
+  934.        yl = 365
+  935.        IF (    ((MOD(year,4) == 0).AND.(MOD(year,100) /= 0)) &
+  936.            .OR.(MOD(year,400) == 0) ) THEN
+  937.          yl = yl+1
+  938.        ENDIF
+  939.      CASE('julian')
+  940.        yl = 365
+  941.        IF (MOD(year,4) == 0) THEN
+  942.          yl = yl+1
+  943.        ENDIF
+  944.      CASE DEFAULT
+  945.        yl = NINT(one_year)
+  946.      END SELECT
+  947.      ioget_year_len = yl
+  948.    !--------------------------
+  949.    END FUNCTION ioget_year_len
+  950.    !-
+  951.    !===
+  952.    !-
+  953.    SUBROUTINE ioget_timestamp (string)
+  954.    !---------------------------------------------------------------------
+  955.      IMPLICIT NONE
+  956.    !-
+  957.      CHARACTER(LEN=30),INTENT(OUT) :: string
+  958.    !-
+  959.      INTEGER :: date_time(8)
+  960.      CHARACTER(LEN=10) :: bigben(3)
+  961.    !---------------------------------------------------------------------
+  962.      IF (INDEX(time_stamp,'XXXXXX') > 0) THEN
+  963.        CALL DATE_AND_TIME (bigben(1),bigben(2),bigben(3),date_time)
+  964.    !---
+  965.        WRITE(time_stamp, &
+  966.     &   "(I4.4,'-',A3,'-',I2.2,' ',I2.2,':',I2.2,':',I2.2,' GMT',a5)") &
+  967.     &   date_time(1),cal(date_time(2)),date_time(3),date_time(5), &
+  968.     &   date_time(6),date_time(7),bigben(3)
+  969.      ENDIF
+  970.    !-
+  971.      string = time_stamp
+  972.    !-----------------------------
+  973.    END SUBROUTINE ioget_timestamp
+  974.    !-
+  975.    !===
+  976.    !-
+  977.    SUBROUTINE time_add &
+  978.     &  (year_s,month_s,day_s,sec_s,sec_increment, &
+  979.     &   year_e,month_e,day_e,sec_e)
+  980.    !---------------------------------------------------------------------
+  981.    !- This subroutine allows to increment a date by a number of seconds.
+  982.    !---------------------------------------------------------------------
+  983.      IMPLICIT NONE
+  984.    !-
+  985.      INTEGER,INTENT(IN) :: year_s,month_s,day_s
+  986.      REAL,INTENT(IN)    :: sec_s
+  987.    !-
+  988.    ! Time in seconds to be added to the date
+  989.    !-
+  990.      REAL,INTENT(IN)    :: sec_increment
+  991.    !-
+  992.      INTEGER,INTENT(OUT) :: year_e,month_e,day_e
+  993.      REAL,INTENT(OUT)    :: sec_e
+  994.    !-
+  995.      INTEGER :: julian_day
+  996.      REAL    :: julian_sec
+  997.    !---------------------------------------------------------------------
+  998.      CALL ymds2ju_internal &
+  999.     &  (year_s,month_s,day_s,sec_s,julian_day,julian_sec)
+ 1000.    !-
+ 1001.      julian_sec = julian_sec+sec_increment
+ 1002.    !-
+ 1003.      CALL ju2ymds_internal &
+ 1004.     &  (julian_day,julian_sec,year_e,month_e,day_e,sec_e)
+ 1005.    !----------------------
+ 1006.    END SUBROUTINE time_add
+ 1007.    !-
+ 1008.    !===
+ 1009.    !-
+ 1010.    SUBROUTINE time_diff &
+ 1011.     &  (year_s,month_s,day_s,sec_s,year_e,month_e,day_e,sec_e,sec_diff)
+ 1012.    !---------------------------------------------------------------------
+ 1013.    !- This subroutine allows to determine the number of seconds
+ 1014.    !- between two dates.
+ 1015.    !---------------------------------------------------------------------
+ 1016.      IMPLICIT NONE
+ 1017.    !-
+ 1018.      INTEGER,INTENT(IN) :: year_s,month_s,day_s
+ 1019.      REAL,INTENT(IN)    :: sec_s
+ 1020.      INTEGER,INTENT(IN) :: year_e,month_e,day_e
+ 1021.      REAL,INTENT(IN)    :: sec_e
+ 1022.    !-
+ 1023.    ! Time in seconds between the two dates
+ 1024.    !-
+ 1025.      REAL,INTENT(OUT)    :: sec_diff
+ 1026.    !-
+ 1027.      INTEGER :: julian_day_s,julian_day_e,day_diff
+ 1028.      REAL    :: julian_sec_s,julian_sec_e
+ 1029.    !---------------------------------------------------------------------
+ 1030.      CALL ymds2ju_internal &
+ 1031.     &  (year_s,month_s,day_s,sec_s,julian_day_s,julian_sec_s)
+ 1032.      CALL ymds2ju_internal &
+ 1033.     &  (year_e,month_e,day_e,sec_e,julian_day_e,julian_sec_e)
+ 1034.    !-
+ 1035.      day_diff = julian_day_e-julian_day_s
+ 1036.      sec_diff = julian_sec_e-julian_sec_s
+ 1037.    !-
+ 1038.      sec_diff = sec_diff+day_diff*one_day
+ 1039.    !-----------------------
+ 1040.    END SUBROUTINE time_diff
+ 1041.    !-
+ 1042.    !===
+ 1043.    !-
+ 1044.    END MODULE calendar
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                         E x t e r n a l   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Name  Messages
+----  --------
+ABS(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   YMDS2JU_INTERNAL in CALENDAR (Line 183, file calendar.f90)
+                   YMDS2JU_INTERNAL in CALENDAR (Line 184, file calendar.f90)
+                   JU2YMDS_INTERNAL in CALENDAR (Line 284, file calendar.f90)
+                   JU2YMDS_INTERNAL in CALENDAR (Line 285, file calendar.f90)
+                   ISITTIME in CALENDAR (Line 548, file calendar.f90)
+                   ISITTIME in CALENDAR (Line 548, file calendar.f90)
+                   ISITTIME in CALENDAR (Line 577, file calendar.f90)
+                   ISITTIME in CALENDAR (Line 603, file calendar.f90)
+                   ISITTIME in CALENDAR (Line 604, file calendar.f90)
+                   ISITTIME in CALENDAR (Line 622, file calendar.f90)
+                   ISITTIME in CALENDAR (Line 623, file calendar.f90)
+                   IOGET_MON_LEN in CALENDAR (Line 884, file calendar.f90)
+
+Name  Messages
+----  --------
+ADJUSTL(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOCONF_CALENDAR in CALENDAR (Line 709, file calendar.f90)
+
+Name  Messages
+----  --------
+CALENDAR
+      Defined as:  Module (line 1, file calendar.f90)
+
+        Uses:      ERRIOIPSL
+
+Name  Messages
+----  --------
+DATE_AND_TIME(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOGET_TIMESTAMP in CALENDAR (Line 963, file calendar.f90)
+
+Name  Messages
+----  --------
+DTCHDATE in CALENDAR
+      Defined as:  Function (line 470, file calendar.f90)
+
+      Interface:   None
+
+      Calls:       ITAU2DATE in CALENDAR (Line 491, file calendar.f90)
+                   REAL(Intrinsic) (Line 492, file calendar.f90)
+
+Name  Messages
+----  --------
+EPSILON(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   YMDS2JU_INTERNAL in CALENDAR (Line 183, file calendar.f90)
+                   YMDS2JU_INTERNAL in CALENDAR (Line 184, file calendar.f90)
+                   JU2YMDS_INTERNAL in CALENDAR (Line 284, file calendar.f90)
+                   JU2YMDS_INTERNAL in CALENDAR (Line 285, file calendar.f90)
+                   IOGET_MON_LEN in CALENDAR (Line 884, file calendar.f90)
+
+Name  Messages
+----  --------
+ERRIOIPSL
+      Defined as:  No definitions.
+
+      Used By:     CALENDAR
+
+Name  Messages
+----  --------
+INDEX(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   TLEN2ITAU in CALENDAR (Line 347, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 347, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 348, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 348, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 349, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 349, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 350, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 350, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 351, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 351, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 391, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 391, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 392, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 392, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 393, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 393, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 394, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 394, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 395, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 395, file calendar.f90)
+                   IOCONF_CALENDAR in CALENDAR (Line 684, file calendar.f90)
+                   IOGET_TIMESTAMP in CALENDAR (Line 962, file calendar.f90)
+
+Name  Messages
+----  --------
+INT(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   YMDS2JU_INTERNAL in CALENDAR (Line 178, file calendar.f90)
+                   YMDS2JU_INTERNAL in CALENDAR (Line 179, file calendar.f90)
+                   YMDS2JU_INTERNAL in CALENDAR (Line 180, file calendar.f90)
+                   JU2YMDS in CALENDAR (Line 213, file calendar.f90)
+                   JU2YMDS_INTERNAL in CALENDAR (Line 261, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 363, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 363, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 371, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 371, file calendar.f90)
+                   ISITTIME in CALENDAR (Line 601, file calendar.f90)
+                   IOCONF_STARTDATE_SIMPLE in CALENDAR (Line 725, file calendar.f90)
+
+Name  Messages
+----  --------
+IOCONF_CALENDAR in CALENDAR
+      Defined as:  Subroutine (line 45, file calendar.f90)
+
+      Interface:   None
+
+      Calls:       IPSLERR in ERRIOIPSL (Line 692, file calendar.f90)
+                   IPSLERR in ERRIOIPSL (Line 698, file calendar.f90)
+                   IPSLERR in ERRIOIPSL (Line 705, file calendar.f90)
+                   STRLOWERCASE in STRINGOP (Line 656, file calendar.f90)
+                   TRIM(Intrinsic) (Line 662, file calendar.f90)
+                   TRIM(Intrinsic) (Line 695, file calendar.f90)
+                   TRIM(Intrinsic) (Line 700, file calendar.f90)
+                   TRIM(Intrinsic) (Line 703, file calendar.f90)
+                   TRIM(Intrinsic) (Line 703, file calendar.f90)
+                   TRIM(Intrinsic) (Line 707, file calendar.f90)
+                   TRIM(Intrinsic) (Line 708, file calendar.f90)
+                   TRIM(Intrinsic) (Line 709, file calendar.f90)
+                   INDEX(Intrinsic) (Line 684, file calendar.f90)
+                   MOD(Intrinsic) (Line 687, file calendar.f90)
+                   ADJUSTL(Intrinsic) (Line 709, file calendar.f90)
+
+Name  Messages
+----  --------
+IOCONF_STARTDATE_INTERNAL in CALENDAR
+      Defined as:  Subroutine (line 752, file calendar.f90)
+
+      Interface:   None
+
+      Called By:   IOCONF_STARTDATE_SIMPLE in CALENDAR (Line 728, file calendar.f90)
+                   IOCONF_STARTDATE_YMDS in CALENDAR (Line 746, file calendar.f90)
+
+      Calls:       IPSLERR in ERRIOIPSL (Line 776, file calendar.f90)
+
+Name  Messages
+----  --------
+IOCONF_STARTDATE_SIMPLE in CALENDAR
+      Defined as:  Subroutine (line 716, file calendar.f90)
+
+      Interface:   None
+
+      Calls:       IOCONF_STARTDATE_INTERNAL in CALENDAR (Line 728, file calendar.f90)
+                   INT(Intrinsic) (Line 725, file calendar.f90)
+
+Name  Messages
+----  --------
+IOCONF_STARTDATE_YMDS in CALENDAR
+      Defined as:  Subroutine (line 734, file calendar.f90)
+
+      Interface:   None
+
+      Calls:       YMDS2JU_INTERNAL in CALENDAR (Line 744, file calendar.f90)
+                   IOCONF_STARTDATE_INTERNAL in CALENDAR (Line 746, file calendar.f90)
+
+Name  Messages
+----  --------
+IOGET_CALENDAR_REAL1 in CALENDAR
+      Defined as:  Subroutine (line 809, file calendar.f90)
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOGET_CALENDAR_REAL2 in CALENDAR
+      Defined as:  Subroutine (line 832, file calendar.f90)
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOGET_CALENDAR_STR in CALENDAR
+      Defined as:  Subroutine (line 785, file calendar.f90)
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOGET_MON_LEN in CALENDAR
+      Defined as:  Function (line 46, file calendar.f90)
+
+      Interface:   None
+
+      Calls:       IPSLERR in ERRIOIPSL (Line 903, file calendar.f90)
+                   ABS(Intrinsic) (Line 884, file calendar.f90)
+                   EPSILON(Intrinsic) (Line 884, file calendar.f90)
+                   MOD(Intrinsic) (Line 886, file calendar.f90)
+                   MOD(Intrinsic) (Line 886, file calendar.f90)
+                   MOD(Intrinsic) (Line 887, file calendar.f90)
+                   MOD(Intrinsic) (Line 892, file calendar.f90)
+
+Name  Messages
+----  --------
+IOGET_TIMESTAMP in CALENDAR
+      Defined as:  Subroutine (line 47, file calendar.f90)
+
+      Interface:   None
+
+      Calls:       INDEX(Intrinsic) (Line 962, file calendar.f90)
+                   DATE_AND_TIME(Intrinsic) (Line 963, file calendar.f90)
+
+Name  Messages
+----  --------
+IOGET_YEAR_LEN in CALENDAR
+      Defined as:  Function (line 46, file calendar.f90)
+
+      Interface:   None
+
+      Calls:       TRIM(Intrinsic) (Line 932, file calendar.f90)
+                   MOD(Intrinsic) (Line 935, file calendar.f90)
+                   MOD(Intrinsic) (Line 935, file calendar.f90)
+                   MOD(Intrinsic) (Line 936, file calendar.f90)
+                   MOD(Intrinsic) (Line 941, file calendar.f90)
+                   NINT(Intrinsic) (Line 945, file calendar.f90)
+
+Name  Messages
+----  --------
+IPSLERR in ERRIOIPSL
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   ITAU2YMDS in CALENDAR (Line 457, file calendar.f90)
+                   IOCONF_CALENDAR in CALENDAR (Line 692, file calendar.f90)
+                   IOCONF_CALENDAR in CALENDAR (Line 698, file calendar.f90)
+                   IOCONF_CALENDAR in CALENDAR (Line 705, file calendar.f90)
+                   IOCONF_STARTDATE_INTERNAL in CALENDAR (Line 776, file calendar.f90)
+                   IOGET_MON_LEN in CALENDAR (Line 903, file calendar.f90)
+
+Name  Messages
+----  --------
+ISITTIME in CALENDAR
+      Defined as:  Subroutine (line 45, file calendar.f90)
+
+      Interface:   None
+
+      Calls:       YMDS2JU in CALENDAR (Line 569, file calendar.f90)
+                   YMDS2JU in CALENDAR (Line 585, file calendar.f90)
+                   JU2YMDS in CALENDAR (Line 559, file calendar.f90)
+                   JU2YMDS in CALENDAR (Line 610, file calendar.f90)
+                   ITAU2DATE in CALENDAR (Line 557, file calendar.f90)
+                   ITAU2DATE in CALENDAR (Line 558, file calendar.f90)
+                   ITAU2DATE in CALENDAR (Line 596, file calendar.f90)
+                   ABS(Intrinsic) (Line 548, file calendar.f90)
+                   ABS(Intrinsic) (Line 548, file calendar.f90)
+                   ABS(Intrinsic) (Line 577, file calendar.f90)
+                   ABS(Intrinsic) (Line 603, file calendar.f90)
+                   ABS(Intrinsic) (Line 604, file calendar.f90)
+                   ABS(Intrinsic) (Line 622, file calendar.f90)
+                   ABS(Intrinsic) (Line 623, file calendar.f90)
+                   INT(Intrinsic) (Line 601, file calendar.f90)
+
+Name  Messages
+----  --------
+ITAU2DATE in CALENDAR
+      Defined as:  Function (line 46, file calendar.f90)
+
+      Interface:   None
+
+      Called By:   DTCHDATE in CALENDAR (Line 491, file calendar.f90)
+                   ISITTIME in CALENDAR (Line 557, file calendar.f90)
+                   ISITTIME in CALENDAR (Line 558, file calendar.f90)
+                   ISITTIME in CALENDAR (Line 596, file calendar.f90)
+
+      Calls:       REAL(Intrinsic) (Line 424, file calendar.f90)
+
+Name  Messages
+----  --------
+ITAU2YMDS in CALENDAR
+      Defined as:  Subroutine (line 47, file calendar.f90)
+
+      Interface:   None
+
+      Calls:       JU2YMDS_INTERNAL in CALENDAR (Line 464, file calendar.f90)
+                   IPSLERR in ERRIOIPSL (Line 457, file calendar.f90)
+                   REAL(Intrinsic) (Line 463, file calendar.f90)
+
+Name  Messages
+----  --------
+JU2YMDS in CALENDAR
+      Defined as:  Subroutine (line 45, file calendar.f90)
+
+      Interface:   None
+
+      Called By:   TLEN2ITAU in CALENDAR (Line 345, file calendar.f90)
+                   ISITTIME in CALENDAR (Line 559, file calendar.f90)
+                   ISITTIME in CALENDAR (Line 610, file calendar.f90)
+
+      Calls:       JU2YMDS_INTERNAL in CALENDAR (Line 216, file calendar.f90)
+                   INT(Intrinsic) (Line 213, file calendar.f90)
+
+Name  Messages
+----  --------
+JU2YMDS_INTERNAL in CALENDAR
+      Defined as:  Subroutine (line 222, file calendar.f90)
+
+      Interface:   None
+
+      Called By:   JU2YMDS in CALENDAR (Line 216, file calendar.f90)
+                   ITAU2YMDS in CALENDAR (Line 464, file calendar.f90)
+                   TIME_ADD in CALENDAR (Line 1003, file calendar.f90)
+
+      Calls:       SPACING(Intrinsic) (Line 255, file calendar.f90)
+                   INT(Intrinsic) (Line 261, file calendar.f90)
+                   ABS(Intrinsic) (Line 284, file calendar.f90)
+                   ABS(Intrinsic) (Line 285, file calendar.f90)
+                   EPSILON(Intrinsic) (Line 284, file calendar.f90)
+                   EPSILON(Intrinsic) (Line 285, file calendar.f90)
+                   NINT(Intrinsic) (Line 287, file calendar.f90)
+                   NINT(Intrinsic) (Line 288, file calendar.f90)
+                   NINT(Intrinsic) (Line 298, file calendar.f90)
+                   NINT(Intrinsic) (Line 299, file calendar.f90)
+                   NINT(Intrinsic) (Line 300, file calendar.f90)
+
+Name  Messages
+----  --------
+LEN_TRIM(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   TLEN2ITAU in CALENDAR (Line 365, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 373, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 378, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 383, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 388, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 398, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 399, file calendar.f90)
+
+Name  Messages
+----  --------
+LOCK_CALENDAR in CALENDAR
+      Defined as:  Subroutine (line 48, file calendar.f90)
+
+      Interface:   None
+
+      Calls:       PRESENT(Intrinsic) (Line 105, file calendar.f90)
+                   PRESENT(Intrinsic) (Line 108, file calendar.f90)
+
+Name  Messages
+----  --------
+MAX(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   TLEN2ITAU in CALENDAR (Line 347, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 348, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 349, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 350, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 351, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 353, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 353, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 353, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 355, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 355, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 355, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 391, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 392, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 393, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 394, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 395, file calendar.f90)
+
+Name  Messages
+----  --------
+MOD(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOCONF_CALENDAR in CALENDAR (Line 687, file calendar.f90)
+                   IOGET_MON_LEN in CALENDAR (Line 886, file calendar.f90)
+                   IOGET_MON_LEN in CALENDAR (Line 886, file calendar.f90)
+                   IOGET_MON_LEN in CALENDAR (Line 887, file calendar.f90)
+                   IOGET_MON_LEN in CALENDAR (Line 892, file calendar.f90)
+                   IOGET_YEAR_LEN in CALENDAR (Line 935, file calendar.f90)
+                   IOGET_YEAR_LEN in CALENDAR (Line 935, file calendar.f90)
+                   IOGET_YEAR_LEN in CALENDAR (Line 936, file calendar.f90)
+                   IOGET_YEAR_LEN in CALENDAR (Line 941, file calendar.f90)
+
+Name  Messages
+----  --------
+NINT(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   YMDS2JU_INTERNAL in CALENDAR (Line 187, file calendar.f90)
+                   YMDS2JU_INTERNAL in CALENDAR (Line 190, file calendar.f90)
+                   YMDS2JU_INTERNAL in CALENDAR (Line 191, file calendar.f90)
+                   JU2YMDS_INTERNAL in CALENDAR (Line 287, file calendar.f90)
+                   JU2YMDS_INTERNAL in CALENDAR (Line 288, file calendar.f90)
+                   JU2YMDS_INTERNAL in CALENDAR (Line 298, file calendar.f90)
+                   JU2YMDS_INTERNAL in CALENDAR (Line 299, file calendar.f90)
+                   JU2YMDS_INTERNAL in CALENDAR (Line 300, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 364, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 372, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 377, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 382, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 387, file calendar.f90)
+                   IOGET_YEAR_LEN in CALENDAR (Line 945, file calendar.f90)
+
+Name  Messages
+----  --------
+PRESENT(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   LOCK_CALENDAR in CALENDAR (Line 105, file calendar.f90)
+                   LOCK_CALENDAR in CALENDAR (Line 108, file calendar.f90)
+
+Name  Messages
+----  --------
+REAL(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   ITAU2DATE in CALENDAR (Line 424, file calendar.f90)
+                   ITAU2YMDS in CALENDAR (Line 463, file calendar.f90)
+                   DTCHDATE in CALENDAR (Line 492, file calendar.f90)
+
+Name  Messages
+----  --------
+SPACING(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   JU2YMDS_INTERNAL in CALENDAR (Line 255, file calendar.f90)
+
+Name  Messages
+----  --------
+STRINGOP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+Name  Messages
+----  --------
+STRLOWERCASE in STRINGOP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOCONF_CALENDAR in CALENDAR (Line 656, file calendar.f90)
+
+Name  Messages
+----  --------
+SUM(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   YMDS2JU_INTERNAL in CALENDAR (Line 186, file calendar.f90)
+
+Name  Messages
+----  --------
+TIME_ADD in CALENDAR
+      Defined as:  Subroutine (line 48, file calendar.f90)
+
+      Interface:   None
+
+      Calls:       YMDS2JU_INTERNAL in CALENDAR (Line 998, file calendar.f90)
+                   JU2YMDS_INTERNAL in CALENDAR (Line 1003, file calendar.f90)
+
+Name  Messages
+----  --------
+TIME_DIFF in CALENDAR
+      Defined as:  Subroutine (line 48, file calendar.f90)
+
+      Interface:   None
+
+      Calls:       YMDS2JU_INTERNAL in CALENDAR (Line 1030, file calendar.f90)
+                   YMDS2JU_INTERNAL in CALENDAR (Line 1032, file calendar.f90)
+
+Name  Messages
+----  --------
+TLEN2ITAU in CALENDAR
+      Defined as:  Subroutine (line 45, file calendar.f90)
+
+      Interface:   None
+
+      Calls:       YMDS2JU in CALENDAR (Line 361, file calendar.f90)
+                   YMDS2JU in CALENDAR (Line 369, file calendar.f90)
+                   JU2YMDS in CALENDAR (Line 345, file calendar.f90)
+                   INDEX(Intrinsic) (Line 347, file calendar.f90)
+                   INDEX(Intrinsic) (Line 347, file calendar.f90)
+                   INDEX(Intrinsic) (Line 348, file calendar.f90)
+                   INDEX(Intrinsic) (Line 348, file calendar.f90)
+                   INDEX(Intrinsic) (Line 349, file calendar.f90)
+                   INDEX(Intrinsic) (Line 349, file calendar.f90)
+                   INDEX(Intrinsic) (Line 350, file calendar.f90)
+                   INDEX(Intrinsic) (Line 350, file calendar.f90)
+                   INDEX(Intrinsic) (Line 351, file calendar.f90)
+                   INDEX(Intrinsic) (Line 351, file calendar.f90)
+                   INDEX(Intrinsic) (Line 391, file calendar.f90)
+                   INDEX(Intrinsic) (Line 391, file calendar.f90)
+                   INDEX(Intrinsic) (Line 392, file calendar.f90)
+                   INDEX(Intrinsic) (Line 392, file calendar.f90)
+                   INDEX(Intrinsic) (Line 393, file calendar.f90)
+                   INDEX(Intrinsic) (Line 393, file calendar.f90)
+                   INDEX(Intrinsic) (Line 394, file calendar.f90)
+                   INDEX(Intrinsic) (Line 394, file calendar.f90)
+                   INDEX(Intrinsic) (Line 395, file calendar.f90)
+                   INDEX(Intrinsic) (Line 395, file calendar.f90)
+                   MAX(Intrinsic) (Line 347, file calendar.f90)
+                   MAX(Intrinsic) (Line 348, file calendar.f90)
+                   MAX(Intrinsic) (Line 349, file calendar.f90)
+                   MAX(Intrinsic) (Line 350, file calendar.f90)
+                   MAX(Intrinsic) (Line 351, file calendar.f90)
+                   MAX(Intrinsic) (Line 353, file calendar.f90)
+                   MAX(Intrinsic) (Line 353, file calendar.f90)
+                   MAX(Intrinsic) (Line 353, file calendar.f90)
+                   MAX(Intrinsic) (Line 355, file calendar.f90)
+                   MAX(Intrinsic) (Line 355, file calendar.f90)
+                   MAX(Intrinsic) (Line 355, file calendar.f90)
+                   MAX(Intrinsic) (Line 391, file calendar.f90)
+                   MAX(Intrinsic) (Line 392, file calendar.f90)
+                   MAX(Intrinsic) (Line 393, file calendar.f90)
+                   MAX(Intrinsic) (Line 394, file calendar.f90)
+                   MAX(Intrinsic) (Line 395, file calendar.f90)
+                   INT(Intrinsic) (Line 363, file calendar.f90)
+                   INT(Intrinsic) (Line 363, file calendar.f90)
+                   INT(Intrinsic) (Line 371, file calendar.f90)
+                   INT(Intrinsic) (Line 371, file calendar.f90)
+                   NINT(Intrinsic) (Line 364, file calendar.f90)
+                   NINT(Intrinsic) (Line 372, file calendar.f90)
+                   NINT(Intrinsic) (Line 377, file calendar.f90)
+                   NINT(Intrinsic) (Line 382, file calendar.f90)
+                   NINT(Intrinsic) (Line 387, file calendar.f90)
+                   LEN_TRIM(Intrinsic) (Line 365, file calendar.f90)
+                   LEN_TRIM(Intrinsic) (Line 373, file calendar.f90)
+                   LEN_TRIM(Intrinsic) (Line 378, file calendar.f90)
+                   LEN_TRIM(Intrinsic) (Line 383, file calendar.f90)
+                   LEN_TRIM(Intrinsic) (Line 388, file calendar.f90)
+                   LEN_TRIM(Intrinsic) (Line 398, file calendar.f90)
+                   LEN_TRIM(Intrinsic) (Line 399, file calendar.f90)
+
+Name  Messages
+----  --------
+TRIM(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   IOCONF_CALENDAR in CALENDAR (Line 662, file calendar.f90)
+                   IOCONF_CALENDAR in CALENDAR (Line 695, file calendar.f90)
+                   IOCONF_CALENDAR in CALENDAR (Line 700, file calendar.f90)
+                   IOCONF_CALENDAR in CALENDAR (Line 703, file calendar.f90)
+                   IOCONF_CALENDAR in CALENDAR (Line 703, file calendar.f90)
+                   IOCONF_CALENDAR in CALENDAR (Line 707, file calendar.f90)
+                   IOCONF_CALENDAR in CALENDAR (Line 708, file calendar.f90)
+                   IOCONF_CALENDAR in CALENDAR (Line 709, file calendar.f90)
+                   IOGET_YEAR_LEN in CALENDAR (Line 932, file calendar.f90)
+
+Name  Messages
+----  --------
+YMDS2JU in CALENDAR
+      Defined as:  Subroutine (line 45, file calendar.f90)
+
+      Interface:   None
+
+      Called By:   TLEN2ITAU in CALENDAR (Line 361, file calendar.f90)
+                   TLEN2ITAU in CALENDAR (Line 369, file calendar.f90)
+                   ISITTIME in CALENDAR (Line 569, file calendar.f90)
+                   ISITTIME in CALENDAR (Line 585, file calendar.f90)
+
+      Calls:       YMDS2JU_INTERNAL in CALENDAR (Line 128, file calendar.f90)
+
+Name  Messages
+----  --------
+YMDS2JU_INTERNAL in CALENDAR
+      Defined as:  Subroutine (line 136, file calendar.f90)
+
+      Interface:   None
+
+      Called By:   YMDS2JU in CALENDAR (Line 128, file calendar.f90)
+                   IOCONF_STARTDATE_YMDS in CALENDAR (Line 744, file calendar.f90)
+                   TIME_ADD in CALENDAR (Line 998, file calendar.f90)
+                   TIME_DIFF in CALENDAR (Line 1030, file calendar.f90)
+                   TIME_DIFF in CALENDAR (Line 1032, file calendar.f90)
+
+      Calls:       INT(Intrinsic) (Line 178, file calendar.f90)
+                   INT(Intrinsic) (Line 179, file calendar.f90)
+                   INT(Intrinsic) (Line 180, file calendar.f90)
+                   ABS(Intrinsic) (Line 183, file calendar.f90)
+                   ABS(Intrinsic) (Line 184, file calendar.f90)
+                   EPSILON(Intrinsic) (Line 183, file calendar.f90)
+                   EPSILON(Intrinsic) (Line 184, file calendar.f90)
+                   SUM(Intrinsic) (Line 186, file calendar.f90)
+                   NINT(Intrinsic) (Line 187, file calendar.f90)
+                   NINT(Intrinsic) (Line 190, file calendar.f90)
+                   NINT(Intrinsic) (Line 191, file calendar.f90)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

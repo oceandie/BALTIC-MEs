@@ -1,0 +1,1478 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S u m m a r y   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Compilation
+-----------
+File     : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/wrk_nemo.f90
+Compiled : 04/29/22  10:43:09
+Compiler : Version 8.3.4
+Ftnlx    : Version 8318 (libcif 83016)
+Target   : x86-64
+Command  : ftn_driver.exe -hcpu=haswell -hstatic -D__CRAYXC -D__CRAY_HASWELL
+           -D__CRAYXT_COMPUTE_LINUX_TARGET -hnetwork=aries -owrk_nemo.o
+           -I/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HE
+           AD_test_MEs/tools/DOMAINcfg/BLD/inc -sreal64 -sinteger32 -Ovector0
+           -hfp0 -O0 -hflex_mp=intolerant -eCID
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/common/moci/modules/packages/XIOS/2.0/24708/952/inc
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/m
+           ct
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/p
+           smile.MPI1 -c -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/opt/cray/libsci/13.0.1/CRAY/83/haswell/include
+           -I/opt/cray/mpt/7.0.4/gni/mpich2-cray/83/include
+           -I/opt/cray/rca/1.0.0-2.0502.60530.1.62.ari/include
+           -I/opt/cray/alps/5.2.4-2.0502.9774.31.11.ari/include
+           -I/opt/cray/xpmem/0.1-2.0502.64982.5.3.ari/include
+           -I/opt/cray/gni-headers/4.0-1.0502.10859.7.8.ari/include
+           -I/opt/cray/dmapp/7.0.1-1.0502.11080.8.76.ari/include
+           -I/opt/cray/pmi/5.0.5-1.0000.10300.134.8.ari/include
+           -I/opt/cray/ugni/6.0-1.0502.10863.8.29.ari/include
+           -I/opt/cray/udreg/2.3.2-1.0502.10518.2.17.ari/include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/pkgconfig/../include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/wlm_detect/1.0-1.0502.64649.2.1.ari/include
+           -I/opt/cray/krca/1.0.0-2.0502.63139.4.31.ari/include
+           -I/opt/cray-hss-devel/7.2.0/include /projects/jmmp/dbruciaf/NEMO/CHEC
+           KOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/wrk
+           _nemo.f90
+
+ftnlx report
+------------
+Source   : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp//projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/wrk_nemo.f90
+Date     : 04/29/2022  10:43:10
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S o u r c e   L i s t i n g
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    1.    MODULE wrk_nemo
+    2.       !!======================================================================
+    3.       !!                       ***  MODULE  wrk_nemo  ***
+    4.       !! NEMO work space:  define and allocate work-space arrays used in 
+    5.       !! all components of NEMO
+    6.       !!======================================================================
+    7.       !! History :  4.0  !  2011-01  (A Porter)  Original code
+    8.       !!----------------------------------------------------------------------
+    9.    
+   10.       !!----------------------------------------------------------------------
+   11.       !!   wrk_alloc         : get work space arrays
+   12.       !!   wrk_dealloc       : release work space arrays
+   13.       !!
+   14.       !! 1d arrays:
+   15.       !!   REAL(wp), POINTER, DIMENSION(:) :: arr1, arr2, ... arr10
+   16.       !!    or
+   17.       !!   INTEGER, POINTER, DIMENSION(:) :: arr1, arr2, ... arr10
+   18.       !!   ...
+   19.       !!   CALL wrk_alloc( nx, arr1, arr2, ... arr10, kistart = kistart )
+   20.       !!   ...
+   21.       !!   CALL wrk_dealloc( nx, arr1, arr2, ... arr10, kistart = kistart)
+   22.       !!   with:
+   23.       !!     - arr*: 1d arrays. real or (not and) integer
+   24.       !!     - nx: size of the 1d arr* arrays
+   25.       !!     - arr2, ..., arr10: optional parameters
+   26.       !!     - kistart: optional parameter to lower bound of the 1st dimension (default = 1)
+   27.       !!
+   28.       !! 2d arrays:
+   29.       !!   REAL(wp), POINTER, DIMENSION(:,:) :: arr1, arr2, ... arr10
+   30.       !!    or
+   31.       !!   INTEGER, POINTER, DIMENSION(:,:) :: arr1, arr2, ... arr10
+   32.       !!   ...
+   33.       !!   CALL wrk_alloc( nx, ny, arr1, arr2, ... arr10, kistart = kistart, kjstart = kjstart )
+   34.       !!   ...
+   35.       !!   CALL wrk_dealloc( nx, ny, arr1, arr2, ... arr10, kistart = kistart, kjstart = kjstart )
+   36.       !!   with:
+   37.       !!     - arr* 2d arrays. real or (not and) integer
+   38.       !!     - nx, ny: size of the 2d arr* arrays
+   39.       !!     - arr2, ..., arr10: optional parameters
+   40.       !!     - kistart, kjstart: optional parameters to lower bound of the 1st/2nd dimension (default = 1)
+   41.       !!
+   42.       !! 3d arrays:
+   43.       !!   REAL(wp), POINTER, DIMENSION(:,:,:) :: arr1, arr2, ... arr10
+   44.       !!    or
+   45.       !!   INTEGER, POINTER, DIMENSION(:,:,:) :: arr1, arr2, ... arr10
+   46.       !!   ...
+   47.       !!   CALL wrk_alloc( nx, ny, nz, arr1, arr2, ... arr10, kistart = kistart, kjstart = kjstart, kkstart = kkstart )
+   48.       !!   ...
+   49.       !!   CALL wrk_dealloc( nx, ny, nz, arr1, arr2, ... arr10, kistart = kistart, kjstart = kjstart, kkstart = kkstart )
+   50.       !!   with:
+   51.       !!     - arr* 3d arrays. real or (not and) integer
+   52.       !!     - nx, ny, nz: size of the 3d arr* arrays
+   53.       !!     - arr2, ..., arr10: optional parameters
+   54.       !!     - kistart, kjstart, kkstart: optional parameters to lower bound of the 1st/2nd/3rd dimension (default = 1)
+   55.       !!
+   56.       !! 4d arrays:
+   57.       !!   REAL(wp), POINTER, DIMENSION(:,:,:,:) :: arr1, arr2, ... arr10
+   58.       !!    or
+   59.       !!   INTEGER, POINTER, DIMENSION(:,:,:,:) :: arr1, arr2, ... arr10
+   60.       !!   ...
+   61.       !!   CALL wrk_alloc( nx, ny, nz, nl, arr1, arr2, ... arr10, &
+   62.       !!      &            kistart = kistart, kjstart = kjstart, kkstart = kkstart, klstart = klstart )
+   63.       !!   ...
+   64.       !!   CALL wrk_dealloc( nx, ny, nz, nl, arr1, arr2, ... arr10, &
+   65.       !!      &            kistart = kistart, kjstart = kjstart, kkstart = kkstart, klstart = klstart )
+   66.       !!   with:
+   67.       !!     - arr* 3d arrays. real or (not and) integer
+   68.       !!     - nx, ny, nz, nl: size of the 4d arr* arrays
+   69.       !!     - arr2, ..., arr10: optional parameters
+   70.       !!     - kistart, kjstart, kkstart, klstart: optional parameters to lower bound of the 1st/2nd/3rd/4th dimension (default = 1)
+   71.       !!   
+   72.       !!----------------------------------------------------------------------
+   73.       USE par_oce        ! ocean parameters
+                 ^                                 
+ftn-1193 ftn: CAUTION WRK_NEMO, File = wrk_nemo.f90, Line = 73, Column = 8 
+  Module "PAR_KIND" is indirectly used in module "PAR_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_kind.o".  That file no
+  longer exists.
+
+   74.    
+   75.       IMPLICIT NONE
+   76.       PRIVATE
+   77.       
+   78.       PUBLIC wrk_alloc, wrk_dealloc, wrk_list
+   79.    
+   80.       INTERFACE wrk_alloc
+   81.          MODULE PROCEDURE wrk_alloc_1dr, wrk_alloc_2dr, wrk_alloc_3dr, wrk_alloc_4dr,   &
+   82.             &             wrk_alloc_1di, wrk_alloc_2di, wrk_alloc_3di, wrk_alloc_4di
+   83.       END INTERFACE
+   84.    
+   85.       INTERFACE wrk_dealloc
+   86.          MODULE PROCEDURE wrk_dealloc_1dr, wrk_dealloc_2dr, wrk_dealloc_3dr, wrk_dealloc_4dr,   &
+   87.             &             wrk_dealloc_1di, wrk_dealloc_2di, wrk_dealloc_3di, wrk_dealloc_4di
+   88.       END INTERFACE
+   89.    
+   90.    
+   91.       INTEGER, PARAMETER :: jparray = 1000
+   92.       INTEGER, PARAMETER :: jpmaxdim = 4
+   93.    
+   94.       INTEGER, PARAMETER :: jpnotdefined = 0
+   95.       INTEGER, PARAMETER :: jpinteger = 1
+   96.       INTEGER, PARAMETER :: jpreal = 2
+   97.      
+   98.       TYPE leaf
+   99.          LOGICAL :: in_use
+  100.          INTEGER :: indic
+  101.          INTEGER , DIMENSION(:)      , POINTER :: iwrk1d => NULL()    
+  102.          INTEGER , DIMENSION(:,:)    , POINTER :: iwrk2d => NULL()    
+  103.          INTEGER , DIMENSION(:,:,:)  , POINTER :: iwrk3d => NULL()    
+  104.          INTEGER , DIMENSION(:,:,:,:), POINTER :: iwrk4d => NULL()    
+  105.          REAL(wp), DIMENSION(:)      , POINTER :: zwrk1d => NULL()    
+  106.          REAL(wp), DIMENSION(:,:)    , POINTER :: zwrk2d => NULL()    
+  107.          REAL(wp), DIMENSION(:,:,:)  , POINTER :: zwrk3d => NULL()    
+  108.          REAL(wp), DIMENSION(:,:,:,:), POINTER :: zwrk4d => NULL()    
+  109.          TYPE (leaf), POINTER :: next => NULL() 
+  110.          TYPE (leaf), POINTER :: prev => NULL() 
+  111.       END TYPE leaf
+  112.       
+  113.       TYPE branch
+  114.          INTEGER :: itype
+  115.          INTEGER, DIMENSION(jpmaxdim) :: ishape, istart
+  116.          TYPE(leaf), POINTER :: start => NULL()     
+  117.          TYPE(leaf), POINTER :: current => NULL()      
+  118.       END TYPE branch
+  119.    
+  120.       TYPE(branch), SAVE, DIMENSION(jparray) :: tree
+  121.    
+  122.       LOGICAL ::   linit = .FALSE.
+  123.       LOGICAL ::   ldebug = .FALSE.
+  124.       !!----------------------------------------------------------------------
+  125.       !! NEMO/OPA 4.0 , NEMO Consortium (2011)
+  126.       !! $Id: wrk_nemo.F90 5514 2015-06-30 10:06:05Z smasson $
+  127.       !! Software governed by the CeCILL licence     (./LICENSE)
+  128.       !!----------------------------------------------------------------------
+  129.    CONTAINS
+  130.    
+  131.       SUBROUTINE wrk_list
+  132.          ! to list 3d arrays in use, to be duplicated for all cases 
+  133.          WRITE(*,*) 'Arrays in use :'
+  134.          !      CALL listage(tree_3d(1)%s_wrk_3d_start)
+  135.          WRITE(*,*) ''
+  136.          
+  137.       END SUBROUTINE wrk_list
+  138.       
+  139.       
+  140.       RECURSIVE SUBROUTINE listage(ptr)
+  141.          
+  142.          TYPE(leaf), POINTER, INTENT(in) :: ptr
+  143.          !
+  144.          IF( ASSOCIATED(ptr%next) ) CALL listage(ptr%next)
+  145.          WRITE(*,*) ptr%in_use, ptr%indic   
+  146.          
+  147.       END SUBROUTINE listage
+  148.    
+  149.    
+  150.       SUBROUTINE wrk_alloc_1dr( kidim, p1d01, p1d02, p1d03, p1d04, p1d05, p1d06, p1d07, p1d08, p1d09, p1d10, kistart )
+  151.          INTEGER                        , INTENT(in   )           ::   kidim   ! dimensions size
+  152.          REAL(wp), POINTER, DIMENSION(:), INTENT(inout)           ::   p1d01
+  153.          REAL(wp), POINTER, DIMENSION(:), INTENT(inout), OPTIONAL ::   p1d02,p1d03,p1d04,p1d05,p1d06,p1d07,p1d08,p1d09,p1d10
+  154.          INTEGER                        , INTENT(in   ), OPTIONAL ::   kistart
+  155.          !
+  156.          CALL wrk_alloc_xd( kidim, 0, 0, 0, kistart, 1, 1, 1,                                            &
+  157.             &               p1d01 = p1d01, p1d02 = p1d02, p1d03 = p1d03, p1d04 = p1d04, p1d05 = p1d05,   &
+  158.             &               p1d06 = p1d06, p1d07 = p1d07, p1d08 = p1d08, p1d09 = p1d09, p1d10 = p1d10    )
+  159.          !
+  160.       END SUBROUTINE wrk_alloc_1dr
+  161.    
+  162.    
+  163.       SUBROUTINE wrk_alloc_1di( kidim, k1d01, k1d02, k1d03, k1d04, k1d05, k1d06, k1d07, k1d08, k1d09, k1d10, kistart )
+  164.          INTEGER                        , INTENT(in   )           ::   kidim   ! dimensions size
+  165.          INTEGER , POINTER, DIMENSION(:), INTENT(inout)           ::   k1d01
+  166.          INTEGER , POINTER, DIMENSION(:), INTENT(inout), OPTIONAL ::   k1d02,k1d03,k1d04,k1d05,k1d06,k1d07,k1d08,k1d09,k1d10
+  167.          INTEGER                        , INTENT(in   ), OPTIONAL ::   kistart
+  168.          !
+  169.          CALL wrk_alloc_xd( kidim, 0, 0, 0, kistart, 1, 1, 1,                                            &
+  170.             &               k1d01 = k1d01, k1d02 = k1d02, k1d03 = k1d03, k1d04 = k1d04, k1d05 = k1d05,   &
+  171.             &               k1d06 = k1d06, k1d07 = k1d07, k1d08 = k1d08, k1d09 = k1d09, k1d10 = k1d10    )
+  172.          !
+  173.       END SUBROUTINE wrk_alloc_1di
+  174.    
+  175.    
+  176.       SUBROUTINE wrk_alloc_2dr( kidim, kjdim, p2d01, p2d02, p2d03, p2d04, p2d05, p2d06, p2d07, p2d08, p2d09, p2d10, kistart, kjstart )
+  177.          INTEGER                          , INTENT(in   )           ::   kidim, kjdim   ! dimensions size
+  178.          REAL(wp), POINTER, DIMENSION(:,:), INTENT(inout)           ::   p2d01
+  179.          REAL(wp), POINTER, DIMENSION(:,:), INTENT(inout), OPTIONAL ::   p2d02,p2d03,p2d04,p2d05,p2d06,p2d07,p2d08,p2d09,p2d10
+  180.          INTEGER                          , INTENT(in   ), OPTIONAL ::   kistart, kjstart
+  181.          !
+  182.          CALL wrk_alloc_xd( kidim, kjdim, 0, 0, kistart, kjstart, 1, 1,                                  &
+  183.             &               p2d01 = p2d01, p2d02 = p2d02, p2d03 = p2d03, p2d04 = p2d04, p2d05 = p2d05,   &
+  184.             &               p2d06 = p2d06, p2d07 = p2d07, p2d08 = p2d08, p2d09 = p2d09, p2d10 = p2d10    )
+  185.          !
+  186.       END SUBROUTINE wrk_alloc_2dr
+  187.    
+  188.    
+  189.       SUBROUTINE wrk_alloc_2di( kidim, kjdim, k2d01, k2d02, k2d03, k2d04, k2d05, k2d06, k2d07, k2d08, k2d09, k2d10, kistart, kjstart )
+  190.          INTEGER                          , INTENT(in   )           ::   kidim, kjdim   ! dimensions size
+  191.          INTEGER , POINTER, DIMENSION(:,:), INTENT(inout)           ::   k2d01
+  192.          INTEGER , POINTER, DIMENSION(:,:), INTENT(inout), OPTIONAL ::   k2d02,k2d03,k2d04,k2d05,k2d06,k2d07,k2d08,k2d09,k2d10
+  193.          INTEGER                          , INTENT(in   ), OPTIONAL ::   kistart, kjstart
+  194.          !
+  195.          CALL wrk_alloc_xd( kidim, kjdim, 0, 0, kistart, kjstart, 1, 1,                                  &
+  196.             &               k2d01 = k2d01, k2d02 = k2d02, k2d03 = k2d03, k2d04 = k2d04, k2d05 = k2d05,   &
+  197.             &               k2d06 = k2d06, k2d07 = k2d07, k2d08 = k2d08, k2d09 = k2d09, k2d10 = k2d10    )
+  198.          !
+  199.       END SUBROUTINE wrk_alloc_2di
+  200.    
+  201.    
+  202.       SUBROUTINE wrk_alloc_3dr( kidim, kjdim, kkdim, p3d01, p3d02, p3d03, p3d04, p3d05, p3d06, p3d07, p3d08, p3d09, p3d10,   &
+  203.          &                      kistart, kjstart, kkstart )
+  204.          INTEGER                            , INTENT(in   )           ::   kidim, kjdim, kkdim   ! dimensions size
+  205.          REAL(wp), POINTER, DIMENSION(:,:,:), INTENT(inout)           ::   p3d01
+  206.          REAL(wp), POINTER, DIMENSION(:,:,:), INTENT(inout), OPTIONAL ::   p3d02,p3d03,p3d04,p3d05,p3d06,p3d07,p3d08,p3d09,p3d10
+  207.          INTEGER                            , INTENT(in   ), OPTIONAL ::   kistart, kjstart, kkstart
+  208.          !
+  209.          CALL wrk_alloc_xd( kidim, kjdim, kkdim, 0, kistart, kjstart, kkstart, 1,                        &
+  210.             &               p3d01 = p3d01, p3d02 = p3d02, p3d03 = p3d03, p3d04 = p3d04, p3d05 = p3d05,   &
+  211.             &               p3d06 = p3d06, p3d07 = p3d07, p3d08 = p3d08, p3d09 = p3d09, p3d10 = p3d10    )
+  212.          !
+  213.       END SUBROUTINE wrk_alloc_3dr
+  214.    
+  215.    
+  216.       SUBROUTINE wrk_alloc_3di( kidim, kjdim, kkdim, k3d01, k3d02, k3d03, k3d04, k3d05, k3d06, k3d07, k3d08, k3d09, k3d10,   &
+  217.          &                      kistart, kjstart, kkstart )
+  218.          INTEGER                            , INTENT(in   )           ::   kidim, kjdim, kkdim   ! dimensions size
+  219.          INTEGER , POINTER, DIMENSION(:,:,:), INTENT(inout)           ::   k3d01
+  220.          INTEGER , POINTER, DIMENSION(:,:,:), INTENT(inout), OPTIONAL ::   k3d02,k3d03,k3d04,k3d05,k3d06,k3d07,k3d08,k3d09,k3d10
+  221.          INTEGER                            , INTENT(in   ), OPTIONAL ::   kistart, kjstart, kkstart
+  222.          !
+  223.          CALL wrk_alloc_xd( kidim, kjdim, kkdim, 0, kistart, kjstart, kkstart, 1,                        &
+  224.             &               k3d01 = k3d01, k3d02 = k3d02, k3d03 = k3d03, k3d04 = k3d04, k3d05 = k3d05,   &
+  225.             &               k3d06 = k3d06, k3d07 = k3d07, k3d08 = k3d08, k3d09 = k3d09, k3d10 = k3d10    )
+  226.          !
+  227.       END SUBROUTINE wrk_alloc_3di
+  228.    
+  229.    
+  230.       SUBROUTINE wrk_alloc_4dr( kidim, kjdim, kkdim, kldim, p4d01, p4d02, p4d03, p4d04, p4d05, p4d06, p4d07, p4d08, p4d09, p4d10,   &
+  231.          &                      kistart, kjstart, kkstart, klstart )
+  232.          INTEGER                              , INTENT(in   )           ::   kidim, kjdim, kkdim, kldim   ! dimensions size
+  233.          REAL(wp), POINTER, DIMENSION(:,:,:,:), INTENT(inout)           ::   p4d01
+  234.          REAL(wp), POINTER, DIMENSION(:,:,:,:), INTENT(inout), OPTIONAL ::   p4d02,p4d03,p4d04,p4d05,p4d06,p4d07,p4d08,p4d09,p4d10
+  235.          INTEGER                              , INTENT(in   ), OPTIONAL ::   kistart, kjstart, kkstart, klstart
+  236.          !
+  237.          CALL wrk_alloc_xd( kidim, kjdim, kkdim, kldim, kistart, kjstart, kkstart, klstart,              &
+  238.             &               p4d01 = p4d01, p4d02 = p4d02, p4d03 = p4d03, p4d04 = p4d04, p4d05 = p4d05,   &
+  239.             &               p4d06 = p4d06, p4d07 = p4d07, p4d08 = p4d08, p4d09 = p4d09, p4d10 = p4d10    )
+  240.          !
+  241.       END SUBROUTINE wrk_alloc_4dr
+  242.    
+  243.    
+  244.       SUBROUTINE wrk_alloc_4di( kidim, kjdim, kkdim, kldim, k4d01, k4d02, k4d03, k4d04, k4d05, k4d06, k4d07, k4d08, k4d09, k4d10,   &
+  245.          &                      kistart, kjstart, kkstart, klstart )
+  246.          INTEGER                              , INTENT(in   )           ::   kidim, kjdim, kkdim, kldim   ! dimensions size
+  247.          INTEGER , POINTER, DIMENSION(:,:,:,:), INTENT(inout)           ::   k4d01
+  248.          INTEGER , POINTER, DIMENSION(:,:,:,:), INTENT(inout), OPTIONAL ::   k4d02,k4d03,k4d04,k4d05,k4d06,k4d07,k4d08,k4d09,k4d10
+  249.          INTEGER                              , INTENT(in   ), OPTIONAL ::   kistart, kjstart, kkstart, klstart
+  250.          !
+  251.          CALL wrk_alloc_xd( kidim, kjdim, kkdim, kldim, kistart, kjstart, kkstart, klstart,              &
+  252.             &               k4d01 = k4d01, k4d02 = k4d02, k4d03 = k4d03, k4d04 = k4d04, k4d05 = k4d05,   &
+  253.             &               k4d06 = k4d06, k4d07 = k4d07, k4d08 = k4d08, k4d09 = k4d09, k4d10 = k4d10    )
+  254.          !
+  255.       END SUBROUTINE wrk_alloc_4di
+  256.    
+  257.    
+  258.       SUBROUTINE wrk_dealloc_1dr( kidim, p1d01, p1d02, p1d03, p1d04, p1d05, p1d06, p1d07, p1d08, p1d09, p1d10, kistart )
+  259.          INTEGER                        , INTENT(in   )           ::   kidim   ! dimensions size
+  260.          REAL(wp), POINTER, DIMENSION(:), INTENT(inout)           ::   p1d01
+  261.          REAL(wp), POINTER, DIMENSION(:), INTENT(inout), OPTIONAL ::   p1d02,p1d03,p1d04,p1d05,p1d06,p1d07,p1d08,p1d09,p1d10
+  262.          INTEGER                        , INTENT(in   ), OPTIONAL ::   kistart
+  263.          !
+  264.          INTEGER :: icnt, jn
+  265.          icnt = 1 + COUNT( (/                PRESENT(p1d02),PRESENT(p1d03),PRESENT(p1d04),PRESENT(p1d05),   &
+ftn-6297 ftn: VECTOR File = wrk_nemo.f90, Line = 265 
+  A loop starting at line 265 was not vectorized because a recurrence was found at line 265.
+
+  266.             &                 PRESENT(p1d06),PRESENT(p1d07),PRESENT(p1d08),PRESENT(p1d09),PRESENT(p1d10) /) )
+  267.          DO jn = 1, icnt   ;   CALL wrk_deallocbase( jpreal, kidim, 0, 0, 0, kistart, 1, 1, 1)   ;   END DO
+  268.          !
+  269.       END SUBROUTINE wrk_dealloc_1dr
+ftn-5004 ftn: NOTE File = wrk_nemo.f90, Line = 269 
+  Dummy Argument "P1D01" is not referenced or defined.
+
+  270.    
+  271.    
+  272.       SUBROUTINE wrk_dealloc_1di( kidim, k1d01, k1d02, k1d03, k1d04, k1d05, k1d06, k1d07, k1d08, k1d09, k1d10, kistart )
+  273.          INTEGER                        , INTENT(in   )           ::   kidim   ! dimensions size
+  274.          INTEGER , POINTER, DIMENSION(:), INTENT(inout)           ::   k1d01
+  275.          INTEGER , POINTER, DIMENSION(:), INTENT(inout), OPTIONAL ::   k1d02,k1d03,k1d04,k1d05,k1d06,k1d07,k1d08,k1d09,k1d10
+  276.          INTEGER                        , INTENT(in   ), OPTIONAL ::   kistart
+  277.          !
+  278.          INTEGER :: icnt, jn
+  279.          icnt = 1 + COUNT( (/                PRESENT(k1d02),PRESENT(k1d03),PRESENT(k1d04),PRESENT(k1d05),   &
+ftn-6297 ftn: VECTOR File = wrk_nemo.f90, Line = 279 
+  A loop starting at line 279 was not vectorized because a recurrence was found at line 279.
+
+  280.             &                 PRESENT(k1d06),PRESENT(k1d07),PRESENT(k1d08),PRESENT(k1d09),PRESENT(k1d10) /) )
+  281.          DO jn = 1, icnt   ;   CALL wrk_deallocbase( jpinteger, kidim, 0, 0, 0, kistart, 1, 1, 1 )   ;   END DO
+  282.          !
+  283.       END SUBROUTINE wrk_dealloc_1di
+ftn-5004 ftn: NOTE File = wrk_nemo.f90, Line = 283 
+  Dummy Argument "K1D01" is not referenced or defined.
+
+  284.    
+  285.    
+  286.       SUBROUTINE wrk_dealloc_2dr( kidim, kjdim, p2d01, p2d02, p2d03, p2d04, p2d05, p2d06, p2d07, p2d08, p2d09, p2d10, kistart,kjstart )
+  287.          INTEGER                          , INTENT(in   )           ::   kidim, kjdim   ! dimensions size
+  288.          REAL(wp), POINTER, DIMENSION(:,:), INTENT(inout)           ::   p2d01
+  289.          REAL(wp), POINTER, DIMENSION(:,:), INTENT(inout), OPTIONAL ::   p2d02,p2d03,p2d04,p2d05,p2d06,p2d07,p2d08,p2d09,p2d10
+  290.          INTEGER                          , INTENT(in   ), OPTIONAL ::   kistart, kjstart
+  291.          !
+  292.          INTEGER :: icnt, jn
+  293.          icnt = 1 + COUNT( (/                PRESENT(p2d02),PRESENT(p2d03),PRESENT(p2d04),PRESENT(p2d05),   &
+ftn-6297 ftn: VECTOR File = wrk_nemo.f90, Line = 293 
+  A loop starting at line 293 was not vectorized because a recurrence was found at line 293.
+
+  294.             &                 PRESENT(p2d06),PRESENT(p2d07),PRESENT(p2d08),PRESENT(p2d09),PRESENT(p2d10) /) )
+  295.          DO jn = 1, icnt   ;   CALL wrk_deallocbase( jpreal, kidim, kjdim, 0, 0, kistart, kjstart, 1, 1 )   ;   END DO
+  296.          !
+  297.       END SUBROUTINE wrk_dealloc_2dr
+ftn-5004 ftn: NOTE File = wrk_nemo.f90, Line = 297 
+  Dummy Argument "P2D01" is not referenced or defined.
+
+  298.    
+  299.    
+  300.       SUBROUTINE wrk_dealloc_2di( kidim, kjdim, k2d01, k2d02, k2d03, k2d04, k2d05, k2d06, k2d07, k2d08, k2d09, k2d10, kistart,kjstart )
+  301.          INTEGER                          , INTENT(in   )           ::   kidim, kjdim   ! dimensions size
+  302.          INTEGER , POINTER, DIMENSION(:,:), INTENT(inout)           ::   k2d01
+  303.          INTEGER , POINTER, DIMENSION(:,:), INTENT(inout), OPTIONAL ::   k2d02,k2d03,k2d04,k2d05,k2d06,k2d07,k2d08,k2d09,k2d10
+  304.          INTEGER                          , INTENT(in   ), OPTIONAL ::   kistart, kjstart
+  305.          !
+  306.          INTEGER :: icnt, jn
+  307.          icnt = 1 + COUNT( (/                PRESENT(k2d02),PRESENT(k2d03),PRESENT(k2d04),PRESENT(k2d05),   &
+ftn-6297 ftn: VECTOR File = wrk_nemo.f90, Line = 307 
+  A loop starting at line 307 was not vectorized because a recurrence was found at line 307.
+
+  308.             &                 PRESENT(k2d06),PRESENT(k2d07),PRESENT(k2d08),PRESENT(k2d09),PRESENT(k2d10) /) )
+  309.          DO jn = 1, icnt   ;   CALL wrk_deallocbase( jpinteger, kidim, kjdim, 0, 0, kistart, kjstart, 1, 1 )   ;   END DO
+  310.          !
+  311.       END SUBROUTINE wrk_dealloc_2di
+ftn-5004 ftn: NOTE File = wrk_nemo.f90, Line = 311 
+  Dummy Argument "K2D01" is not referenced or defined.
+
+  312.    
+  313.    
+  314.       SUBROUTINE wrk_dealloc_3dr( kidim, kjdim, kkdim, p3d01, p3d02, p3d03, p3d04, p3d05, p3d06, p3d07, p3d08, p3d09, p3d10,   &
+  315.          &                        kistart, kjstart, kkstart )
+  316.          INTEGER                            , INTENT(in   )           ::   kidim, kjdim, kkdim   ! dimensions size
+  317.          REAL(wp), POINTER, DIMENSION(:,:,:), INTENT(inout)           ::   p3d01
+  318.          REAL(wp), POINTER, DIMENSION(:,:,:), INTENT(inout), OPTIONAL ::   p3d02,p3d03,p3d04,p3d05,p3d06,p3d07,p3d08,p3d09,p3d10
+  319.          INTEGER                            , INTENT(in   ), OPTIONAL ::   kistart, kjstart, kkstart
+  320.          !
+  321.          INTEGER :: icnt, jn
+  322.          icnt = 1 + COUNT( (/                PRESENT(p3d02),PRESENT(p3d03),PRESENT(p3d04),PRESENT(p3d05),   &
+ftn-6297 ftn: VECTOR File = wrk_nemo.f90, Line = 322 
+  A loop starting at line 322 was not vectorized because a recurrence was found at line 322.
+
+  323.             &                 PRESENT(p3d06),PRESENT(p3d07),PRESENT(p3d08),PRESENT(p3d09),PRESENT(p3d10) /) )
+  324.          DO jn = 1, icnt   ;   CALL wrk_deallocbase( jpreal, kidim, kjdim, kkdim, 0, kistart, kjstart, kkstart, 1 )   ;   END DO
+  325.          !
+  326.       END SUBROUTINE wrk_dealloc_3dr
+ftn-5004 ftn: NOTE File = wrk_nemo.f90, Line = 326 
+  Dummy Argument "P3D01" is not referenced or defined.
+
+  327.    
+  328.    
+  329.       SUBROUTINE wrk_dealloc_3di( kidim, kjdim, kkdim, k3d01, k3d02, k3d03, k3d04, k3d05, k3d06, k3d07, k3d08, k3d09, k3d10,   &
+  330.          &                        kistart, kjstart, kkstart )
+  331.          INTEGER                            , INTENT(in   )           ::   kidim, kjdim, kkdim   ! dimensions size
+  332.          INTEGER , POINTER, DIMENSION(:,:,:), INTENT(inout)           ::   k3d01
+  333.          INTEGER , POINTER, DIMENSION(:,:,:), INTENT(inout), OPTIONAL ::   k3d02,k3d03,k3d04,k3d05,k3d06,k3d07,k3d08,k3d09,k3d10
+  334.          INTEGER                            , INTENT(in   ), OPTIONAL ::   kistart, kjstart, kkstart
+  335.          !
+  336.          INTEGER :: icnt, jn
+  337.          icnt = 1 + COUNT( (/                PRESENT(k3d02),PRESENT(k3d03),PRESENT(k3d04),PRESENT(k3d05),   &
+ftn-6297 ftn: VECTOR File = wrk_nemo.f90, Line = 337 
+  A loop starting at line 337 was not vectorized because a recurrence was found at line 337.
+
+  338.             &                 PRESENT(k3d06),PRESENT(k3d07),PRESENT(k3d08),PRESENT(k3d09),PRESENT(k3d10) /) )
+  339.          DO jn = 1, icnt   ;   CALL wrk_deallocbase( jpinteger, kidim, kjdim, kkdim, 0, kistart, kjstart, kkstart, 1 )   ;   END DO
+  340.          !
+  341.       END SUBROUTINE wrk_dealloc_3di
+ftn-5004 ftn: NOTE File = wrk_nemo.f90, Line = 341 
+  Dummy Argument "K3D01" is not referenced or defined.
+
+  342.    
+  343.    
+  344.       SUBROUTINE wrk_dealloc_4dr( kidim, kjdim, kkdim, kldim, p4d01, p4d02, p4d03, p4d04, p4d05, p4d06, p4d07, p4d08, p4d09, p4d10,   &
+  345.          &                        kistart, kjstart, kkstart, klstart )
+  346.          INTEGER                              , INTENT(in   )           ::   kidim, kjdim, kkdim, kldim   ! dimensions size
+  347.          REAL(wp), POINTER, DIMENSION(:,:,:,:), INTENT(inout)           ::   p4d01
+  348.          REAL(wp), POINTER, DIMENSION(:,:,:,:), INTENT(inout), OPTIONAL ::   p4d02,p4d03,p4d04,p4d05,p4d06,p4d07,p4d08,p4d09,p4d10
+  349.          INTEGER                              , INTENT(in   ), OPTIONAL ::   kistart, kjstart, kkstart, klstart
+  350.          !
+  351.          INTEGER :: icnt, jn
+  352.          icnt = 1 + COUNT( (/                PRESENT(p4d02),PRESENT(p4d03),PRESENT(p4d04),PRESENT(p4d05),   &
+ftn-6297 ftn: VECTOR File = wrk_nemo.f90, Line = 352 
+  A loop starting at line 352 was not vectorized because a recurrence was found at line 352.
+
+  353.             &                 PRESENT(p4d06),PRESENT(p4d07),PRESENT(p4d08),PRESENT(p4d09),PRESENT(p4d10) /) )
+  354.          DO jn = 1, icnt ; CALL wrk_deallocbase( jpreal, kidim, kjdim, kkdim, kldim, kistart, kjstart, kkstart, klstart ) ; END DO
+  355.          !
+  356.       END SUBROUTINE wrk_dealloc_4dr
+ftn-5004 ftn: NOTE File = wrk_nemo.f90, Line = 356 
+  Dummy Argument "P4D01" is not referenced or defined.
+
+  357.    
+  358.    
+  359.       SUBROUTINE wrk_dealloc_4di( kidim, kjdim, kkdim, kldim, k4d01, k4d02, k4d03, k4d04, k4d05, k4d06, k4d07, k4d08, k4d09, k4d10,   &
+  360.          &                        kistart, kjstart, kkstart, klstart )
+  361.          INTEGER                              , INTENT(in   )           ::   kidim, kjdim, kkdim, kldim   ! dimensions size
+  362.          INTEGER , POINTER, DIMENSION(:,:,:,:), INTENT(inout)           ::   k4d01
+  363.          INTEGER , POINTER, DIMENSION(:,:,:,:), INTENT(inout), OPTIONAL ::   k4d02,k4d03,k4d04,k4d05,k4d06,k4d07,k4d08,k4d09,k4d10
+  364.          INTEGER                              , INTENT(in   ), OPTIONAL ::   kistart, kjstart, kkstart, klstart
+  365.          !
+  366.          INTEGER :: icnt, jn
+  367.          icnt = 1 + COUNT( (/                PRESENT(k4d02),PRESENT(k4d03),PRESENT(k4d04),PRESENT(k4d05),   &
+ftn-6297 ftn: VECTOR File = wrk_nemo.f90, Line = 367 
+  A loop starting at line 367 was not vectorized because a recurrence was found at line 367.
+
+  368.             &                 PRESENT(k4d06),PRESENT(k4d07),PRESENT(k4d08),PRESENT(k4d09),PRESENT(k4d10) /) )
+  369.          DO jn = 1, icnt ; CALL wrk_deallocbase( jpinteger, kidim, kjdim, kkdim, kldim, kistart, kjstart, kkstart, klstart ) ; END DO
+  370.          !
+  371.       END SUBROUTINE wrk_dealloc_4di
+ftn-5004 ftn: NOTE File = wrk_nemo.f90, Line = 371 
+  Dummy Argument "K4D01" is not referenced or defined.
+
+  372.    
+  373.    
+  374.       SUBROUTINE wrk_alloc_xd( kidim, kjdim, kkdim, kldim,                                             &
+  375.          &                     kisrt, kjsrt, kksrt, klsrt,                                             &
+  376.          &                     k1d01, k1d02, k1d03, k1d04, k1d05, k1d06, k1d07, k1d08, k1d09, k1d10,   &
+  377.          &                     k2d01, k2d02, k2d03, k2d04, k2d05, k2d06, k2d07, k2d08, k2d09, k2d10,   &
+  378.          &                     k3d01, k3d02, k3d03, k3d04, k3d05, k3d06, k3d07, k3d08, k3d09, k3d10,   &
+  379.          &                     k4d01, k4d02, k4d03, k4d04, k4d05, k4d06, k4d07, k4d08, k4d09, k4d10,   &
+  380.          &                     p1d01, p1d02, p1d03, p1d04, p1d05, p1d06, p1d07, p1d08, p1d09, p1d10,   &
+  381.          &                     p2d01, p2d02, p2d03, p2d04, p2d05, p2d06, p2d07, p2d08, p2d09, p2d10,   &
+  382.          &                     p3d01, p3d02, p3d03, p3d04, p3d05, p3d06, p3d07, p3d08, p3d09, p3d10,   &
+  383.          &                     p4d01, p4d02, p4d03, p4d04, p4d05, p4d06, p4d07, p4d08, p4d09, p4d10    )
+  384.          INTEGER                              ,INTENT(in   )         ::   kidim, kjdim, kkdim, kldim   ! dimensions size
+  385.          INTEGER                              ,INTENT(in   ),OPTIONAL::   kisrt, kjsrt, kksrt, klsrt
+  386.          INTEGER , POINTER, DIMENSION(:      ),INTENT(inout),OPTIONAL::   k1d01,k1d02,k1d03,k1d04,k1d05,k1d06,k1d07,k1d08,k1d09,k1d10
+  387.          INTEGER , POINTER, DIMENSION(:,:    ),INTENT(inout),OPTIONAL::   k2d01,k2d02,k2d03,k2d04,k2d05,k2d06,k2d07,k2d08,k2d09,k2d10
+  388.          INTEGER , POINTER, DIMENSION(:,:,:  ),INTENT(inout),OPTIONAL::   k3d01,k3d02,k3d03,k3d04,k3d05,k3d06,k3d07,k3d08,k3d09,k3d10
+  389.          INTEGER , POINTER, DIMENSION(:,:,:,:),INTENT(inout),OPTIONAL::   k4d01,k4d02,k4d03,k4d04,k4d05,k4d06,k4d07,k4d08,k4d09,k4d10
+  390.          REAL(wp), POINTER, DIMENSION(:      ),INTENT(inout),OPTIONAL::   p1d01,p1d02,p1d03,p1d04,p1d05,p1d06,p1d07,p1d08,p1d09,p1d10
+  391.          REAL(wp), POINTER, DIMENSION(:,:    ),INTENT(inout),OPTIONAL::   p2d01,p2d02,p2d03,p2d04,p2d05,p2d06,p2d07,p2d08,p2d09,p2d10
+  392.          REAL(wp), POINTER, DIMENSION(:,:,:  ),INTENT(inout),OPTIONAL::   p3d01,p3d02,p3d03,p3d04,p3d05,p3d06,p3d07,p3d08,p3d09,p3d10
+  393.          REAL(wp), POINTER, DIMENSION(:,:,:,:),INTENT(inout),OPTIONAL::   p4d01,p4d02,p4d03,p4d04,p4d05,p4d06,p4d07,p4d08,p4d09,p4d10
+  394.          !
+  395.          LOGICAL ::   llpres
+  396.          INTEGER ::   jn, iisrt, ijsrt, iksrt, ilsrt
+  397.          !
+  398.          IF( .NOT. linit ) THEN
+  399.             tree(:)%itype = jpnotdefined
+ftn-6332 ftn: VECTOR File = wrk_nemo.f90, Line = 399 
+  A loop starting at line 399 was not vectorized because it does not map well onto the target architecture.
+
+  400.             DO jn = 1, jparray   ;   tree(jn)%ishape(:) = 0   ;   tree(jn)%istart(:) = 0   ;   END DO
+ftn-6263 ftn: VECTOR File = wrk_nemo.f90, Line = 400 
+  A loop starting at line 400 was not vectorized because it contains a reference to a non-vector intrinsic on line 400.
+
+  401.             linit = .TRUE.
+  402.          ENDIF
+  403.    
+  404.          IF( PRESENT(kisrt) ) THEN   ;   iisrt =  kisrt   ;   ELSE   ;   iisrt = 1   ;   ENDIF 
+  405.          IF( PRESENT(kjsrt) ) THEN   ;   ijsrt =  kjsrt   ;   ELSE   ;   ijsrt = 1   ;   ENDIF 
+  406.          IF( PRESENT(kksrt) ) THEN   ;   iksrt =  kksrt   ;   ELSE   ;   iksrt = 1   ;   ENDIF 
+  407.          IF( PRESENT(klsrt) ) THEN   ;   ilsrt =  klsrt   ;   ELSE   ;   ilsrt = 1   ;   ENDIF 
+  408.    
+  409.          llpres =  PRESENT(k1d01) .OR. PRESENT(k2d01) .OR. PRESENT(k3d01) .OR. PRESENT(k4d01)   &
+  410.             & .OR. PRESENT(p1d01) .OR. PRESENT(p2d01) .OR. PRESENT(p3d01) .OR. PRESENT(p4d01)
+  411.          IF( llpres ) CALL wrk_allocbase( kidim, kjdim, kkdim, kldim, iisrt, ijsrt, iksrt, ilsrt,   &
+  412.             &                             k1d01, k2d01, k3d01, k4d01, p1d01, p2d01, p3d01, p4d01    )
+  413.          llpres =  PRESENT(k1d02) .OR. PRESENT(k2d02) .OR. PRESENT(k3d02) .OR. PRESENT(k4d02)   &
+  414.             & .OR. PRESENT(p1d02) .OR. PRESENT(p2d02) .OR. PRESENT(p3d02) .OR. PRESENT(p4d02)
+  415.          IF( llpres ) CALL wrk_allocbase( kidim, kjdim, kkdim, kldim, iisrt, ijsrt, iksrt, ilsrt,   &
+  416.             &                             k1d02, k2d02, k3d02, k4d02, p1d02, p2d02, p3d02, p4d02    )
+  417.          llpres =  PRESENT(k1d03) .OR. PRESENT(k2d03) .OR. PRESENT(k3d03) .OR. PRESENT(k4d03)   &
+  418.             & .OR. PRESENT(p1d03) .OR. PRESENT(p2d03) .OR. PRESENT(p3d03) .OR. PRESENT(p4d03)
+  419.          IF( llpres ) CALL wrk_allocbase( kidim, kjdim, kkdim, kldim, iisrt, ijsrt, iksrt, ilsrt,   &
+  420.             &                             k1d03, k2d03, k3d03, k4d03, p1d03, p2d03, p3d03, p4d03    )
+  421.          llpres =  PRESENT(k1d04) .OR. PRESENT(k2d04) .OR. PRESENT(k3d04) .OR. PRESENT(k4d04)   &
+  422.             & .OR. PRESENT(p1d04) .OR. PRESENT(p2d04) .OR. PRESENT(p3d04) .OR. PRESENT(p4d04)
+  423.          IF( llpres ) CALL wrk_allocbase( kidim, kjdim, kkdim, kldim, iisrt, ijsrt, iksrt, ilsrt,   &
+  424.             &                             k1d04, k2d04, k3d04, k4d04, p1d04, p2d04, p3d04, p4d04    )
+  425.          llpres =  PRESENT(k1d05) .OR. PRESENT(k2d05) .OR. PRESENT(k3d05) .OR. PRESENT(k4d05)   &
+  426.             & .OR. PRESENT(p1d05) .OR. PRESENT(p2d05) .OR. PRESENT(p3d05) .OR. PRESENT(p4d05)
+  427.          IF( llpres ) CALL wrk_allocbase( kidim, kjdim, kkdim, kldim, iisrt, ijsrt, iksrt, ilsrt,   &
+  428.             &                             k1d05, k2d05, k3d05, k4d05, p1d05, p2d05, p3d05, p4d05    )
+  429.          llpres =  PRESENT(k1d06) .OR. PRESENT(k2d06) .OR. PRESENT(k3d06) .OR. PRESENT(k4d06)   &
+  430.             & .OR. PRESENT(p1d06) .OR. PRESENT(p2d06) .OR. PRESENT(p3d06) .OR. PRESENT(p4d06)
+  431.          IF( llpres ) CALL wrk_allocbase( kidim, kjdim, kkdim, kldim, iisrt, ijsrt, iksrt, ilsrt,   &
+  432.             &                             k1d06, k2d06, k3d06, k4d06, p1d06, p2d06, p3d06, p4d06    )
+  433.          llpres =  PRESENT(k1d07) .OR. PRESENT(k2d07) .OR. PRESENT(k3d07) .OR. PRESENT(k4d07)   &
+  434.             & .OR. PRESENT(p1d07) .OR. PRESENT(p2d07) .OR. PRESENT(p3d07) .OR. PRESENT(p4d07)
+  435.          IF( llpres ) CALL wrk_allocbase( kidim, kjdim, kkdim, kldim, iisrt, ijsrt, iksrt, ilsrt,   &
+  436.             &                             k1d07, k2d07, k3d07, k4d07, p1d07, p2d07, p3d07, p4d07    )
+  437.          llpres =  PRESENT(k1d08) .OR. PRESENT(k2d08) .OR. PRESENT(k3d08) .OR. PRESENT(k4d08)   &
+  438.             & .OR. PRESENT(p1d08) .OR. PRESENT(p2d08) .OR. PRESENT(p3d08) .OR. PRESENT(p4d08)
+  439.          IF( llpres ) CALL wrk_allocbase( kidim, kjdim, kkdim, kldim, iisrt, ijsrt, iksrt, ilsrt,   &
+  440.             &                             k1d08, k2d08, k3d08, k4d08, p1d08, p2d08, p3d08, p4d08    )
+  441.          llpres =  PRESENT(k1d09) .OR. PRESENT(k2d09) .OR. PRESENT(k3d09) .OR. PRESENT(k4d09)   &
+  442.             & .OR. PRESENT(p1d09) .OR. PRESENT(p2d09) .OR. PRESENT(p3d09) .OR. PRESENT(p4d09)
+  443.          IF( llpres ) CALL wrk_allocbase( kidim, kjdim, kkdim, kldim, iisrt, ijsrt, iksrt, ilsrt,   &
+  444.             &                             k1d09, k2d09, k3d09, k4d09, p1d09, p2d09, p3d09, p4d09    )
+  445.          llpres =  PRESENT(k1d10) .OR. PRESENT(k2d10) .OR. PRESENT(k3d10) .OR. PRESENT(k4d10)   &
+  446.             & .OR. PRESENT(p1d10) .OR. PRESENT(p2d10) .OR. PRESENT(p3d10) .OR. PRESENT(p4d10)
+  447.          IF( llpres ) CALL wrk_allocbase( kidim, kjdim, kkdim, kldim, iisrt, ijsrt, iksrt, ilsrt,   &
+  448.             &                             k1d10, k2d10, k3d10, k4d10, p1d10, p2d10, p3d10, p4d10    )
+  449.    
+  450.       END SUBROUTINE wrk_alloc_xd
+  451.    
+  452.    
+  453.       SUBROUTINE wrk_allocbase( kidim , kjdim , kkdim , kldim , kisrt , kjsrt , kksrt , klsrt ,   &
+  454.          &                      kwrk1d, kwrk2d, kwrk3d, kwrk4d, pwrk1d, pwrk2d, pwrk3d, pwrk4d    )
+  455.          INTEGER                              , INTENT(in   )           :: kidim, kjdim, kkdim, kldim
+  456.          INTEGER                              , INTENT(in   )           :: kisrt, kjsrt, kksrt, klsrt
+  457.          INTEGER , POINTER, DIMENSION(:)      , INTENT(inout), OPTIONAL :: kwrk1d  
+  458.          INTEGER , POINTER, DIMENSION(:,:)    , INTENT(inout), OPTIONAL :: kwrk2d  
+  459.          INTEGER , POINTER, DIMENSION(:,:,:)  , INTENT(inout), OPTIONAL :: kwrk3d  
+  460.          INTEGER , POINTER, DIMENSION(:,:,:,:), INTENT(inout), OPTIONAL :: kwrk4d  
+  461.          REAL(wp), POINTER, DIMENSION(:)      , INTENT(inout), OPTIONAL :: pwrk1d  
+  462.          REAL(wp), POINTER, DIMENSION(:,:)    , INTENT(inout), OPTIONAL :: pwrk2d  
+  463.          REAL(wp), POINTER, DIMENSION(:,:,:)  , INTENT(inout), OPTIONAL :: pwrk3d  
+  464.          REAL(wp), POINTER, DIMENSION(:,:,:,:), INTENT(inout), OPTIONAL :: pwrk4d  
+  465.          !
+  466.          INTEGER, DIMENSION(jpmaxdim) :: ishape, isrt, iend
+  467.          INTEGER :: itype
+  468.          INTEGER :: ii
+  469.    
+  470.          ! define the shape to be given to the work array
+  471.          ishape(:) = (/ kidim, kjdim, kkdim, kldim /)
+ftn-6205 ftn: VECTOR File = wrk_nemo.f90, Line = 471 
+  A loop starting at line 471 was vectorized with a single vector iteration.
+
+  472.          ! define the starting index of the dimension shape to be given to the work array
+  473.          isrt  (:) = (/ kisrt, kjsrt, kksrt, klsrt /)
+ftn-6205 ftn: VECTOR File = wrk_nemo.f90, Line = 473 
+  A loop starting at line 473 was vectorized with a single vector iteration.
+
+  474.          iend  (:) = ishape(:) + isrt(:) - 1
+ftn-6205 ftn: VECTOR File = wrk_nemo.f90, Line = 474 
+  A loop starting at line 474 was vectorized with a single vector iteration.
+
+  475.    
+  476.          ! is it integer or real array?
+  477.          IF( PRESENT(kwrk1d) .OR. PRESENT(kwrk2d) .OR. PRESENT(kwrk3d) .OR. PRESENT(kwrk4d) )   itype = jpinteger   
+  478.          IF( PRESENT(pwrk1d) .OR. PRESENT(pwrk2d) .OR. PRESENT(pwrk3d) .OR. PRESENT(pwrk4d) )   itype = jpreal         
+  479.    
+  480.          ! find the branch with the matching shape, staring index and type or get the first "free" branch 
+  481.          ii = 1                          
+  482.          DO WHILE(       ( ANY( tree(ii)%ishape /= ishape ) .OR. ANY( tree(ii)%istart /= isrt ) .OR. tree(ii)%itype /= itype )   &
+  483.             &      .AND. SUM( tree(ii)%ishape ) /= 0 )
+  484.             ii = ii + 1
+  485.             IF (ii > jparray) STOP   ! increase the value of jparray (should not be needed as already very big!)
+  486.          END DO
+  487.          
+  488.          IF( SUM( tree(ii)%ishape ) == 0 ) THEN                    ! create a new branch 
+ftn-6297 ftn: VECTOR File = wrk_nemo.f90, Line = 488 
+  A loop starting at line 488 was not vectorized because a recurrence was found at line 488.
+
+  489.             IF(ldebug) PRINT *, 'create new branch ', ii,ishape, isrt, itype
+  490.             tree(ii)%itype = itype                                        ! define the type of this branch 
+  491.             tree(ii)%ishape(:) = ishape(:)                                ! define the shape of this branch 
+ftn-6210 ftn: VECTOR File = wrk_nemo.f90, Line = 491 
+  A loop starting at line 491 was partially vectorized with a single vector iteration.
+
+  492.             tree(ii)%istart(:) = isrt(:)                                  ! define the lower bounds of this branch 
+ftn-6210 ftn: VECTOR File = wrk_nemo.f90, Line = 492 
+  A loop starting at line 492 was partially vectorized with a single vector iteration.
+
+  493.             ALLOCATE( tree(ii)%start )                                    ! allocate its start
+  494.             ALLOCATE( tree(ii)%current)                                   ! allocate the current leaf (the first leaf)
+  495.    
+  496.             tree(ii)%start%in_use = .FALSE.                               ! Never use the start as work array
+  497.             tree(ii)%start%indic = 0
+  498.             tree(ii)%start%prev => NULL()                                 ! nothing before the start
+  499.             tree(ii)%start%next => tree(ii)%current                       ! first leaf link to the start
+  500.             
+  501.             tree(ii)%current%in_use = .FALSE.                             ! first leaf is not yet used
+  502.             tree(ii)%current%indic = 1                                    ! first leaf
+  503.             tree(ii)%current%prev => tree(ii)%start                       ! previous leaf is the start
+  504.             tree(ii)%current%next => NULL()                               ! next leaf is not yet defined
+  505.             ! allocate the array of the first leaf
+  506.             IF( PRESENT(kwrk1d) ) ALLOCATE( tree(ii)%current%iwrk1d(isrt(1):iend(1)                                                ) )
+  507.             IF( PRESENT(kwrk2d) ) ALLOCATE( tree(ii)%current%iwrk2d(isrt(1):iend(1),isrt(2):iend(2)                                ) )
+  508.             IF( PRESENT(kwrk3d) ) ALLOCATE( tree(ii)%current%iwrk3d(isrt(1):iend(1),isrt(2):iend(2),isrt(3):iend(3)                ) )
+  509.             IF( PRESENT(kwrk4d) ) ALLOCATE( tree(ii)%current%iwrk4d(isrt(1):iend(1),isrt(2):iend(2),isrt(3):iend(3),isrt(4):iend(4)) )
+  510.             IF( PRESENT(pwrk1d) ) ALLOCATE( tree(ii)%current%zwrk1d(isrt(1):iend(1)                                                ) )
+  511.             IF( PRESENT(pwrk2d) ) ALLOCATE( tree(ii)%current%zwrk2d(isrt(1):iend(1),isrt(2):iend(2)                                ) )
+  512.             IF( PRESENT(pwrk3d) ) ALLOCATE( tree(ii)%current%zwrk3d(isrt(1):iend(1),isrt(2):iend(2),isrt(3):iend(3)                ) )
+  513.             IF( PRESENT(pwrk4d) ) ALLOCATE( tree(ii)%current%zwrk4d(isrt(1):iend(1),isrt(2):iend(2),isrt(3):iend(3),isrt(4):iend(4)) )
+  514.                      
+  515.          ELSE IF( .NOT. ASSOCIATED(tree(ii)%current%next) ) THEN   ! all leafs used -> define a new one
+  516.             ALLOCATE( tree(ii)%current%next )                             ! allocate the new leaf
+  517.             tree(ii)%current%next%in_use = .FALSE.                        ! this leaf is not yet used
+  518.             tree(ii)%current%next%indic = tree(ii)%current%indic + 1      ! number of this leaf
+  519.             IF(ldebug) PRINT *, 'add a leaf ', ii, tree(ii)%current%indic
+  520.             tree(ii)%current%next%prev => tree(ii)%current                ! previous leaf of the new leaf is the current leaf
+  521.             tree(ii)%current%next%next => NULL()                          ! next leaf is not yet defined
+  522.    
+  523.             tree(ii)%current => tree(ii)%current%next                     ! the current leaf becomes the new one 
+  524.     
+  525.             ! allocate the array of the new leaf
+  526.             IF( PRESENT(kwrk1d) ) ALLOCATE( tree(ii)%current%iwrk1d(isrt(1):iend(1)                                                ) )
+  527.             IF( PRESENT(kwrk2d) ) ALLOCATE( tree(ii)%current%iwrk2d(isrt(1):iend(1),isrt(2):iend(2)                                ) )
+  528.             IF( PRESENT(kwrk3d) ) ALLOCATE( tree(ii)%current%iwrk3d(isrt(1):iend(1),isrt(2):iend(2),isrt(3):iend(3)                ) )
+  529.             IF( PRESENT(kwrk4d) ) ALLOCATE( tree(ii)%current%iwrk4d(isrt(1):iend(1),isrt(2):iend(2),isrt(3):iend(3),isrt(4):iend(4)) )
+  530.             IF( PRESENT(pwrk1d) ) ALLOCATE( tree(ii)%current%zwrk1d(isrt(1):iend(1)                                                ) )
+  531.             IF( PRESENT(pwrk2d) ) ALLOCATE( tree(ii)%current%zwrk2d(isrt(1):iend(1),isrt(2):iend(2)                                ) )
+  532.             IF( PRESENT(pwrk3d) ) ALLOCATE( tree(ii)%current%zwrk3d(isrt(1):iend(1),isrt(2):iend(2),isrt(3):iend(3)                ) )
+  533.             IF( PRESENT(pwrk4d) ) ALLOCATE( tree(ii)%current%zwrk4d(isrt(1):iend(1),isrt(2):iend(2),isrt(3):iend(3),isrt(4):iend(4)) )
+  534.             
+  535.          ELSE 
+  536.             tree(ii)%current => tree(ii)%current%next                     ! the current leaf becomes the next one 
+  537.          ENDIF   
+  538.          !       
+  539.          ! use the array of the current leaf as a work array
+  540.          IF( PRESENT(kwrk1d) ) kwrk1d => tree(ii)%current%iwrk1d   
+  541.          IF( PRESENT(kwrk2d) ) kwrk2d => tree(ii)%current%iwrk2d   
+  542.          IF( PRESENT(kwrk3d) ) kwrk3d => tree(ii)%current%iwrk3d   
+  543.          IF( PRESENT(kwrk4d) ) kwrk4d => tree(ii)%current%iwrk4d   
+  544.          IF( PRESENT(pwrk1d) ) pwrk1d => tree(ii)%current%zwrk1d   
+  545.          IF( PRESENT(pwrk2d) ) pwrk2d => tree(ii)%current%zwrk2d   
+  546.          IF( PRESENT(pwrk3d) ) pwrk3d => tree(ii)%current%zwrk3d   
+  547.          IF( PRESENT(pwrk4d) ) pwrk4d => tree(ii)%current%zwrk4d   
+  548.          tree(ii)%current%in_use = .TRUE.   ! this leaf is now used
+  549.          !      
+  550.       END SUBROUTINE wrk_allocbase
+  551.    
+  552.    
+  553.       SUBROUTINE wrk_deallocbase( ktype, kidim, kjdim, kkdim, kldim, kisrt, kjsrt, kksrt, klsrt )
+  554.          INTEGER, INTENT(in   )           :: ktype
+  555.          INTEGER, INTENT(in   )           :: kidim, kjdim, kkdim, kldim
+  556.          INTEGER, INTENT(in   ), OPTIONAL :: kisrt, kjsrt, kksrt, klsrt
+  557.          !
+  558.          INTEGER, DIMENSION(jpmaxdim) :: ishape, istart
+  559.          INTEGER :: ii
+  560.    
+  561.          ishape(:) = (/ kidim, kjdim, kkdim, kldim /)
+ftn-6205 ftn: VECTOR File = wrk_nemo.f90, Line = 561 
+  A loop starting at line 561 was vectorized with a single vector iteration.
+
+  562.          IF( PRESENT(kisrt) ) THEN   ;   istart(1) =  kisrt   ;   ELSE   ;   istart(1) = 1   ;   ENDIF 
+  563.          IF( PRESENT(kjsrt) ) THEN   ;   istart(2) =  kjsrt   ;   ELSE   ;   istart(2) = 1   ;   ENDIF 
+  564.          IF( PRESENT(kksrt) ) THEN   ;   istart(3) =  kksrt   ;   ELSE   ;   istart(3) = 1   ;   ENDIF 
+  565.          IF( PRESENT(klsrt) ) THEN   ;   istart(4) =  klsrt   ;   ELSE   ;   istart(4) = 1   ;   ENDIF 
+  566.    
+  567.          ! find the branch with the matcing shape and type or get the first "free" branch 
+  568.          ii = 1                          
+  569.          DO WHILE( ANY( tree(ii)%ishape /= ishape ) .OR. ANY( tree(ii)%istart /= istart ) .OR. tree(ii)%itype /= ktype )
+  570.             ii = ii + 1
+  571.          END DO
+  572.          !
+  573.          tree(ii)%current%in_use = .FALSE.           ! current leaf is no more used
+  574.          tree(ii)%current => tree(ii)%current%prev   ! move back toward previous leaf   
+  575.          ! 
+  576.       END SUBROUTINE wrk_deallocbase
+  577.    
+  578.    
+  579.       SUBROUTINE wrk_stop(cmsg)
+  580.          !!----------------------------------------------------------------------
+  581.          !!               ***  ROUTINE wrk_stop  ***
+  582.          !! ** Purpose :   to act as local alternative to ctl_stop. 
+  583.          !!                Avoids dependency on in_out_manager module.
+  584.          !!----------------------------------------------------------------------
+  585.          CHARACTER(LEN=*), INTENT(in) :: cmsg
+  586.          !!----------------------------------------------------------------------
+  587.          !
+  588.    !      WRITE(kumout, cform_err2)
+  589.          WRITE(*,*) TRIM(cmsg)
+  590.          ! ARPDBG - would like to CALL mppstop here to force a stop but that
+  591.          ! introduces a dependency on lib_mpp. Could CALL mpi_abort() directly
+  592.          ! but that's fairly brutal. Better to rely on CALLing routine to
+  593.          ! deal with the error passed back from the wrk_X routine?
+  594.          !CALL mppstop
+  595.          !
+  596.       END SUBROUTINE wrk_stop
+  597.    
+  598.       !!=====================================================================
+  599.    END MODULE wrk_nemo
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                         E x t e r n a l   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Name  Messages
+----  --------
+ANY(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   WRK_ALLOCBASE in WRK_NEMO (Line 482, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 482, file wrk_nemo.f90)
+                   WRK_DEALLOCBASE in WRK_NEMO (Line 569, file wrk_nemo.f90)
+                   WRK_DEALLOCBASE in WRK_NEMO (Line 569, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+ASSOCIATED(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   LISTAGE in WRK_NEMO (Line 144, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 515, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+COUNT(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   WRK_DEALLOC_1DR in WRK_NEMO (Line 265, file wrk_nemo.f90)
+                   WRK_DEALLOC_1DI in WRK_NEMO (Line 279, file wrk_nemo.f90)
+                   WRK_DEALLOC_2DR in WRK_NEMO (Line 293, file wrk_nemo.f90)
+                   WRK_DEALLOC_2DI in WRK_NEMO (Line 307, file wrk_nemo.f90)
+                   WRK_DEALLOC_3DR in WRK_NEMO (Line 322, file wrk_nemo.f90)
+                   WRK_DEALLOC_3DI in WRK_NEMO (Line 337, file wrk_nemo.f90)
+                   WRK_DEALLOC_4DR in WRK_NEMO (Line 352, file wrk_nemo.f90)
+                   WRK_DEALLOC_4DI in WRK_NEMO (Line 367, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+LISTAGE in WRK_NEMO
+      Defined as:  Subroutine (line 140, file wrk_nemo.f90)
+
+      Interface:   None
+
+      Called By:   LISTAGE in WRK_NEMO (Line 144, file wrk_nemo.f90)
+
+      Calls:       LISTAGE in WRK_NEMO (Line 144, file wrk_nemo.f90)
+                   ASSOCIATED(Intrinsic) (Line 144, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+NULL(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   WRK_ALLOCBASE in WRK_NEMO (Line 498, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 504, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 521, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+PAR_KIND
+      Defined as:  No definitions.
+
+      Used By:     WRK_NEMO  (indirectly)
+
+Name  Messages
+----  --------
+PAR_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+Name  Messages
+----  --------
+PRESENT(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   WRK_DEALLOC_1DR in WRK_NEMO (Line 265, file wrk_nemo.f90)
+                   WRK_DEALLOC_1DR in WRK_NEMO (Line 265, file wrk_nemo.f90)
+                   WRK_DEALLOC_1DR in WRK_NEMO (Line 265, file wrk_nemo.f90)
+                   WRK_DEALLOC_1DR in WRK_NEMO (Line 265, file wrk_nemo.f90)
+                   WRK_DEALLOC_1DR in WRK_NEMO (Line 266, file wrk_nemo.f90)
+                   WRK_DEALLOC_1DR in WRK_NEMO (Line 266, file wrk_nemo.f90)
+                   WRK_DEALLOC_1DR in WRK_NEMO (Line 266, file wrk_nemo.f90)
+                   WRK_DEALLOC_1DR in WRK_NEMO (Line 266, file wrk_nemo.f90)
+                   WRK_DEALLOC_1DR in WRK_NEMO (Line 266, file wrk_nemo.f90)
+                   WRK_DEALLOC_1DI in WRK_NEMO (Line 279, file wrk_nemo.f90)
+                   WRK_DEALLOC_1DI in WRK_NEMO (Line 279, file wrk_nemo.f90)
+                   WRK_DEALLOC_1DI in WRK_NEMO (Line 279, file wrk_nemo.f90)
+                   WRK_DEALLOC_1DI in WRK_NEMO (Line 279, file wrk_nemo.f90)
+                   WRK_DEALLOC_1DI in WRK_NEMO (Line 280, file wrk_nemo.f90)
+                   WRK_DEALLOC_1DI in WRK_NEMO (Line 280, file wrk_nemo.f90)
+                   WRK_DEALLOC_1DI in WRK_NEMO (Line 280, file wrk_nemo.f90)
+                   WRK_DEALLOC_1DI in WRK_NEMO (Line 280, file wrk_nemo.f90)
+                   WRK_DEALLOC_1DI in WRK_NEMO (Line 280, file wrk_nemo.f90)
+                   WRK_DEALLOC_2DR in WRK_NEMO (Line 293, file wrk_nemo.f90)
+                   WRK_DEALLOC_2DR in WRK_NEMO (Line 293, file wrk_nemo.f90)
+                   WRK_DEALLOC_2DR in WRK_NEMO (Line 293, file wrk_nemo.f90)
+                   WRK_DEALLOC_2DR in WRK_NEMO (Line 293, file wrk_nemo.f90)
+                   WRK_DEALLOC_2DR in WRK_NEMO (Line 294, file wrk_nemo.f90)
+                   WRK_DEALLOC_2DR in WRK_NEMO (Line 294, file wrk_nemo.f90)
+                   WRK_DEALLOC_2DR in WRK_NEMO (Line 294, file wrk_nemo.f90)
+                   WRK_DEALLOC_2DR in WRK_NEMO (Line 294, file wrk_nemo.f90)
+                   WRK_DEALLOC_2DR in WRK_NEMO (Line 294, file wrk_nemo.f90)
+                   WRK_DEALLOC_2DI in WRK_NEMO (Line 307, file wrk_nemo.f90)
+                   WRK_DEALLOC_2DI in WRK_NEMO (Line 307, file wrk_nemo.f90)
+                   WRK_DEALLOC_2DI in WRK_NEMO (Line 307, file wrk_nemo.f90)
+                   WRK_DEALLOC_2DI in WRK_NEMO (Line 307, file wrk_nemo.f90)
+                   WRK_DEALLOC_2DI in WRK_NEMO (Line 308, file wrk_nemo.f90)
+                   WRK_DEALLOC_2DI in WRK_NEMO (Line 308, file wrk_nemo.f90)
+                   WRK_DEALLOC_2DI in WRK_NEMO (Line 308, file wrk_nemo.f90)
+                   WRK_DEALLOC_2DI in WRK_NEMO (Line 308, file wrk_nemo.f90)
+                   WRK_DEALLOC_2DI in WRK_NEMO (Line 308, file wrk_nemo.f90)
+                   WRK_DEALLOC_3DR in WRK_NEMO (Line 322, file wrk_nemo.f90)
+                   WRK_DEALLOC_3DR in WRK_NEMO (Line 322, file wrk_nemo.f90)
+                   WRK_DEALLOC_3DR in WRK_NEMO (Line 322, file wrk_nemo.f90)
+                   WRK_DEALLOC_3DR in WRK_NEMO (Line 322, file wrk_nemo.f90)
+                   WRK_DEALLOC_3DR in WRK_NEMO (Line 323, file wrk_nemo.f90)
+                   WRK_DEALLOC_3DR in WRK_NEMO (Line 323, file wrk_nemo.f90)
+                   WRK_DEALLOC_3DR in WRK_NEMO (Line 323, file wrk_nemo.f90)
+                   WRK_DEALLOC_3DR in WRK_NEMO (Line 323, file wrk_nemo.f90)
+                   WRK_DEALLOC_3DR in WRK_NEMO (Line 323, file wrk_nemo.f90)
+                   WRK_DEALLOC_3DI in WRK_NEMO (Line 337, file wrk_nemo.f90)
+                   WRK_DEALLOC_3DI in WRK_NEMO (Line 337, file wrk_nemo.f90)
+                   WRK_DEALLOC_3DI in WRK_NEMO (Line 337, file wrk_nemo.f90)
+                   WRK_DEALLOC_3DI in WRK_NEMO (Line 337, file wrk_nemo.f90)
+                   WRK_DEALLOC_3DI in WRK_NEMO (Line 338, file wrk_nemo.f90)
+                   WRK_DEALLOC_3DI in WRK_NEMO (Line 338, file wrk_nemo.f90)
+                   WRK_DEALLOC_3DI in WRK_NEMO (Line 338, file wrk_nemo.f90)
+                   WRK_DEALLOC_3DI in WRK_NEMO (Line 338, file wrk_nemo.f90)
+                   WRK_DEALLOC_3DI in WRK_NEMO (Line 338, file wrk_nemo.f90)
+                   WRK_DEALLOC_4DR in WRK_NEMO (Line 352, file wrk_nemo.f90)
+                   WRK_DEALLOC_4DR in WRK_NEMO (Line 352, file wrk_nemo.f90)
+                   WRK_DEALLOC_4DR in WRK_NEMO (Line 352, file wrk_nemo.f90)
+                   WRK_DEALLOC_4DR in WRK_NEMO (Line 352, file wrk_nemo.f90)
+                   WRK_DEALLOC_4DR in WRK_NEMO (Line 353, file wrk_nemo.f90)
+                   WRK_DEALLOC_4DR in WRK_NEMO (Line 353, file wrk_nemo.f90)
+                   WRK_DEALLOC_4DR in WRK_NEMO (Line 353, file wrk_nemo.f90)
+                   WRK_DEALLOC_4DR in WRK_NEMO (Line 353, file wrk_nemo.f90)
+                   WRK_DEALLOC_4DR in WRK_NEMO (Line 353, file wrk_nemo.f90)
+                   WRK_DEALLOC_4DI in WRK_NEMO (Line 367, file wrk_nemo.f90)
+                   WRK_DEALLOC_4DI in WRK_NEMO (Line 367, file wrk_nemo.f90)
+                   WRK_DEALLOC_4DI in WRK_NEMO (Line 367, file wrk_nemo.f90)
+                   WRK_DEALLOC_4DI in WRK_NEMO (Line 367, file wrk_nemo.f90)
+                   WRK_DEALLOC_4DI in WRK_NEMO (Line 368, file wrk_nemo.f90)
+                   WRK_DEALLOC_4DI in WRK_NEMO (Line 368, file wrk_nemo.f90)
+                   WRK_DEALLOC_4DI in WRK_NEMO (Line 368, file wrk_nemo.f90)
+                   WRK_DEALLOC_4DI in WRK_NEMO (Line 368, file wrk_nemo.f90)
+                   WRK_DEALLOC_4DI in WRK_NEMO (Line 368, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 404, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 405, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 406, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 407, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 409, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 409, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 409, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 409, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 410, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 410, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 410, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 410, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 413, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 413, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 413, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 413, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 414, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 414, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 414, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 414, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 417, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 417, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 417, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 417, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 418, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 418, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 418, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 418, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 421, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 421, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 421, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 421, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 422, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 422, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 422, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 422, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 425, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 425, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 425, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 425, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 426, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 426, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 426, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 426, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 429, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 429, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 429, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 429, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 430, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 430, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 430, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 430, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 433, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 433, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 433, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 433, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 434, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 434, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 434, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 434, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 437, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 437, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 437, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 437, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 438, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 438, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 438, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 438, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 441, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 441, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 441, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 441, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 442, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 442, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 442, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 442, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 445, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 445, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 445, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 445, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 446, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 446, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 446, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 446, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 477, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 477, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 477, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 477, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 478, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 478, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 478, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 478, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 506, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 507, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 508, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 509, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 510, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 511, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 512, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 513, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 526, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 527, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 528, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 529, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 530, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 531, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 532, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 533, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 540, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 541, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 542, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 543, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 544, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 545, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 546, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 547, file wrk_nemo.f90)
+                   WRK_DEALLOCBASE in WRK_NEMO (Line 562, file wrk_nemo.f90)
+                   WRK_DEALLOCBASE in WRK_NEMO (Line 563, file wrk_nemo.f90)
+                   WRK_DEALLOCBASE in WRK_NEMO (Line 564, file wrk_nemo.f90)
+                   WRK_DEALLOCBASE in WRK_NEMO (Line 565, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+SUM(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   WRK_ALLOCBASE in WRK_NEMO (Line 483, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 488, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+TRIM(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   WRK_STOP in WRK_NEMO (Line 589, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+WRK_ALLOCBASE in WRK_NEMO
+      Defined as:  Subroutine (line 453, file wrk_nemo.f90)
+
+      Interface:   None
+
+      Called By:   WRK_ALLOC_XD in WRK_NEMO (Line 411, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 415, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 419, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 423, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 427, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 431, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 435, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 439, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 443, file wrk_nemo.f90)
+                   WRK_ALLOC_XD in WRK_NEMO (Line 447, file wrk_nemo.f90)
+
+      Calls:       NULL(Intrinsic) (Line 498, file wrk_nemo.f90)
+                   NULL(Intrinsic) (Line 504, file wrk_nemo.f90)
+                   NULL(Intrinsic) (Line 521, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 477, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 477, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 477, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 477, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 478, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 478, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 478, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 478, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 506, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 507, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 508, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 509, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 510, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 511, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 512, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 513, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 526, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 527, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 528, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 529, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 530, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 531, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 532, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 533, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 540, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 541, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 542, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 543, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 544, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 545, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 546, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 547, file wrk_nemo.f90)
+                   ANY(Intrinsic) (Line 482, file wrk_nemo.f90)
+                   ANY(Intrinsic) (Line 482, file wrk_nemo.f90)
+                   SUM(Intrinsic) (Line 483, file wrk_nemo.f90)
+                   SUM(Intrinsic) (Line 488, file wrk_nemo.f90)
+                   ASSOCIATED(Intrinsic) (Line 515, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+WRK_ALLOC_1DI in WRK_NEMO
+      Defined as:  Subroutine (line 163, file wrk_nemo.f90)
+
+      Interface:   None
+
+      Calls:       WRK_ALLOC_XD in WRK_NEMO (Line 169, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+WRK_ALLOC_1DR in WRK_NEMO
+      Defined as:  Subroutine (line 150, file wrk_nemo.f90)
+
+      Interface:   None
+
+      Calls:       WRK_ALLOC_XD in WRK_NEMO (Line 156, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+WRK_ALLOC_2DI in WRK_NEMO
+      Defined as:  Subroutine (line 189, file wrk_nemo.f90)
+
+      Interface:   None
+
+      Calls:       WRK_ALLOC_XD in WRK_NEMO (Line 195, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+WRK_ALLOC_2DR in WRK_NEMO
+      Defined as:  Subroutine (line 176, file wrk_nemo.f90)
+
+      Interface:   None
+
+      Calls:       WRK_ALLOC_XD in WRK_NEMO (Line 182, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+WRK_ALLOC_3DI in WRK_NEMO
+      Defined as:  Subroutine (line 216, file wrk_nemo.f90)
+
+      Interface:   None
+
+      Calls:       WRK_ALLOC_XD in WRK_NEMO (Line 223, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+WRK_ALLOC_3DR in WRK_NEMO
+      Defined as:  Subroutine (line 202, file wrk_nemo.f90)
+
+      Interface:   None
+
+      Calls:       WRK_ALLOC_XD in WRK_NEMO (Line 209, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+WRK_ALLOC_4DI in WRK_NEMO
+      Defined as:  Subroutine (line 244, file wrk_nemo.f90)
+
+      Interface:   None
+
+      Calls:       WRK_ALLOC_XD in WRK_NEMO (Line 251, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+WRK_ALLOC_4DR in WRK_NEMO
+      Defined as:  Subroutine (line 230, file wrk_nemo.f90)
+
+      Interface:   None
+
+      Calls:       WRK_ALLOC_XD in WRK_NEMO (Line 237, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+WRK_ALLOC_XD in WRK_NEMO
+      Defined as:  Subroutine (line 374, file wrk_nemo.f90)
+
+      Interface:   None
+
+      Called By:   WRK_ALLOC_1DR in WRK_NEMO (Line 156, file wrk_nemo.f90)
+                   WRK_ALLOC_1DI in WRK_NEMO (Line 169, file wrk_nemo.f90)
+                   WRK_ALLOC_2DR in WRK_NEMO (Line 182, file wrk_nemo.f90)
+                   WRK_ALLOC_2DI in WRK_NEMO (Line 195, file wrk_nemo.f90)
+                   WRK_ALLOC_3DR in WRK_NEMO (Line 209, file wrk_nemo.f90)
+                   WRK_ALLOC_3DI in WRK_NEMO (Line 223, file wrk_nemo.f90)
+                   WRK_ALLOC_4DR in WRK_NEMO (Line 237, file wrk_nemo.f90)
+                   WRK_ALLOC_4DI in WRK_NEMO (Line 251, file wrk_nemo.f90)
+
+      Calls:       WRK_ALLOCBASE in WRK_NEMO (Line 411, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 415, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 419, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 423, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 427, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 431, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 435, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 439, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 443, file wrk_nemo.f90)
+                   WRK_ALLOCBASE in WRK_NEMO (Line 447, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 404, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 405, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 406, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 407, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 409, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 409, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 409, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 409, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 410, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 410, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 410, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 410, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 413, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 413, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 413, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 413, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 414, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 414, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 414, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 414, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 417, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 417, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 417, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 417, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 418, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 418, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 418, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 418, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 421, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 421, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 421, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 421, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 422, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 422, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 422, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 422, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 425, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 425, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 425, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 425, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 426, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 426, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 426, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 426, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 429, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 429, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 429, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 429, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 430, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 430, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 430, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 430, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 433, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 433, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 433, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 433, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 434, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 434, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 434, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 434, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 437, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 437, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 437, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 437, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 438, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 438, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 438, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 438, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 441, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 441, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 441, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 441, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 442, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 442, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 442, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 442, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 445, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 445, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 445, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 445, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 446, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 446, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 446, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 446, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+WRK_DEALLOCBASE in WRK_NEMO
+      Defined as:  Subroutine (line 553, file wrk_nemo.f90)
+
+      Interface:   None
+
+      Called By:   WRK_DEALLOC_1DR in WRK_NEMO (Line 267, file wrk_nemo.f90)
+                   WRK_DEALLOC_1DI in WRK_NEMO (Line 281, file wrk_nemo.f90)
+                   WRK_DEALLOC_2DR in WRK_NEMO (Line 295, file wrk_nemo.f90)
+                   WRK_DEALLOC_2DI in WRK_NEMO (Line 309, file wrk_nemo.f90)
+                   WRK_DEALLOC_3DR in WRK_NEMO (Line 324, file wrk_nemo.f90)
+                   WRK_DEALLOC_3DI in WRK_NEMO (Line 339, file wrk_nemo.f90)
+                   WRK_DEALLOC_4DR in WRK_NEMO (Line 354, file wrk_nemo.f90)
+                   WRK_DEALLOC_4DI in WRK_NEMO (Line 369, file wrk_nemo.f90)
+
+      Calls:       PRESENT(Intrinsic) (Line 562, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 563, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 564, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 565, file wrk_nemo.f90)
+                   ANY(Intrinsic) (Line 569, file wrk_nemo.f90)
+                   ANY(Intrinsic) (Line 569, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+WRK_DEALLOC_1DI in WRK_NEMO
+      Defined as:  Subroutine (line 272, file wrk_nemo.f90)
+
+      Interface:   None
+
+      Calls:       WRK_DEALLOCBASE in WRK_NEMO (Line 281, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 279, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 279, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 279, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 279, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 280, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 280, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 280, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 280, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 280, file wrk_nemo.f90)
+                   COUNT(Intrinsic) (Line 279, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+WRK_DEALLOC_1DR in WRK_NEMO
+      Defined as:  Subroutine (line 258, file wrk_nemo.f90)
+
+      Interface:   None
+
+      Calls:       WRK_DEALLOCBASE in WRK_NEMO (Line 267, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 265, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 265, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 265, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 265, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 266, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 266, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 266, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 266, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 266, file wrk_nemo.f90)
+                   COUNT(Intrinsic) (Line 265, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+WRK_DEALLOC_2DI in WRK_NEMO
+      Defined as:  Subroutine (line 300, file wrk_nemo.f90)
+
+      Interface:   None
+
+      Calls:       WRK_DEALLOCBASE in WRK_NEMO (Line 309, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 307, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 307, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 307, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 307, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 308, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 308, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 308, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 308, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 308, file wrk_nemo.f90)
+                   COUNT(Intrinsic) (Line 307, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+WRK_DEALLOC_2DR in WRK_NEMO
+      Defined as:  Subroutine (line 286, file wrk_nemo.f90)
+
+      Interface:   None
+
+      Calls:       WRK_DEALLOCBASE in WRK_NEMO (Line 295, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 293, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 293, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 293, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 293, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 294, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 294, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 294, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 294, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 294, file wrk_nemo.f90)
+                   COUNT(Intrinsic) (Line 293, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+WRK_DEALLOC_3DI in WRK_NEMO
+      Defined as:  Subroutine (line 329, file wrk_nemo.f90)
+
+      Interface:   None
+
+      Calls:       WRK_DEALLOCBASE in WRK_NEMO (Line 339, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 337, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 337, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 337, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 337, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 338, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 338, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 338, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 338, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 338, file wrk_nemo.f90)
+                   COUNT(Intrinsic) (Line 337, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+WRK_DEALLOC_3DR in WRK_NEMO
+      Defined as:  Subroutine (line 314, file wrk_nemo.f90)
+
+      Interface:   None
+
+      Calls:       WRK_DEALLOCBASE in WRK_NEMO (Line 324, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 322, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 322, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 322, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 322, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 323, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 323, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 323, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 323, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 323, file wrk_nemo.f90)
+                   COUNT(Intrinsic) (Line 322, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+WRK_DEALLOC_4DI in WRK_NEMO
+      Defined as:  Subroutine (line 359, file wrk_nemo.f90)
+
+      Interface:   None
+
+      Calls:       WRK_DEALLOCBASE in WRK_NEMO (Line 369, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 367, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 367, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 367, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 367, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 368, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 368, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 368, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 368, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 368, file wrk_nemo.f90)
+                   COUNT(Intrinsic) (Line 367, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+WRK_DEALLOC_4DR in WRK_NEMO
+      Defined as:  Subroutine (line 344, file wrk_nemo.f90)
+
+      Interface:   None
+
+      Calls:       WRK_DEALLOCBASE in WRK_NEMO (Line 354, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 352, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 352, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 352, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 352, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 353, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 353, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 353, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 353, file wrk_nemo.f90)
+                   PRESENT(Intrinsic) (Line 353, file wrk_nemo.f90)
+                   COUNT(Intrinsic) (Line 352, file wrk_nemo.f90)
+
+Name  Messages
+----  --------
+WRK_LIST in WRK_NEMO
+      Defined as:  Subroutine (line 78, file wrk_nemo.f90)
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_NEMO
+      Defined as:  Module (line 1, file wrk_nemo.f90)
+
+        Uses:      PAR_KIND  (indirectly)
+
+Name  Messages
+----  --------
+WRK_STOP in WRK_NEMO
+      Defined as:  Subroutine (line 579, file wrk_nemo.f90)
+
+      Interface:   None
+
+      Calls:       TRIM(Intrinsic) (Line 589, file wrk_nemo.f90)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

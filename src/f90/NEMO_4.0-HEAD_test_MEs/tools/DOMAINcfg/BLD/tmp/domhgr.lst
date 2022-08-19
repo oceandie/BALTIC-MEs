@@ -1,0 +1,2040 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S u m m a r y   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Compilation
+-----------
+File     : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/domhgr.f90
+Compiled : 04/29/22  10:43:23
+Compiler : Version 8.3.4
+Ftnlx    : Version 8318 (libcif 83016)
+Target   : x86-64
+Command  : ftn_driver.exe -hcpu=haswell -hstatic -D__CRAYXC -D__CRAY_HASWELL
+           -D__CRAYXT_COMPUTE_LINUX_TARGET -hnetwork=aries -odomhgr.o
+           -I/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HE
+           AD_test_MEs/tools/DOMAINcfg/BLD/inc -sreal64 -sinteger32 -Ovector0
+           -hfp0 -O0 -hflex_mp=intolerant -eCID
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/common/moci/modules/packages/XIOS/2.0/24708/952/inc
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/m
+           ct
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/p
+           smile.MPI1 -c -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/opt/cray/libsci/13.0.1/CRAY/83/haswell/include
+           -I/opt/cray/mpt/7.0.4/gni/mpich2-cray/83/include
+           -I/opt/cray/rca/1.0.0-2.0502.60530.1.62.ari/include
+           -I/opt/cray/alps/5.2.4-2.0502.9774.31.11.ari/include
+           -I/opt/cray/xpmem/0.1-2.0502.64982.5.3.ari/include
+           -I/opt/cray/gni-headers/4.0-1.0502.10859.7.8.ari/include
+           -I/opt/cray/dmapp/7.0.1-1.0502.11080.8.76.ari/include
+           -I/opt/cray/pmi/5.0.5-1.0000.10300.134.8.ari/include
+           -I/opt/cray/ugni/6.0-1.0502.10863.8.29.ari/include
+           -I/opt/cray/udreg/2.3.2-1.0502.10518.2.17.ari/include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/pkgconfig/../include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/wlm_detect/1.0-1.0502.64649.2.1.ari/include
+           -I/opt/cray/krca/1.0.0-2.0502.63139.4.31.ari/include
+           -I/opt/cray-hss-devel/7.2.0/include /projects/jmmp/dbruciaf/NEMO/CHEC
+           KOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/dom
+           hgr.f90
+
+ftnlx report
+------------
+Source   : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp//projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/domhgr.f90
+Date     : 04/29/2022  10:43:24
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S o u r c e   L i s t i n g
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    1.    MODULE domhgr
+    2.       !!==============================================================================
+    3.       !!                       ***  MODULE domhgr   ***
+    4.       !! Ocean initialization : domain initialization
+    5.       !!==============================================================================
+    6.       !! History :  OPA  ! 1988-03  (G. Madec) Original code
+    7.       !!            7.0  ! 1996-01  (G. Madec)  terrain following coordinates
+    8.       !!            8.0  ! 1997-02  (G. Madec)  print mesh informations
+    9.       !!            8.1  ! 1999-11  (M. Imbard) NetCDF format with IO-IPSL
+   10.       !!            8.2  ! 2000-08  (D. Ludicone) Reduced section at Bab el Mandeb
+   11.       !!             -   ! 2001-09  (M. Levy)  eel config: grid in km, beta-plane
+   12.       !!  NEMO      1.0  ! 2002-08  (G. Madec)  F90: Free form and module, namelist
+   13.       !!             -   ! 2004-01  (A.M. Treguier, J.M. Molines) Case 4 (Mercator mesh)
+   14.       !!                            use of parameters in par_CONFIG-Rxx.h90, not in namelist
+   15.       !!             -   ! 2004-05  (A. Koch-Larrouy) Add Gyre configuration 
+   16.       !!            3.7  ! 2015-09  (G. Madec, S. Flavoni) add cell surface and their inverse
+   17.       !!                                       add optional read of e1e2u & e1e2v
+   18.       !!----------------------------------------------------------------------
+   19.    
+   20.       !!----------------------------------------------------------------------
+   21.       !!   dom_hgr       : initialize the horizontal mesh 
+   22.       !!   hgr_read      : read "coordinate" NetCDF file 
+   23.       !!----------------------------------------------------------------------
+   24.       USE dom_oce        ! ocean space and time domain
+                 ^                                            
+ftn-1193 ftn: CAUTION DOMHGR, File = domhgr.f90, Line = 24, Column = 8 
+  Module "PAR_KIND" is indirectly used in module "DOM_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_kind.o".  That file no
+  longer exists.
+
+                 ^                                            
+ftn-1193 ftn: CAUTION DOMHGR, File = domhgr.f90, Line = 24, Column = 8 
+  Module "PAR_OCE" is indirectly used in module "DOM_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_oce.o".  That file no
+  longer exists.
+
+   25.       USE phycst         ! physical constants
+   26.       USE domwri         ! write 'meshmask.nc' & 'coordinate_e1e2u_v.nc' files
+   27.       !
+   28.       USE in_out_manager ! I/O manager
+                 ^                            
+ftn-1193 ftn: CAUTION DOMHGR, File = domhgr.f90, Line = 28, Column = 8 
+  Module "NC4INTERFACE" is indirectly used in module "IN_OUT_MANAGER" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/nc4interface.o".  That file no
+  longer exists.
+
+   29.       USE lib_mpp        ! MPP library
+   30.       USE timing         ! Timing
+   31.    
+   32.       IMPLICIT NONE
+   33.       PRIVATE
+   34.    
+   35.       REAL(wp) ::   glam0, gphi0   ! variables corresponding to parameters ppglam0 ppgphi0 set in par_oce
+   36.    
+   37.       PUBLIC   dom_hgr   ! called by domain.F90
+   38.    
+   39.       !!----------------------------------------------------------------------
+   40.       !! NEMO/OPA 3.7 , NEMO Consortium (2014)
+   41.       !! $Id: domhgr.F90 6140 2015-12-21 11:35:23Z timgraham $ 
+   42.       !! Software governed by the CeCILL licence     (./LICENSE)
+   43.       !!----------------------------------------------------------------------
+   44.    CONTAINS
+   45.    
+   46.       SUBROUTINE dom_hgr
+   47.          !!----------------------------------------------------------------------
+   48.          !!                  ***  ROUTINE dom_hgr  ***
+   49.          !!
+   50.          !! ** Purpose :   Compute the geographical position (in degre) of the 
+   51.          !!      model grid-points,  the horizontal scale factors (in meters) and 
+   52.          !!      the Coriolis factor (in s-1).
+   53.          !!
+   54.          !! ** Method  :   The geographical position of the model grid-points is
+   55.          !!      defined from analytical functions, fslam and fsphi, the deriva-
+   56.          !!      tives of which gives the horizontal scale factors e1,e2.
+   57.          !!      Defining two function fslam and fsphi and their derivatives in 
+   58.          !!      the two horizontal directions (fse1 and fse2), the model grid-
+   59.          !!      point position and scale factors are given by:
+   60.          !!         t-point:
+   61.          !!      glamt(i,j) = fslam(i    ,j    )   e1t(i,j) = fse1(i    ,j    )
+   62.          !!      gphit(i,j) = fsphi(i    ,j    )   e2t(i,j) = fse2(i    ,j    )
+   63.          !!         u-point:
+   64.          !!      glamu(i,j) = fslam(i+1/2,j    )   e1u(i,j) = fse1(i+1/2,j    )
+   65.          !!      gphiu(i,j) = fsphi(i+1/2,j    )   e2u(i,j) = fse2(i+1/2,j    )
+   66.          !!         v-point:
+   67.          !!      glamv(i,j) = fslam(i    ,j+1/2)   e1v(i,j) = fse1(i    ,j+1/2)
+   68.          !!      gphiv(i,j) = fsphi(i    ,j+1/2)   e2v(i,j) = fse2(i    ,j+1/2)
+   69.          !!            f-point:
+   70.          !!      glamf(i,j) = fslam(i+1/2,j+1/2)   e1f(i,j) = fse1(i+1/2,j+1/2)
+   71.          !!      gphif(i,j) = fsphi(i+1/2,j+1/2)   e2f(i,j) = fse2(i+1/2,j+1/2)
+   72.          !!      Where fse1 and fse2 are defined by:
+   73.          !!         fse1(i,j) = ra * rad * SQRT( (cos(phi) di(fslam))**2
+   74.          !!                                     +          di(fsphi) **2 )(i,j)
+   75.          !!         fse2(i,j) = ra * rad * SQRT( (cos(phi) dj(fslam))**2
+   76.          !!                                     +          dj(fsphi) **2 )(i,j)
+   77.          !!
+   78.          !!        The coriolis factor is given at z-point by:
+   79.          !!                     ff = 2.*omega*sin(gphif)      (in s-1)
+   80.          !!
+   81.          !!        This routine is given as an example, it must be modified
+   82.          !!      following the user s desiderata. nevertheless, the output as
+   83.          !!      well as the way to compute the model grid-point position and
+   84.          !!      horizontal scale factors must be respected in order to insure
+   85.          !!      second order accuracy schemes.
+   86.          !!
+   87.          !! N.B. If the domain is periodic, verify that scale factors are also
+   88.          !!      periodic, and the coriolis term again.
+   89.          !!
+   90.          !! ** Action  : - define  glamt, glamu, glamv, glamf: longitude of t-, 
+   91.          !!                u-, v- and f-points (in degre)
+   92.          !!              - define  gphit, gphiu, gphiv, gphit: latitude  of t-,
+   93.          !!               u-, v-  and f-points (in degre)
+   94.          !!        define e1t, e2t, e1u, e2u, e1v, e2v, e1f, e2f: horizontal
+   95.          !!      scale factors (in meters) at t-, u-, v-, and f-points.
+   96.          !!        define ff: coriolis factor at f-point
+   97.          !!
+   98.          !! References :   Marti, Madec and Delecluse, 1992, JGR
+   99.          !!                Madec, Imbard, 1996, Clim. Dyn.
+  100.          !!----------------------------------------------------------------------
+  101.          INTEGER  ::   ji, jj               ! dummy loop indices
+  102.          INTEGER  ::   ii0, ii1, ij0, ij1   ! temporary integers
+  103.          INTEGER  ::   ijeq                 ! index of equator T point (used in case 4)
+  104.          REAL(wp) ::   zti, zui, zvi, zfi   ! local scalars
+  105.          REAL(wp) ::   ztj, zuj, zvj, zfj   !   -      -
+  106.          REAL(wp) ::   zphi0, zbeta, znorme !
+  107.          REAL(wp) ::   zarg, zf0, zminff, zmaxff
+  108.          REAL(wp) ::   zlam1, zcos_alpha, zim1 , zjm1 , ze1, ze1deg
+  109.          REAL(wp) ::   zphi1, zsin_alpha, zim05, zjm05
+  110.          INTEGER  ::   isrow                ! index for ORCA1 starting row
+  111.          INTEGER  ::   ie1e2u_v             ! fag for u- & v-surface read in coordinate file or not
+  112.          !!----------------------------------------------------------------------
+  113.          !
+  114.          IF( nn_timing == 1 )  CALL timing_start('dom_hgr')
+  115.          !
+  116.          IF(lwp) THEN
+  117.             WRITE(numout,*)
+  118.             WRITE(numout,*) 'dom_hgr : define the horizontal mesh from ithe following par_oce parameters '
+  119.             WRITE(numout,*) '~~~~~~~      type of horizontal mesh           jphgr_msh = ', jphgr_msh
+  120.             WRITE(numout,*) '             position of the first row and     ppglam0  = ', ppglam0
+  121.             WRITE(numout,*) '             column grid-point (degrees)       ppgphi0  = ', ppgphi0
+  122.             WRITE(numout,*) '             zonal      grid-spacing (degrees) ppe1_deg = ', ppe1_deg
+  123.             WRITE(numout,*) '             meridional grid-spacing (degrees) ppe2_deg = ', ppe2_deg
+  124.             WRITE(numout,*) '             zonal      grid-spacing (meters)  ppe1_m   = ', ppe1_m  
+  125.             WRITE(numout,*) '             meridional grid-spacing (meters)  ppe2_m   = ', ppe2_m  
+  126.          ENDIF
+  127.          !
+  128.          !
+  129.          SELECT CASE( jphgr_msh )   !  type of horizontal mesh  
+  130.          !
+  131.          CASE ( 0 )                     !==  read in coordinate.nc file  ==!
+  132.             !
+  133.             IF(lwp) WRITE(numout,*)
+  134.             IF(lwp) WRITE(numout,*) '          curvilinear coordinate on the sphere read in "coordinate" file'
+  135.             !
+  136.             ie1e2u_v = 0                  ! set to unread e1e2u and e1e2v
+  137.             !
+  138.             CALL hgr_read( ie1e2u_v )     ! read the coordinate.nc file
+  139.             !
+  140.             IF( ie1e2u_v == 0 ) THEN      ! e1e2u and e1e2v have not been read: compute them
+  141.                !                          ! e2u and e1v does not include a reduction in some strait: apply reduction
+  142.                e1e2u (:,:) = e1u(:,:) * e2u(:,:)   
+ftn-6262 ftn: VECTOR File = domhgr.f90, Line = 142 
+  A loop starting at line 142 was not vectorized because it contains a call to a subroutine or function on line 142.
+
+  143.                e1e2v (:,:) = e1v(:,:) * e2v(:,:) 
+ftn-6262 ftn: VECTOR File = domhgr.f90, Line = 143 
+  A loop starting at line 143 was not vectorized because it contains a call to a subroutine or function on line 143.
+
+  144.             ENDIF
+  145.             !
+  146.          CASE ( 1 )                     !==  geographical mesh on the sphere with regular (in degree) grid-spacing  ==!
+  147.             !
+  148.             IF(lwp) WRITE(numout,*)
+  149.             IF(lwp) WRITE(numout,*) '          geographical mesh on the sphere with regular grid-spacing'
+  150.             IF(lwp) WRITE(numout,*) '          given by ppe1_deg and ppe2_deg' 
+  151.             !
+  152.             DO jj = 1, jpj
+  153.                DO ji = 1, jpi
+  154.                   zti = REAL( ji - 1 + nimpp - 1 )         ;   ztj = REAL( jj - 1 + njmpp - 1 )
+  155.                   zui = REAL( ji - 1 + nimpp - 1 ) + 0.5   ;   zuj = REAL( jj - 1 + njmpp - 1 )
+  156.                   zvi = REAL( ji - 1 + nimpp - 1 )         ;   zvj = REAL( jj - 1 + njmpp - 1 ) + 0.5
+  157.                   zfi = REAL( ji - 1 + nimpp - 1 ) + 0.5   ;   zfj = REAL( jj - 1 + njmpp - 1 ) + 0.5
+  158.             ! Longitude
+  159.                   glamt(ji,jj) = ppglam0 + ppe1_deg * zti
+  160.                   glamu(ji,jj) = ppglam0 + ppe1_deg * zui
+  161.                   glamv(ji,jj) = ppglam0 + ppe1_deg * zvi
+  162.                   glamf(ji,jj) = ppglam0 + ppe1_deg * zfi
+  163.             ! Latitude
+  164.                   gphit(ji,jj) = ppgphi0 + ppe2_deg * ztj
+  165.                   gphiu(ji,jj) = ppgphi0 + ppe2_deg * zuj
+  166.                   gphiv(ji,jj) = ppgphi0 + ppe2_deg * zvj
+  167.                   gphif(ji,jj) = ppgphi0 + ppe2_deg * zfj
+  168.             ! e1
+  169.                   e1t(ji,jj) = ra * rad * COS( rad * gphit(ji,jj) ) * ppe1_deg
+  170.                   e1u(ji,jj) = ra * rad * COS( rad * gphiu(ji,jj) ) * ppe1_deg
+  171.                   e1v(ji,jj) = ra * rad * COS( rad * gphiv(ji,jj) ) * ppe1_deg
+  172.                   e1f(ji,jj) = ra * rad * COS( rad * gphif(ji,jj) ) * ppe1_deg
+  173.             ! e2
+  174.                   e2t(ji,jj) = ra * rad * ppe2_deg
+  175.                   e2u(ji,jj) = ra * rad * ppe2_deg
+  176.                   e2v(ji,jj) = ra * rad * ppe2_deg
+  177.                   e2f(ji,jj) = ra * rad * ppe2_deg
+  178.                END DO
+  179.             END DO
+  180.             !
+  181.          CASE ( 2:3 )                   !==  f- or beta-plane with regular grid-spacing  ==!
+  182.             !
+  183.             IF(lwp) WRITE(numout,*)
+  184.             IF(lwp) WRITE(numout,*) '          f- or beta-plane with regular grid-spacing'
+  185.             IF(lwp) WRITE(numout,*) '          given by ppe1_m and ppe2_m' 
+  186.             !
+  187.             ! Position coordinates (in kilometers)
+  188.             !                          ==========
+  189.             glam0 = 0._wp
+  190.             gphi0 = - ppe2_m * 1.e-3
+  191.             !
+  192.             DO jj = 1, jpj
+  193.                DO ji = 1, jpi
+  194.                   glamt(ji,jj) = glam0 + ppe1_m * 1.e-3 * ( REAL( ji - 1 + nimpp - 1 )       )
+  195.                   glamu(ji,jj) = glam0 + ppe1_m * 1.e-3 * ( REAL( ji - 1 + nimpp - 1 ) + 0.5 )
+  196.                   glamv(ji,jj) = glamt(ji,jj)
+  197.                   glamf(ji,jj) = glamu(ji,jj)
+  198.                   !
+  199.                   gphit(ji,jj) = gphi0 + ppe2_m * 1.e-3 * ( REAL( jj - 1 + njmpp - 1 )       )
+  200.                   gphiu(ji,jj) = gphit(ji,jj)
+  201.                   gphiv(ji,jj) = gphi0 + ppe2_m * 1.e-3 * ( REAL( jj - 1 + njmpp - 1 ) + 0.5 )
+  202.                   gphif(ji,jj) = gphiv(ji,jj)
+  203.                END DO
+  204.             END DO
+  205.             !
+  206.             ! Horizontal scale factors (in meters)
+  207.             !                              ======
+  208.             e1t(:,:) = ppe1_m      ;      e2t(:,:) = ppe2_m
+ftn-6263 ftn: VECTOR File = domhgr.f90, Line = 208 
+  A loop starting at line 208 was not vectorized because it contains a reference to a non-vector intrinsic on line 208.
+
+  209.             e1u(:,:) = ppe1_m      ;      e2u(:,:) = ppe2_m
+ftn-6263 ftn: VECTOR File = domhgr.f90, Line = 209 
+  A loop starting at line 209 was not vectorized because it contains a reference to a non-vector intrinsic on line 209.
+
+  210.             e1v(:,:) = ppe1_m      ;      e2v(:,:) = ppe2_m
+ftn-6263 ftn: VECTOR File = domhgr.f90, Line = 210 
+  A loop starting at line 210 was not vectorized because it contains a reference to a non-vector intrinsic on line 210.
+
+  211.             e1f(:,:) = ppe1_m      ;      e2f(:,:) = ppe2_m
+ftn-6263 ftn: VECTOR File = domhgr.f90, Line = 211 
+  A loop starting at line 211 was not vectorized because it contains a reference to a non-vector intrinsic on line 211.
+
+  212.             !
+  213.          CASE ( 4 )                     !==  geographical mesh on the sphere, isotropic MERCATOR type  ==!
+  214.             !
+  215.             IF(lwp) WRITE(numout,*)
+  216.             IF(lwp) WRITE(numout,*) '          geographical mesh on the sphere, MERCATOR type'
+  217.             IF(lwp) WRITE(numout,*) '          longitudinal/latitudinal spacing given by ppe1_deg'
+  218.             IF ( ppgphi0 == -90 ) CALL ctl_stop( ' Mercator grid cannot start at south pole !!!! ' )
+  219.             !
+  220.             !  Find index corresponding to the equator, given the grid spacing e1_deg
+  221.             !  and the (approximate) southern latitude ppgphi0.
+  222.             !  This way we ensure that the equator is at a "T / U" point, when in the domain.
+  223.             !  The formula should work even if the equator is outside the domain.
+  224.             zarg = rpi / 4. - rpi / 180. * ppgphi0 / 2.
+  225.             ijeq = ABS( 180./rpi * LOG( COS( zarg ) / SIN( zarg ) ) / ppe1_deg )
+                                   ^                                                    
+ftn-938 ftn: CAUTION DOM_HGR, File = domhgr.f90, Line = 225, Column = 26 
+  A real division was encountered in an expression being converted to integer.
+
+                                                           ^                            
+ftn-938 ftn: CAUTION DOM_HGR, File = domhgr.f90, Line = 225, Column = 50 
+  A real division was encountered in an expression being converted to integer.
+
+                                                                           ^            
+ftn-938 ftn: CAUTION DOM_HGR, File = domhgr.f90, Line = 225, Column = 66 
+  A real division was encountered in an expression being converted to integer.
+
+  226.             IF(  ppgphi0 > 0 )  ijeq = -ijeq
+  227.             !
+  228.             IF(lwp) WRITE(numout,*) '          Index of the equator on the MERCATOR grid:', ijeq
+  229.             !
+  230.             DO jj = 1, jpj
+  231.                DO ji = 1, jpi
+  232.                   zti = REAL( ji - 1 + nimpp - 1 )         ;   ztj = REAL( jj - ijeq + njmpp - 1 )
+  233.                   zui = REAL( ji - 1 + nimpp - 1 ) + 0.5   ;   zuj = REAL( jj - ijeq + njmpp - 1 )
+  234.                   zvi = REAL( ji - 1 + nimpp - 1 )         ;   zvj = REAL( jj - ijeq + njmpp - 1 ) + 0.5
+  235.                   zfi = REAL( ji - 1 + nimpp - 1 ) + 0.5   ;   zfj = REAL( jj - ijeq + njmpp - 1 ) + 0.5
+  236.             ! Longitude
+  237.                   glamt(ji,jj) = ppglam0 + ppe1_deg * zti
+  238.                   glamu(ji,jj) = ppglam0 + ppe1_deg * zui
+  239.                   glamv(ji,jj) = ppglam0 + ppe1_deg * zvi
+  240.                   glamf(ji,jj) = ppglam0 + ppe1_deg * zfi
+  241.             ! Latitude
+  242.                   gphit(ji,jj) = 1./rad * ASIN ( TANH( ppe1_deg *rad* ztj ) )
+  243.                   gphiu(ji,jj) = 1./rad * ASIN ( TANH( ppe1_deg *rad* zuj ) )
+  244.                   gphiv(ji,jj) = 1./rad * ASIN ( TANH( ppe1_deg *rad* zvj ) )
+  245.                   gphif(ji,jj) = 1./rad * ASIN ( TANH( ppe1_deg *rad* zfj ) )
+  246.             ! e1
+  247.                   e1t(ji,jj) = ra * rad * COS( rad * gphit(ji,jj) ) * ppe1_deg
+  248.                   e1u(ji,jj) = ra * rad * COS( rad * gphiu(ji,jj) ) * ppe1_deg
+  249.                   e1v(ji,jj) = ra * rad * COS( rad * gphiv(ji,jj) ) * ppe1_deg
+  250.                   e1f(ji,jj) = ra * rad * COS( rad * gphif(ji,jj) ) * ppe1_deg
+  251.             ! e2
+  252.                   e2t(ji,jj) = ra * rad * COS( rad * gphit(ji,jj) ) * ppe1_deg
+  253.                   e2u(ji,jj) = ra * rad * COS( rad * gphiu(ji,jj) ) * ppe1_deg
+  254.                   e2v(ji,jj) = ra * rad * COS( rad * gphiv(ji,jj) ) * ppe1_deg
+  255.                   e2f(ji,jj) = ra * rad * COS( rad * gphif(ji,jj) ) * ppe1_deg
+  256.                END DO
+  257.             END DO
+  258.             !
+  259.          CASE ( 5 )                   !==  beta-plane with regular grid-spacing and rotated domain ==! (GYRE configuration)
+  260.             !
+  261.             IF(lwp) WRITE(numout,*)
+  262.             IF(lwp) WRITE(numout,*) '          beta-plane with regular grid-spacing and rotated domain (GYRE configuration)'
+  263.             IF(lwp) WRITE(numout,*) '          given by ppe1_m and ppe2_m'
+  264.             !
+  265.             ! Position coordinates (in kilometers)
+  266.             !                          ==========
+  267.             !
+  268.             ! angle 45deg and ze1=106.e+3 / jp_cfg forced -> zlam1 = -85deg, zphi1 = 29degN
+  269.             zlam1 = -85._wp
+  270.             zphi1 =  29._wp
+  271.             ! resolution in meters
+  272.             ze1 = 106000. / REAL( jp_cfg , wp )            
+  273.             ! benchmark: forced the resolution to be about 100 km
+  274.             IF( nbench /= 0 )   ze1 = 106000._wp     
+  275.             zsin_alpha = - SQRT( 2._wp ) * 0.5_wp
+  276.             zcos_alpha =   SQRT( 2._wp ) * 0.5_wp
+  277.             ze1deg = ze1 / (ra * rad)
+  278.             IF( nbench /= 0 )   ze1deg = ze1deg / REAL( jp_cfg , wp )   ! benchmark: keep the lat/+lon
+  279.             !                                                           ! at the right jp_cfg resolution
+  280.             glam0 = zlam1 + zcos_alpha * ze1deg * REAL( jpjglo-2 , wp )
+  281.             gphi0 = zphi1 + zsin_alpha * ze1deg * REAL( jpjglo-2 , wp )
+  282.             !
+  283.             IF( nprint==1 .AND. lwp )   THEN
+  284.                WRITE(numout,*) '          ze1', ze1, 'cosalpha', zcos_alpha, 'sinalpha', zsin_alpha
+  285.                WRITE(numout,*) '          ze1deg', ze1deg, 'glam0', glam0, 'gphi0', gphi0
+  286.             ENDIF
+  287.             !
+  288.             DO jj = 1, jpj
+  289.                DO ji = 1, jpi
+  290.                   zim1 = REAL( ji + nimpp - 1 ) - 1.   ;   zim05 = REAL( ji + nimpp - 1 ) - 1.5
+  291.                   zjm1 = REAL( jj + njmpp - 1 ) - 1.   ;   zjm05 = REAL( jj + njmpp - 1 ) - 1.5
+  292.                   !
+  293.                   glamf(ji,jj) = glam0 + zim1  * ze1deg * zcos_alpha + zjm1  * ze1deg * zsin_alpha
+  294.                   gphif(ji,jj) = gphi0 - zim1  * ze1deg * zsin_alpha + zjm1  * ze1deg * zcos_alpha
+  295.                   !
+  296.                   glamt(ji,jj) = glam0 + zim05 * ze1deg * zcos_alpha + zjm05 * ze1deg * zsin_alpha
+  297.                   gphit(ji,jj) = gphi0 - zim05 * ze1deg * zsin_alpha + zjm05 * ze1deg * zcos_alpha
+  298.                   !
+  299.                   glamu(ji,jj) = glam0 + zim1  * ze1deg * zcos_alpha + zjm05 * ze1deg * zsin_alpha
+  300.                   gphiu(ji,jj) = gphi0 - zim1  * ze1deg * zsin_alpha + zjm05 * ze1deg * zcos_alpha
+  301.                   !
+  302.                   glamv(ji,jj) = glam0 + zim05 * ze1deg * zcos_alpha + zjm1  * ze1deg * zsin_alpha
+  303.                   gphiv(ji,jj) = gphi0 - zim05 * ze1deg * zsin_alpha + zjm1  * ze1deg * zcos_alpha
+  304.                END DO
+  305.             END DO
+  306.             !
+  307.             ! Horizontal scale factors (in meters)
+  308.             !                              ======
+  309.             e1t(:,:) =  ze1     ;      e2t(:,:) = ze1
+ftn-6263 ftn: VECTOR File = domhgr.f90, Line = 309 
+  A loop starting at line 309 was not vectorized because it contains a reference to a non-vector intrinsic on line 309.
+
+  310.             e1u(:,:) =  ze1     ;      e2u(:,:) = ze1
+ftn-6263 ftn: VECTOR File = domhgr.f90, Line = 310 
+  A loop starting at line 310 was not vectorized because it contains a reference to a non-vector intrinsic on line 310.
+
+  311.             e1v(:,:) =  ze1     ;      e2v(:,:) = ze1
+ftn-6263 ftn: VECTOR File = domhgr.f90, Line = 311 
+  A loop starting at line 311 was not vectorized because it contains a reference to a non-vector intrinsic on line 311.
+
+  312.             e1f(:,:) =  ze1     ;      e2f(:,:) = ze1
+ftn-6263 ftn: VECTOR File = domhgr.f90, Line = 312 
+  A loop starting at line 312 was not vectorized because it contains a reference to a non-vector intrinsic on line 312.
+
+  313.             !
+  314.          CASE DEFAULT
+  315.             WRITE(ctmp1,*) '          bad flag value for jphgr_msh = ', jphgr_msh
+  316.             CALL ctl_stop( ctmp1 )
+  317.             !
+  318.          END SELECT
+  319.          
+  320.          ! associated horizontal metrics
+  321.          ! -----------------------------
+  322.          !
+  323.          r1_e1t(:,:) = 1._wp / e1t(:,:)   ;   r1_e2t (:,:) = 1._wp / e2t(:,:)
+ftn-6262 ftn: VECTOR File = domhgr.f90, Line = 323 
+  A loop starting at line 323 was not vectorized because it contains a call to a subroutine or function on line 323.
+
+  324.          r1_e1u(:,:) = 1._wp / e1u(:,:)   ;   r1_e2u (:,:) = 1._wp / e2u(:,:)
+ftn-6262 ftn: VECTOR File = domhgr.f90, Line = 324 
+  A loop starting at line 324 was not vectorized because it contains a call to a subroutine or function on line 324.
+
+  325.          r1_e1v(:,:) = 1._wp / e1v(:,:)   ;   r1_e2v (:,:) = 1._wp / e2v(:,:)
+ftn-6262 ftn: VECTOR File = domhgr.f90, Line = 325 
+  A loop starting at line 325 was not vectorized because it contains a call to a subroutine or function on line 325.
+
+  326.          r1_e1f(:,:) = 1._wp / e1f(:,:)   ;   r1_e2f (:,:) = 1._wp / e2f(:,:)
+ftn-6262 ftn: VECTOR File = domhgr.f90, Line = 326 
+  A loop starting at line 326 was not vectorized because it contains a call to a subroutine or function on line 326.
+
+  327.          !
+  328.          e1e2t (:,:) = e1t(:,:) * e2t(:,:)   ;   r1_e1e2t(:,:) = 1._wp / e1e2t(:,:)
+ftn-6262 ftn: VECTOR File = domhgr.f90, Line = 328 
+  A loop starting at line 328 was not vectorized because it contains a call to a subroutine or function on line 328.
+
+  329.          e1e2f (:,:) = e1f(:,:) * e2f(:,:)   ;   r1_e1e2f(:,:) = 1._wp / e1e2f(:,:)
+ftn-6262 ftn: VECTOR File = domhgr.f90, Line = 329 
+  A loop starting at line 329 was not vectorized because it contains a call to a subroutine or function on line 329.
+
+  330.          IF( jphgr_msh /= 0 ) THEN               ! e1e2u and e1e2v have not been set: compute them
+  331.             e1e2u (:,:) = e1u(:,:) * e2u(:,:)   
+ftn-6262 ftn: VECTOR File = domhgr.f90, Line = 331 
+  A loop starting at line 331 was not vectorized because it contains a call to a subroutine or function on line 331.
+
+  332.             e1e2v (:,:) = e1v(:,:) * e2v(:,:) 
+ftn-6262 ftn: VECTOR File = domhgr.f90, Line = 332 
+  A loop starting at line 332 was not vectorized because it contains a call to a subroutine or function on line 332.
+
+  333.          ENDIF
+  334.          r1_e1e2u(:,:) = 1._wp / e1e2u(:,:)     ! compute their invert in both cases
+ftn-6262 ftn: VECTOR File = domhgr.f90, Line = 334 
+  A loop starting at line 334 was not vectorized because it contains a call to a subroutine or function on line 334.
+
+  335.          r1_e1e2v(:,:) = 1._wp / e1e2v(:,:)
+ftn-6262 ftn: VECTOR File = domhgr.f90, Line = 335 
+  A loop starting at line 335 was not vectorized because it contains a call to a subroutine or function on line 335.
+
+  336.          !   
+  337.          e2_e1u(:,:) = e2u(:,:) / e1u(:,:)
+ftn-6262 ftn: VECTOR File = domhgr.f90, Line = 337 
+  A loop starting at line 337 was not vectorized because it contains a call to a subroutine or function on line 337.
+
+  338.          e1_e2v(:,:) = e1v(:,:) / e2v(:,:)
+ftn-6262 ftn: VECTOR File = domhgr.f90, Line = 338 
+  A loop starting at line 338 was not vectorized because it contains a call to a subroutine or function on line 338.
+
+  339.    
+  340.          IF( lwp .AND. nn_print >=1 .AND. .NOT.ln_rstart ) THEN      ! Control print : Grid informations (if not restart)
+  341.             WRITE(numout,*)
+  342.             WRITE(numout,*) '          longitude and e1 scale factors'
+  343.             WRITE(numout,*) '          ------------------------------'
+  344.             WRITE(numout,9300) ( ji, glamt(ji,1), glamu(ji,1),   &
+  345.                glamv(ji,1), glamf(ji,1),   &
+  346.                e1t(ji,1), e1u(ji,1),   &
+  347.                e1v(ji,1), e1f(ji,1), ji = 1, jpi,10)
+  348.    9300     FORMAT( 1x, i4, f8.2,1x, f8.2,1x, f8.2,1x, f8.2, 1x,    &
+  349.                f19.10, 1x, f19.10, 1x, f19.10, 1x, f19.10 )
+  350.                !
+  351.             WRITE(numout,*)
+  352.             WRITE(numout,*) '          latitude and e2 scale factors'
+  353.             WRITE(numout,*) '          -----------------------------'
+  354.             WRITE(numout,9300) ( jj, gphit(1,jj), gphiu(1,jj),   &
+  355.                &                     gphiv(1,jj), gphif(1,jj),   &
+  356.                &                     e2t  (1,jj), e2u  (1,jj),   &
+  357.                &                     e2v  (1,jj), e2f  (1,jj), jj = 1, jpj, 10 )
+  358.          ENDIF
+  359.    
+  360.    
+  361.          ! ================= !
+  362.          !  Coriolis factor  !
+  363.          ! ================= !
+  364.    
+  365.          SELECT CASE( jphgr_msh )   ! type of horizontal mesh
+  366.          !
+  367.          CASE ( 0, 1, 4 )               ! mesh on the sphere
+  368.             !
+  369.             ff_f(:,:) = 2. * omega * SIN( rad * gphif(:,:) ) 
+ftn-6262 ftn: VECTOR File = domhgr.f90, Line = 369 
+  A loop starting at line 369 was not vectorized because it contains a call to a subroutine or function on line 369.
+
+  370.             ff_t(:,:) = 2. * omega * SIN( rad * gphit(:,:) )     !    -        -       - at t-point
+ftn-6262 ftn: VECTOR File = domhgr.f90, Line = 370 
+  A loop starting at line 370 was not vectorized because it contains a call to a subroutine or function on line 370.
+
+  371.             !
+  372.          CASE ( 2 )                     ! f-plane at ppgphi0 
+  373.             !
+  374.             ff_f(:,:) = 2. * omega * SIN( rad * ppgphi0 )
+ftn-6263 ftn: VECTOR File = domhgr.f90, Line = 374 
+  A loop starting at line 374 was not vectorized because it contains a reference to a non-vector intrinsic on line 374.
+
+  375.             ff_t(:,:) = 2. * omega * SIN( rad * ppgphi0 )
+ftn-6263 ftn: VECTOR File = domhgr.f90, Line = 375 
+  A loop starting at line 375 was not vectorized because it contains a reference to a non-vector intrinsic on line 375.
+
+  376.             !
+  377.             IF(lwp) WRITE(numout,*) '          f-plane: Coriolis parameter = constant = ', ff_f(1,1)
+  378.             !
+  379.          CASE ( 3 )                     ! beta-plane
+  380.             !
+  381.             zbeta   = 2. * omega * COS( rad * ppgphi0 ) / ra                       ! beta at latitude ppgphi0
+  382.             zphi0   = ppgphi0 - REAL( jpjglo/2) * ppe2_m / ( ra * rad )           ! latitude of the first row F-points
+  383.             !
+  384.             zf0     = 2. * omega * SIN( rad * zphi0 )                              ! compute f0 1st point south
+  385.             !
+  386.             ff_f(:,:) = ( zf0  + zbeta * gphif(:,:) * 1.e+3 )                        ! f = f0 +beta* y ( y=0 at south)
+ftn-6262 ftn: VECTOR File = domhgr.f90, Line = 386 
+  A loop starting at line 386 was not vectorized because it contains a call to a subroutine or function on line 386.
+
+  387.             ff_t(:,:) = ( zf0  + zbeta * gphit(:,:) * 1.e+3 )                        ! f = f0 +beta* y ( y=0 at south)
+ftn-6262 ftn: VECTOR File = domhgr.f90, Line = 387 
+  A loop starting at line 387 was not vectorized because it contains a call to a subroutine or function on line 387.
+
+  388.             !
+  389.             IF(lwp) THEN
+  390.                WRITE(numout,*) 
+  391.                WRITE(numout,*) '          Beta-plane: Beta parameter = constant = ', ff_f(nldi,nldj)
+  392.                WRITE(numout,*) '          Coriolis parameter varies from ', ff_f(nldi,nldj),' to ', ff_f(nldi,nlej)
+  393.             ENDIF
+  394.             IF( lk_mpp ) THEN 
+  395.                zminff=ff_f(nldi,nldj)
+  396.                zmaxff=ff_f(nldi,nlej)
+  397.                CALL mpp_min( zminff )   ! min over the global domain
+  398.                CALL mpp_max( zmaxff )   ! max over the global domain
+  399.                IF(lwp) WRITE(numout,*) '          Coriolis parameter varies globally from ', zminff,' to ', zmaxff
+  400.             END IF
+  401.             !
+  402.          CASE ( 5 )                     ! beta-plane and rotated domain (gyre configuration)
+  403.             !
+  404.             zbeta = 2. * omega * COS( rad * ppgphi0 ) / ra                     ! beta at latitude ppgphi0
+  405.             zphi0 = 15._wp                                                     ! latitude of the first row F-points
+  406.             zf0   = 2. * omega * SIN( rad * zphi0 )                            ! compute f0 1st point south
+  407.             !
+  408.             ff_f(:,:) = ( zf0 + zbeta * ABS( gphif(:,:) - zphi0 ) * rad * ra )   ! f = f0 +beta* y ( y=0 at south)
+ftn-6262 ftn: VECTOR File = domhgr.f90, Line = 408 
+  A loop starting at line 408 was not vectorized because it contains a call to a subroutine or function on line 408.
+
+  409.             ff_t(:,:) = ( zf0 + zbeta * ABS( gphit(:,:) - zphi0 ) * rad * ra )   ! f = f0 +beta* y ( y=0 at south)
+ftn-6262 ftn: VECTOR File = domhgr.f90, Line = 409 
+  A loop starting at line 409 was not vectorized because it contains a call to a subroutine or function on line 409.
+
+  410.             !
+  411.             IF(lwp) THEN
+  412.                WRITE(numout,*) 
+  413.                WRITE(numout,*) '          Beta-plane and rotated domain : '
+  414.                WRITE(numout,*) '          Coriolis parameter varies in this processor from ', ff_f(nldi,nldj),' to ', ff_f(nldi,nlej)
+  415.             ENDIF
+  416.             !
+  417.             IF( lk_mpp ) THEN 
+  418.                zminff=ff_f(nldi,nldj)
+  419.                zmaxff=ff_f(nldi,nlej)
+  420.                CALL mpp_min( zminff )   ! min over the global domain
+  421.                CALL mpp_max( zmaxff )   ! max over the global domain
+  422.                IF(lwp) WRITE(numout,*) '          Coriolis parameter varies globally from ', zminff,' to ', zmaxff
+  423.             END IF
+  424.             !
+  425.          END SELECT
+  426.    
+  427.    
+  428.          ! Control of domain for symetrical condition
+  429.          ! ------------------------------------------
+  430.          ! The equator line must be the latitude coordinate axe
+  431.    
+  432.          IF( nperio == 2 ) THEN
+  433.             znorme = SQRT( SUM( gphiu(:,2) * gphiu(:,2) ) ) / REAL( jpi )
+ftn-6263 ftn: VECTOR File = domhgr.f90, Line = 433 
+  A loop starting at line 433 was not vectorized because it contains a reference to a non-vector intrinsic on line 433.
+
+  434.             IF( znorme > 1.e-13 ) CALL ctl_stop( ' ===>>>> : symmetrical condition: rerun with good equator line' )
+  435.          ENDIF
+  436.          !
+  437.          IF( nn_timing == 1 )  CALL timing_stop('dom_hgr')
+  438.          !
+  439.       END SUBROUTINE dom_hgr
+ftn-5002 ftn: NOTE File = domhgr.f90, Line = 439 
+  Local variable "ISROW" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = domhgr.f90, Line = 439 
+  Local variable "II1" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = domhgr.f90, Line = 439 
+  Local variable "II0" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = domhgr.f90, Line = 439 
+  Local variable "IJ0" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = domhgr.f90, Line = 439 
+  Local variable "IJ1" is declared but neither defined nor used.
+
+  440.    
+  441.    
+  442.       SUBROUTINE hgr_read( ke1e2u_v )
+  443.          !!---------------------------------------------------------------------
+  444.          !!              ***  ROUTINE hgr_read  ***
+  445.          !!
+  446.          !! ** Purpose :   Read a coordinate file in NetCDF format using IOM
+  447.          !!
+  448.          !!----------------------------------------------------------------------
+  449.          USE iom
+                    ^   
+ftn-1193 ftn: CAUTION HGR_READ, File = domhgr.f90, Line = 449, Column = 11 
+  Module "NC4INTERFACE" is indirectly used in module "IOM" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/nc4interface.o".  That file no
+  longer exists.
+
+                    ^   
+ftn-1193 ftn: CAUTION HGR_READ, File = domhgr.f90, Line = 449, Column = 11 
+  Module "PAR_KIND" is indirectly used in module "IOM" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_kind.o".  That file no
+  longer exists.
+
+                    ^   
+ftn-1193 ftn: CAUTION HGR_READ, File = domhgr.f90, Line = 449, Column = 11 
+  Module "PAR_OCE" is indirectly used in module "IOM" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_oce.o".  That file no
+  longer exists.
+
+                    ^   
+ftn-1193 ftn: CAUTION HGR_READ, File = domhgr.f90, Line = 449, Column = 11 
+  Module "LIB_MPP" is indirectly used in module "IOM" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/lib_mpp.o".  That file no
+  longer exists.
+
+                    ^   
+ftn-1193 ftn: CAUTION HGR_READ, File = domhgr.f90, Line = 449, Column = 11 
+  Module "IN_OUT_MANAGER" is indirectly used in module "IOM" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/in_out_manager.o".  That file
+  no longer exists.
+
+                    ^   
+ftn-1193 ftn: CAUTION HGR_READ, File = domhgr.f90, Line = 449, Column = 11 
+  Module "IOM_NF90" is indirectly used in module "IOM" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/iom_nf90.o".  That file no
+  longer exists.
+
+                    ^   
+ftn-1193 ftn: CAUTION HGR_READ, File = domhgr.f90, Line = 449, Column = 11 
+  Module "IOM_DEF" is indirectly used in module "IOM" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/iom_def.o".  That file no
+  longer exists.
+
+                    ^   
+ftn-1193 ftn: CAUTION HGR_READ, File = domhgr.f90, Line = 449, Column = 11 
+  Module "LBCLNK" is indirectly used in module "IOM" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/lbclnk.o".  That file no
+  longer exists.
+
+                    ^   
+ftn-1193 ftn: CAUTION HGR_READ, File = domhgr.f90, Line = 449, Column = 11 
+  Module "DOM_OCE" is indirectly used in module "IOM" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/dom_oce.o".  That file no
+  longer exists.
+
+  450.          !!
+  451.          INTEGER, INTENT( inout ) ::   ke1e2u_v   ! fag: e1e2u & e1e2v read in coordinate file (=1) or not (=0)
+  452.          !
+  453.          INTEGER ::   inum   ! temporary logical unit
+  454.          !!----------------------------------------------------------------------
+  455.          !
+  456.          IF(lwp) THEN
+  457.             WRITE(numout,*)
+  458.             WRITE(numout,*) 'hgr_read : read the horizontal coordinates'
+  459.             WRITE(numout,*) '~~~~~~~~      jpiglo = ', jpiglo, ' jpjglo = ', jpjglo, ' jpk = ', jpk
+  460.          ENDIF
+  461.          !
+  462.          CALL iom_open( 'coordinates', inum )
+  463.          !
+  464.          CALL iom_get( inum, jpdom_data, 'glamt', glamt, lrowattr=ln_use_jattr )
+  465.          CALL iom_get( inum, jpdom_data, 'glamu', glamu, lrowattr=ln_use_jattr )
+  466.          CALL iom_get( inum, jpdom_data, 'glamv', glamv, lrowattr=ln_use_jattr )
+  467.          CALL iom_get( inum, jpdom_data, 'glamf', glamf, lrowattr=ln_use_jattr )
+  468.          !
+  469.          CALL iom_get( inum, jpdom_data, 'gphit', gphit, lrowattr=ln_use_jattr )
+  470.          CALL iom_get( inum, jpdom_data, 'gphiu', gphiu, lrowattr=ln_use_jattr )
+  471.          CALL iom_get( inum, jpdom_data, 'gphiv', gphiv, lrowattr=ln_use_jattr )
+  472.          CALL iom_get( inum, jpdom_data, 'gphif', gphif, lrowattr=ln_use_jattr )
+  473.          !
+  474.          CALL iom_get( inum, jpdom_data, 'e1t'  , e1t  , lrowattr=ln_use_jattr )
+  475.          CALL iom_get( inum, jpdom_data, 'e1u'  , e1u  , lrowattr=ln_use_jattr )
+  476.          CALL iom_get( inum, jpdom_data, 'e1v'  , e1v  , lrowattr=ln_use_jattr )
+  477.          CALL iom_get( inum, jpdom_data, 'e1f'  , e1f  , lrowattr=ln_use_jattr )
+  478.          !
+  479.          CALL iom_get( inum, jpdom_data, 'e2t'  , e2t  , lrowattr=ln_use_jattr )
+  480.          CALL iom_get( inum, jpdom_data, 'e2u'  , e2u  , lrowattr=ln_use_jattr )
+  481.          CALL iom_get( inum, jpdom_data, 'e2v'  , e2v  , lrowattr=ln_use_jattr )
+  482.          CALL iom_get( inum, jpdom_data, 'e2f'  , e2f  , lrowattr=ln_use_jattr )
+  483.          !
+  484.          IF( iom_varid( inum, 'e1e2u', ldstop = .FALSE. ) > 0 ) THEN
+  485.             IF(lwp) WRITE(numout,*) 'hgr_read : e1e2u & e1e2v read in coordinates file'
+  486.             CALL iom_get( inum, jpdom_data, 'e1e2u'  , e1e2u  , lrowattr=ln_use_jattr )
+  487.             CALL iom_get( inum, jpdom_data, 'e1e2v'  , e1e2v  , lrowattr=ln_use_jattr )
+  488.             ke1e2u_v = 1
+  489.          ELSE
+  490.             ke1e2u_v = 0
+  491.          ENDIF
+  492.          !
+  493.          CALL iom_close( inum )
+  494.          
+  495.        END SUBROUTINE hgr_read
+  496.        
+  497.       !!======================================================================
+  498.    END MODULE domhgr
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                         E x t e r n a l   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Name  Messages
+----  --------
+ABS(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_HGR in DOMHGR (Line 225, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 408, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 409, file domhgr.f90)
+
+Name  Messages
+----  --------
+AGRIF_CFIXED in DOM_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+AGRIF_ROOT in DOM_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+ASIN(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_HGR in DOMHGR (Line 242, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 243, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 244, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 245, file domhgr.f90)
+
+Name  Messages
+----  --------
+COS(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_HGR in DOMHGR (Line 169, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 170, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 171, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 172, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 225, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 247, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 248, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 249, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 250, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 252, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 253, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 254, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 255, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 381, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 404, file domhgr.f90)
+
+Name  Messages
+----  --------
+CTL_NAM in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+CTL_OPN in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+CTL_STOP in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_HGR in DOMHGR (Line 218, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 316, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 434, file domhgr.f90)
+
+Name  Messages
+----  --------
+CTL_WARN in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+DOMHGR
+      Defined as:  Module (line 1, file domhgr.f90)
+
+        Uses:      PAR_KIND  (indirectly)
+                   PAR_OCE  (indirectly)
+                   PHYCST
+                   DOMWRI
+                   IN_OUT_MANAGER
+                   PAR_KIND  (indirectly)
+                   NC4INTERFACE  (indirectly)
+                   PAR_OCE  (indirectly)
+                   LIB_MPP
+                   PAR_OCE  (indirectly)
+                   DOM_OCE  (indirectly)
+                   TIMING
+                   IOM
+                   NC4INTERFACE  (indirectly)
+                   PAR_KIND  (indirectly)
+                   PAR_OCE  (indirectly)
+                   LIB_MPP  (indirectly)
+                   IN_OUT_MANAGER  (indirectly)
+                   IOM_NF90  (indirectly)
+                   IOM_DEF  (indirectly)
+                   LBCLNK  (indirectly)
+                   DOM_OCE  (indirectly)
+
+Name  Messages
+----  --------
+DOMWRI
+      Defined as:  No definitions.
+
+      Used By:     DOMHGR
+
+Name  Messages
+----  --------
+DOM_HGR in DOMHGR
+      Defined as:  Subroutine (line 37, file domhgr.f90)
+
+      Interface:   None
+
+      Calls:       HGR_READ in DOMHGR (Line 138, file domhgr.f90)
+                   CTL_STOP in LIB_MPP (Line 218, file domhgr.f90)
+                   CTL_STOP in LIB_MPP (Line 316, file domhgr.f90)
+                   CTL_STOP in LIB_MPP (Line 434, file domhgr.f90)
+                   MPPMAX_REAL in LIB_MPP (Line 398, file domhgr.f90)
+                   MPPMAX_REAL in LIB_MPP (Line 421, file domhgr.f90)
+                   MPPMIN_REAL in LIB_MPP (Line 397, file domhgr.f90)
+                   MPPMIN_REAL in LIB_MPP (Line 420, file domhgr.f90)
+                   TIMING_START in TIMING (Line 114, file domhgr.f90)
+                   TIMING_STOP in TIMING (Line 437, file domhgr.f90)
+                   REAL(Intrinsic) (Line 154, file domhgr.f90)
+                   REAL(Intrinsic) (Line 154, file domhgr.f90)
+                   REAL(Intrinsic) (Line 155, file domhgr.f90)
+                   REAL(Intrinsic) (Line 155, file domhgr.f90)
+                   REAL(Intrinsic) (Line 156, file domhgr.f90)
+                   REAL(Intrinsic) (Line 156, file domhgr.f90)
+                   REAL(Intrinsic) (Line 157, file domhgr.f90)
+                   REAL(Intrinsic) (Line 157, file domhgr.f90)
+                   REAL(Intrinsic) (Line 194, file domhgr.f90)
+                   REAL(Intrinsic) (Line 195, file domhgr.f90)
+                   REAL(Intrinsic) (Line 199, file domhgr.f90)
+                   REAL(Intrinsic) (Line 201, file domhgr.f90)
+                   REAL(Intrinsic) (Line 232, file domhgr.f90)
+                   REAL(Intrinsic) (Line 232, file domhgr.f90)
+                   REAL(Intrinsic) (Line 233, file domhgr.f90)
+                   REAL(Intrinsic) (Line 233, file domhgr.f90)
+                   REAL(Intrinsic) (Line 234, file domhgr.f90)
+                   REAL(Intrinsic) (Line 234, file domhgr.f90)
+                   REAL(Intrinsic) (Line 235, file domhgr.f90)
+                   REAL(Intrinsic) (Line 235, file domhgr.f90)
+                   REAL(Intrinsic) (Line 272, file domhgr.f90)
+                   REAL(Intrinsic) (Line 278, file domhgr.f90)
+                   REAL(Intrinsic) (Line 280, file domhgr.f90)
+                   REAL(Intrinsic) (Line 281, file domhgr.f90)
+                   REAL(Intrinsic) (Line 290, file domhgr.f90)
+                   REAL(Intrinsic) (Line 290, file domhgr.f90)
+                   REAL(Intrinsic) (Line 291, file domhgr.f90)
+                   REAL(Intrinsic) (Line 291, file domhgr.f90)
+                   REAL(Intrinsic) (Line 382, file domhgr.f90)
+                   REAL(Intrinsic) (Line 433, file domhgr.f90)
+                   COS(Intrinsic) (Line 169, file domhgr.f90)
+                   COS(Intrinsic) (Line 170, file domhgr.f90)
+                   COS(Intrinsic) (Line 171, file domhgr.f90)
+                   COS(Intrinsic) (Line 172, file domhgr.f90)
+                   COS(Intrinsic) (Line 225, file domhgr.f90)
+                   COS(Intrinsic) (Line 247, file domhgr.f90)
+                   COS(Intrinsic) (Line 248, file domhgr.f90)
+                   COS(Intrinsic) (Line 249, file domhgr.f90)
+                   COS(Intrinsic) (Line 250, file domhgr.f90)
+                   COS(Intrinsic) (Line 252, file domhgr.f90)
+                   COS(Intrinsic) (Line 253, file domhgr.f90)
+                   COS(Intrinsic) (Line 254, file domhgr.f90)
+                   COS(Intrinsic) (Line 255, file domhgr.f90)
+                   COS(Intrinsic) (Line 381, file domhgr.f90)
+                   COS(Intrinsic) (Line 404, file domhgr.f90)
+                   SIN(Intrinsic) (Line 225, file domhgr.f90)
+                   SIN(Intrinsic) (Line 369, file domhgr.f90)
+                   SIN(Intrinsic) (Line 370, file domhgr.f90)
+                   SIN(Intrinsic) (Line 374, file domhgr.f90)
+                   SIN(Intrinsic) (Line 375, file domhgr.f90)
+                   SIN(Intrinsic) (Line 384, file domhgr.f90)
+                   SIN(Intrinsic) (Line 406, file domhgr.f90)
+                   LOG(Intrinsic) (Line 225, file domhgr.f90)
+                   ABS(Intrinsic) (Line 225, file domhgr.f90)
+                   ABS(Intrinsic) (Line 408, file domhgr.f90)
+                   ABS(Intrinsic) (Line 409, file domhgr.f90)
+                   TANH(Intrinsic) (Line 242, file domhgr.f90)
+                   TANH(Intrinsic) (Line 243, file domhgr.f90)
+                   TANH(Intrinsic) (Line 244, file domhgr.f90)
+                   TANH(Intrinsic) (Line 245, file domhgr.f90)
+                   ASIN(Intrinsic) (Line 242, file domhgr.f90)
+                   ASIN(Intrinsic) (Line 243, file domhgr.f90)
+                   ASIN(Intrinsic) (Line 244, file domhgr.f90)
+                   ASIN(Intrinsic) (Line 245, file domhgr.f90)
+                   SQRT(Intrinsic) (Line 275, file domhgr.f90)
+                   SQRT(Intrinsic) (Line 276, file domhgr.f90)
+                   SQRT(Intrinsic) (Line 433, file domhgr.f90)
+                   SUM(Intrinsic) (Line 433, file domhgr.f90)
+
+Name  Messages
+----  --------
+DOM_OCE
+      Defined as:  No definitions.
+
+      Used By:     DOMHGR  (indirectly)
+                   DOMHGR  (indirectly)
+
+Name  Messages
+----  --------
+DOM_OCE_ALLOC in DOM_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+DOM_STIFF in DOMWRI
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+DOM_STIFF_3D in DOMWRI
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+DOM_WRI in DOMWRI
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+DOM_WRI_COORDINATE in DOMWRI
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GET_NF90_SYMBOL in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GET_UNIT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+HGR_READ in DOMHGR
+      Defined as:  Subroutine (line 442, file domhgr.f90)
+
+      Interface:   None
+
+      Called By:   DOM_HGR in DOMHGR (Line 138, file domhgr.f90)
+
+      Calls:       IOM_OPEN in IOM (Line 462, file domhgr.f90)
+                   IOM_G2D in IOM (Line 464, file domhgr.f90)
+                   IOM_G2D in IOM (Line 465, file domhgr.f90)
+                   IOM_G2D in IOM (Line 466, file domhgr.f90)
+                   IOM_G2D in IOM (Line 467, file domhgr.f90)
+                   IOM_G2D in IOM (Line 469, file domhgr.f90)
+                   IOM_G2D in IOM (Line 470, file domhgr.f90)
+                   IOM_G2D in IOM (Line 471, file domhgr.f90)
+                   IOM_G2D in IOM (Line 472, file domhgr.f90)
+                   IOM_G2D in IOM (Line 474, file domhgr.f90)
+                   IOM_G2D in IOM (Line 475, file domhgr.f90)
+                   IOM_G2D in IOM (Line 476, file domhgr.f90)
+                   IOM_G2D in IOM (Line 477, file domhgr.f90)
+                   IOM_G2D in IOM (Line 479, file domhgr.f90)
+                   IOM_G2D in IOM (Line 480, file domhgr.f90)
+                   IOM_G2D in IOM (Line 481, file domhgr.f90)
+                   IOM_G2D in IOM (Line 482, file domhgr.f90)
+                   IOM_G2D in IOM (Line 486, file domhgr.f90)
+                   IOM_G2D in IOM (Line 487, file domhgr.f90)
+                   IOM_VARID in IOM (Line 484, file domhgr.f90)
+                   IOM_CLOSE in IOM (Line 493, file domhgr.f90)
+
+Name  Messages
+----  --------
+IN_OUT_MANAGER
+      Defined as:  No definitions.
+
+      Used By:     DOMHGR
+                   DOMHGR  (indirectly)
+
+Name  Messages
+----  --------
+IOM
+      Defined as:  No definitions.
+
+      Used By:     DOMHGR
+
+Name  Messages
+----  --------
+IOM_CLOSE in IOM
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   HGR_READ in DOMHGR (Line 493, file domhgr.f90)
+
+Name  Messages
+----  --------
+IOM_CONTEXT_FINALIZE in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_DEF
+      Defined as:  No definitions.
+
+      Used By:     DOMHGR  (indirectly)
+
+Name  Messages
+----  --------
+IOM_G0D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_G0D_INTATT in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_G1D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_G2D in IOM
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   HGR_READ in DOMHGR (Line 464, file domhgr.f90)
+                   HGR_READ in DOMHGR (Line 465, file domhgr.f90)
+                   HGR_READ in DOMHGR (Line 466, file domhgr.f90)
+                   HGR_READ in DOMHGR (Line 467, file domhgr.f90)
+                   HGR_READ in DOMHGR (Line 469, file domhgr.f90)
+                   HGR_READ in DOMHGR (Line 470, file domhgr.f90)
+                   HGR_READ in DOMHGR (Line 471, file domhgr.f90)
+                   HGR_READ in DOMHGR (Line 472, file domhgr.f90)
+                   HGR_READ in DOMHGR (Line 474, file domhgr.f90)
+                   HGR_READ in DOMHGR (Line 475, file domhgr.f90)
+                   HGR_READ in DOMHGR (Line 476, file domhgr.f90)
+                   HGR_READ in DOMHGR (Line 477, file domhgr.f90)
+                   HGR_READ in DOMHGR (Line 479, file domhgr.f90)
+                   HGR_READ in DOMHGR (Line 480, file domhgr.f90)
+                   HGR_READ in DOMHGR (Line 481, file domhgr.f90)
+                   HGR_READ in DOMHGR (Line 482, file domhgr.f90)
+                   HGR_READ in DOMHGR (Line 486, file domhgr.f90)
+                   HGR_READ in DOMHGR (Line 487, file domhgr.f90)
+
+Name  Messages
+----  --------
+IOM_G3D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_GETTIME in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_INIT in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90
+      Defined as:  No definitions.
+
+      Used By:     DOMHGR  (indirectly)
+
+Name  Messages
+----  --------
+IOM_NF90_CLOSE in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_G0D in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_G123D in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_GETTIME in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_INTATT in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_OPEN in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_RP0123D in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_VARID in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_OPEN in IOM
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   HGR_READ in DOMHGR (Line 462, file domhgr.f90)
+
+Name  Messages
+----  --------
+IOM_P0D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_P1D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_P2D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_P3D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_RP0D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_RP1D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_RP2D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_RP3D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_SETKT in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_SWAP in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_USE in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_VARID in IOM
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   HGR_READ in DOMHGR (Line 484, file domhgr.f90)
+
+Name  Messages
+----  --------
+LBCLNK
+      Defined as:  No definitions.
+
+      Used By:     DOMHGR  (indirectly)
+
+Name  Messages
+----  --------
+LIB_MPP
+      Defined as:  No definitions.
+
+      Used By:     DOMHGR
+                   DOMHGR  (indirectly)
+
+Name  Messages
+----  --------
+LOG(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_HGR in DOMHGR (Line 225, file domhgr.f90)
+
+Name  Messages
+----  --------
+MPPBCAST_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPGATHER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_HGR in DOMHGR (Line 398, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 421, file domhgr.f90)
+
+Name  Messages
+----  --------
+MPPMAX_REAL_MULTIPLE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_HGR in DOMHGR (Line 397, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 420, file domhgr.f90)
+
+Name  Messages
+----  --------
+MPPRECV in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSCATTER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSEND in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSTOP in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_REALDD in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_REALDD in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSYNC in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_COMM_FREE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_ICE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_NORTH in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_ZNL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_E in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_ICB in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_9 in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_E in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_ICB in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_MULTIPLE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_3D_GATHER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_BDY_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_BDY_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_SUM_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_SUM_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MAXLOC2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MAXLOC3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MINLOC2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MINLOC3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MYNODE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NC4INTERFACE
+      Defined as:  No definitions.
+
+      Used By:     DOMHGR  (indirectly)
+                   DOMHGR  (indirectly)
+
+Name  Messages
+----  --------
+PAR_KIND
+      Defined as:  No definitions.
+
+      Used By:     DOMHGR  (indirectly)
+                   DOMHGR  (indirectly)
+                   DOMHGR  (indirectly)
+
+Name  Messages
+----  --------
+PAR_OCE
+      Defined as:  No definitions.
+
+      Used By:     DOMHGR  (indirectly)
+                   DOMHGR  (indirectly)
+                   DOMHGR  (indirectly)
+                   DOMHGR  (indirectly)
+
+Name  Messages
+----  --------
+PHYCST
+      Defined as:  No definitions.
+
+      Used By:     DOMHGR
+
+Name  Messages
+----  --------
+PHY_CST in PHYCST
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+REAL(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_HGR in DOMHGR (Line 154, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 154, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 155, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 155, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 156, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 156, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 157, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 157, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 194, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 195, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 199, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 201, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 232, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 232, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 233, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 233, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 234, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 234, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 235, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 235, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 272, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 278, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 280, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 281, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 290, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 290, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 291, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 291, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 382, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 433, file domhgr.f90)
+
+Name  Messages
+----  --------
+SAW_TOOTH in DOMWRI
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SET_NF90_DEF_VAR_CHUNKING in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SET_NF90_DEF_VAR_DEFLATE in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIN(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_HGR in DOMHGR (Line 225, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 369, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 370, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 374, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 375, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 384, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 406, file domhgr.f90)
+
+Name  Messages
+----  --------
+SQRT(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_HGR in DOMHGR (Line 275, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 276, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 433, file domhgr.f90)
+
+Name  Messages
+----  --------
+SUM(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_HGR in DOMHGR (Line 433, file domhgr.f90)
+
+Name  Messages
+----  --------
+TANH(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_HGR in DOMHGR (Line 242, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 243, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 244, file domhgr.f90)
+                   DOM_HGR in DOMHGR (Line 245, file domhgr.f90)
+
+Name  Messages
+----  --------
+TIMING
+      Defined as:  No definitions.
+
+      Used By:     DOMHGR
+
+Name  Messages
+----  --------
+TIMING_FINALIZE in TIMING
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING_INIT in TIMING
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING_RESET in TIMING
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING_START in TIMING
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_HGR in DOMHGR (Line 114, file domhgr.f90)
+
+Name  Messages
+----  --------
+TIMING_STOP in TIMING
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_HGR in DOMHGR (Line 437, file domhgr.f90)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,527 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S u m m a r y   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Compilation
+-----------
+File     : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/dom_oce.f90
+Compiled : 04/29/22  10:43:07
+Compiler : Version 8.3.4
+Ftnlx    : Version 8318 (libcif 83016)
+Target   : x86-64
+Command  : ftn_driver.exe -hcpu=haswell -hstatic -D__CRAYXC -D__CRAY_HASWELL
+           -D__CRAYXT_COMPUTE_LINUX_TARGET -hnetwork=aries -odom_oce.o
+           -I/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HE
+           AD_test_MEs/tools/DOMAINcfg/BLD/inc -sreal64 -sinteger32 -Ovector0
+           -hfp0 -O0 -hflex_mp=intolerant -eCID
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/common/moci/modules/packages/XIOS/2.0/24708/952/inc
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/m
+           ct
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/p
+           smile.MPI1 -c -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/opt/cray/libsci/13.0.1/CRAY/83/haswell/include
+           -I/opt/cray/mpt/7.0.4/gni/mpich2-cray/83/include
+           -I/opt/cray/rca/1.0.0-2.0502.60530.1.62.ari/include
+           -I/opt/cray/alps/5.2.4-2.0502.9774.31.11.ari/include
+           -I/opt/cray/xpmem/0.1-2.0502.64982.5.3.ari/include
+           -I/opt/cray/gni-headers/4.0-1.0502.10859.7.8.ari/include
+           -I/opt/cray/dmapp/7.0.1-1.0502.11080.8.76.ari/include
+           -I/opt/cray/pmi/5.0.5-1.0000.10300.134.8.ari/include
+           -I/opt/cray/ugni/6.0-1.0502.10863.8.29.ari/include
+           -I/opt/cray/udreg/2.3.2-1.0502.10518.2.17.ari/include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/pkgconfig/../include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/wlm_detect/1.0-1.0502.64649.2.1.ari/include
+           -I/opt/cray/krca/1.0.0-2.0502.63139.4.31.ari/include
+           -I/opt/cray-hss-devel/7.2.0/include /projects/jmmp/dbruciaf/NEMO/CHEC
+           KOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/dom
+           _oce.f90
+
+ftnlx report
+------------
+Source   : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp//projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/dom_oce.f90
+Date     : 04/29/2022  10:43:07
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S o u r c e   L i s t i n g
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    1.    MODULE dom_oce
+    2.       !!======================================================================
+    3.       !!                       ***  MODULE dom_oce  ***
+    4.       !!       
+    5.       !! ** Purpose :   Define in memory all the ocean space domain variables
+    6.       !!======================================================================
+    7.       !! History :  1.0  ! 2005-10  (A. Beckmann, G. Madec)  reactivate s-coordinate 
+    8.       !!            3.3  ! 2010-11  (G. Madec) add mbk. arrays associated to the deepest ocean level
+    9.       !!            3.4  ! 2011-01  (A. R. Porter, STFC Daresbury) dynamical allocation
+   10.       !!            3.5  ! 2012     (S. Mocavero, I. Epicoco) Add arrays associated
+   11.       !!                             to the optimization of BDY communications
+   12.       !!            3.7  ! 2015-11  (G. Madec) introduce surface and scale factor ratio
+   13.       !!             -   ! 2015-11  (G. Madec, A. Coward)  time varying zgr by default
+   14.       !!----------------------------------------------------------------------
+   15.    
+   16.       !!----------------------------------------------------------------------
+   17.       !!   Agrif_Root    : dummy function used when lk_agrif=F
+   18.       !!   Agrif_CFixed  : dummy function used when lk_agrif=F
+   19.       !!   dom_oce_alloc : dynamical allocation of dom_oce arrays
+   20.       !!----------------------------------------------------------------------
+   21.       USE par_oce        ! ocean parameters
+                 ^                                 
+ftn-1193 ftn: CAUTION DOM_OCE, File = dom_oce.f90, Line = 21, Column = 8 
+  Module "PAR_KIND" is indirectly used in module "PAR_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_kind.o".  That file no
+  longer exists.
+
+   22.    
+   23.       IMPLICIT NONE
+   24.       PUBLIC             ! allows the acces to par_oce when dom_oce is used (exception to coding rules)
+   25.    
+   26.       PUBLIC dom_oce_alloc  ! Called from nemogcm.F90
+   27.    
+   28.       !!----------------------------------------------------------------------
+   29.       !! time & space domain namelist
+   30.       !! ----------------------------
+   31.       !                                    !!* Namelist namdom : time & space domain *
+   32.       INTEGER , PUBLIC ::   nn_bathy        !: = 0/1 ,compute/read the bathymetry file
+   33.       REAL(wp), PUBLIC ::   rn_bathy        !: depth of flat bottom (active if nn_bathy=0; if =0 depth=jpkm1)
+   34.       REAL(wp), PUBLIC ::   rn_hmin         !: minimum ocean depth (>0) or minimum number of ocean levels (<0)
+   35.       REAL(wp), PUBLIC ::   rn_isfhmin      !: threshold to discriminate grounded ice to floating ice
+   36.       REAL(wp), PUBLIC ::   rn_e3zps_min    !: miminum thickness for partial steps (meters)
+   37.       REAL(wp), PUBLIC ::   rn_e3zps_rat    !: minimum thickness ration for partial steps
+   38.       INTEGER , PUBLIC ::   nn_msh          !: = 1 create a mesh-mask file
+   39.       REAL(wp), PUBLIC ::   rn_atfp         !: asselin time filter parameter
+   40.       REAL(wp), PUBLIC ::   rn_rdt          !: time step for the dynamics and tracer
+   41.       INTEGER , PUBLIC ::   nn_closea       !: =0 suppress closed sea/lake from the ORCA domain or not (=1)
+   42.       INTEGER , PUBLIC ::   nn_euler        !: =0 start with forward time step or not (=1)
+   43.       LOGICAL , PUBLIC ::   ln_iscpl       !: coupling with ice sheet
+   44.       LOGICAL , PUBLIC ::   ln_crs          !: Apply grid coarsening to dynamical model output or online passive tracers
+   45.    
+   46.       !! Free surface parameters
+   47.       !! =======================
+   48.       LOGICAL , PUBLIC :: ln_dynspg_exp     !: Explicit free surface flag
+   49.       LOGICAL , PUBLIC :: ln_dynspg_ts      !: Split-Explicit free surface flag
+   50.    
+   51.       !! Time splitting parameters
+   52.       !! =========================
+   53.       LOGICAL,  PUBLIC :: ln_bt_fw          !: Forward integration of barotropic sub-stepping
+   54.       LOGICAL,  PUBLIC :: ln_bt_av          !: Time averaging of barotropic variables
+   55.       LOGICAL,  PUBLIC :: ln_bt_auto        !: Set number of barotropic iterations automatically
+   56.       INTEGER,  PUBLIC :: nn_bt_flt         !: Filter choice
+   57.       INTEGER,  PUBLIC :: nn_baro           !: Number of barotropic iterations during one baroclinic step (rdt)
+   58.       REAL(wp), PUBLIC :: rn_bt_cmax        !: Maximum allowed courant number (used if ln_bt_auto=T)
+   59.    
+   60.       !! Horizontal grid parameters for domhgr
+   61.       !! =====================================
+   62.       INTEGER       ::   jphgr_msh          !: type of horizontal mesh
+   63.       !                                       !  = 0 curvilinear coordinate on the sphere read in coordinate.nc
+   64.       !                                       !  = 1 geographical mesh on the sphere with regular grid-spacing
+   65.       !                                       !  = 2 f-plane with regular grid-spacing
+   66.       !                                       !  = 3 beta-plane with regular grid-spacing
+   67.       !                                       !  = 4 Mercator grid with T/U point at the equator
+   68.    
+   69.       REAL(wp)      ::   ppglam0            !: longitude of first raw and column T-point (jphgr_msh = 1)
+   70.       REAL(wp)      ::   ppgphi0            !: latitude  of first raw and column T-point (jphgr_msh = 1)
+   71.       !                                                        !  used for Coriolis & Beta parameters (jphgr_msh = 2 or 3)
+   72.       REAL(wp)      ::   ppe1_deg           !: zonal      grid-spacing (degrees)
+   73.       REAL(wp)      ::   ppe2_deg           !: meridional grid-spacing (degrees)
+   74.       REAL(wp)      ::   ppe1_m             !: zonal      grid-spacing (degrees)
+   75.       REAL(wp)      ::   ppe2_m             !: meridional grid-spacing (degrees)
+   76.    
+   77.       !! Vertical grid parameter for domzgr
+   78.       !! ==================================
+   79.       REAL(wp)      ::   ppsur              !: ORCA r4, r2 and r05 coefficients
+   80.       REAL(wp)      ::   ppa0               !: (default coefficients)
+   81.       REAL(wp)      ::   ppa1               !:
+   82.       REAL(wp)      ::   ppkth              !:
+   83.       REAL(wp)      ::   ppacr              !:
+   84.       !
+   85.       !  If both ppa0 ppa1 and ppsur are specified to 0, then
+   86.       !  they are computed from ppdzmin, pphmax , ppkth, ppacr in dom_zgr
+   87.       REAL(wp)      ::   ppdzmin            !: Minimum vertical spacing
+   88.       REAL(wp)      ::   pphmax             !: Maximum depth
+   89.       !
+   90.       LOGICAL       ::   ldbletanh          !: Use/do not use double tanf function for vertical coordinates
+   91.       REAL(wp)      ::   ppa2               !: Double tanh function parameters
+   92.       REAL(wp)      ::   ppkth2             !:
+   93.       REAL(wp)      ::   ppacr2             !:
+   94.    
+   95.       !                                    !! old non-DOCTOR names still used in the model
+   96.       INTEGER , PUBLIC ::   ntopo           !: = 0/1 ,compute/read the bathymetry file
+   97.       REAL(wp), PUBLIC ::   e3zps_min       !: miminum thickness for partial steps (meters)
+   98.       REAL(wp), PUBLIC ::   e3zps_rat       !: minimum thickness ration for partial steps
+   99.       INTEGER , PUBLIC ::   nmsh            !: = 1 create a mesh-mask file
+  100.       REAL(wp), PUBLIC ::   atfp            !: asselin time filter parameter
+  101.       REAL(wp), PUBLIC ::   rdt             !: time step for the dynamics and tracer
+  102.    
+  103.       !                                                  !!! associated variables
+  104.       INTEGER , PUBLIC                 ::   neuler        !: restart euler forward option (0=Euler)
+  105.       REAL(wp), PUBLIC                 ::   atfp1         !: asselin time filter coeff. (atfp1= 1-2*atfp)
+  106.       REAL(wp), PUBLIC                 ::   r2dt          !: = 2*rdt except at nit000 (=rdt) if neuler=0
+  107.    
+  108.       !!----------------------------------------------------------------------
+  109.       !! space domain parameters
+  110.       !!----------------------------------------------------------------------
+  111.       LOGICAL, PUBLIC ::   lzoom      =  .FALSE.   !: zoom flag
+  112.       LOGICAL, PUBLIC ::   lzoom_e    =  .FALSE.   !: East  zoom type flag
+  113.       LOGICAL, PUBLIC ::   lzoom_w    =  .FALSE.   !: West  zoom type flag
+  114.       LOGICAL, PUBLIC ::   lzoom_s    =  .FALSE.   !: South zoom type flag
+  115.       LOGICAL, PUBLIC ::   lzoom_n    =  .FALSE.   !: North zoom type flag
+  116.    
+  117.       !                                     !!! domain parameters linked to mpp
+  118.       INTEGER, PUBLIC ::   nperio            !: type of lateral boundary condition
+  119.       INTEGER, PUBLIC ::   nimpp, njmpp      !: i- & j-indexes for mpp-subdomain left bottom
+  120.       INTEGER, PUBLIC ::   nreci, nrecj      !: overlap region in i and j
+  121.       INTEGER, PUBLIC ::   nproc             !: number for local processor
+  122.       INTEGER, PUBLIC ::   narea             !: number for local area
+  123.       INTEGER, PUBLIC ::   nbondi, nbondj    !: mark of i- and j-direction local boundaries
+  124.       INTEGER, ALLOCATABLE, PUBLIC ::   nbondi_bdy(:)    !: mark i-direction local boundaries for BDY open boundaries
+  125.       INTEGER, ALLOCATABLE, PUBLIC ::   nbondj_bdy(:)    !: mark j-direction local boundaries for BDY open boundaries
+  126.       INTEGER, ALLOCATABLE, PUBLIC ::   nbondi_bdy_b(:)  !: mark i-direction of neighbours local boundaries for BDY open boundaries  
+  127.       INTEGER, ALLOCATABLE, PUBLIC ::   nbondj_bdy_b(:)  !: mark j-direction of neighbours local boundaries for BDY open boundaries  
+  128.    
+  129.       INTEGER, PUBLIC ::   npolj             !: north fold mark (0, 3 or 4)
+  130.       INTEGER, PUBLIC ::   nlci, nldi, nlei  !: i-dimensions of the local subdomain and its first and last indoor indices
+  131.       INTEGER, PUBLIC ::   nlcj, nldj, nlej  !: i-dimensions of the local subdomain and its first and last indoor indices
+  132.       INTEGER, PUBLIC ::   noea, nowe        !: index of the local neighboring processors in
+  133.       INTEGER, PUBLIC ::   noso, nono        !: east, west, south and north directions
+  134.       INTEGER, PUBLIC ::   npne, npnw        !: index of north east and north west processor
+  135.       INTEGER, PUBLIC ::   npse, npsw        !: index of south east and south west processor
+  136.       INTEGER, PUBLIC ::   nbne, nbnw        !: logical of north east & north west processor
+  137.       INTEGER, PUBLIC ::   nbse, nbsw        !: logical of south east & south west processor
+  138.       INTEGER, PUBLIC ::   nidom             !: ???
+  139.    
+  140.       INTEGER, PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:) ::   mig        !: local  ==> global domain i-index
+  141.       INTEGER, PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:) ::   mjg        !: local  ==> global domain j-index
+  142.       INTEGER, PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:) ::   mi0, mi1   !: global ==> local  domain i-index    !!bug ==> other solution?
+  143.       !                                                  ! (mi0=1 and mi1=0 if the global index is not in the local domain)
+  144.       INTEGER, PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:) ::   mj0, mj1   !: global ==> local  domain j-index     !!bug ==> other solution?
+  145.       !                                                  ! (mi0=1 and mi1=0 if the global index is not in the local domain)
+  146.       INTEGER, PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:) ::   nimppt, njmppt   !: i-, j-indexes for each processor
+  147.       INTEGER, PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:) ::   ibonit, ibonjt   !: i-, j- processor neighbour existence
+  148.       INTEGER, PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:) ::   nlcit , nlcjt    !: dimensions of every subdomain
+  149.       INTEGER, PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:) ::   nldit , nldjt    !: first, last indoor index for each i-domain
+  150.       INTEGER, PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:) ::   nleit , nlejt    !: first, last indoor index for each j-domain
+  151.       INTEGER, PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) :: nfiimpp, nfipproc, nfilcit
+  152.    
+  153.       !!----------------------------------------------------------------------
+  154.       !! horizontal curvilinear coordinate and scale factors
+  155.       !! ---------------------------------------------------------------------
+  156.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   glamt , glamu, glamv , glamf    !: longitude at t, u, v, f-points [degree]
+  157.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   gphit , gphiu, gphiv , gphif    !: latitude  at t, u, v, f-points [degree]
+  158.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:) ::   e1t   , e2t  , r1_e1t, r1_e2t   !: t-point horizontal scale factors    [m]
+  159.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:) ::   e1u   , e2u  , r1_e1u, r1_e2u   !: horizontal scale factors at u-point [m]
+  160.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:) ::   e1v   , e2v  , r1_e1v, r1_e2v   !: horizontal scale factors at v-point [m]
+  161.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:) ::   e1f   , e2f  , r1_e1f, r1_e2f   !: horizontal scale factors at f-point [m]
+  162.       !
+  163.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   e1e2t , r1_e1e2t                !: associated metrics at t-point
+  164.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   e1e2u , r1_e1e2u , e2_e1u       !: associated metrics at u-point
+  165.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   e1e2v , r1_e1e2v , e1_e2v       !: associated metrics at v-point
+  166.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   e1e2f , r1_e1e2f                !: associated metrics at f-point
+  167.       !
+  168.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   ff_f, ff_t                      !: coriolis factor                   [1/s]
+  169.    
+  170.       !!----------------------------------------------------------------------
+  171.       !! vertical coordinate and scale factors
+  172.       !! ---------------------------------------------------------------------
+  173.       !                                !!* Namelist namzgr : vertical coordinate *
+  174.       LOGICAL, PUBLIC ::   ln_zco       !: z-coordinate - full step
+  175.       LOGICAL, PUBLIC ::   ln_zps       !: z-coordinate - partial step
+  176.       LOGICAL, PUBLIC ::   ln_sco       !: s-coordinate or hybrid z-s coordinate
+  177.       LOGICAL, PUBLIC ::   ln_mes       !: Multi Enveloped s-coordinate (MEs)
+  178.       LOGICAL, PUBLIC ::   ln_isfcav    !: presence of ISF 
+  179.       LOGICAL, PUBLIC ::   ln_linssh    !: variable grid flag
+  180.       LOGICAL, PUBLIC ::   ln_loc_zgr   !: To localise (.TRUE.) or not (.FALSE.) the 
+  181.                                         !  chosen vertical coordinate system
+  182.    
+  183.       !                                                        !  ref.   ! before  !   now   ! after  !
+  184.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::     e3t_0 ,   e3t_b ,   e3t_n ,  e3t_a   !: t- vert. scale factor [m]
+  185.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::     e3u_0 ,   e3u_b ,   e3u_n ,  e3u_a   !: u- vert. scale factor [m]
+  186.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::     e3v_0 ,   e3v_b ,   e3v_n ,  e3v_a   !: v- vert. scale factor [m]
+  187.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::     e3f_0           ,   e3f_n            !: f- vert. scale factor [m]
+  188.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::     e3w_0 ,   e3w_b ,   e3w_n            !: w- vert. scale factor [m]
+  189.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::    e3uw_0 ,  e3uw_b ,  e3uw_n            !: uw-vert. scale factor [m]
+  190.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::    e3vw_0 ,  e3vw_b ,  e3vw_n            !: vw-vert. scale factor [m]
+  191.    
+  192.       !                                                        !  ref.   ! before  !   now   !
+  193.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   gdept_0 , gdept_b , gdept_n   !: t- depth              [m]
+  194.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   gdepw_0 , gdepw_b , gdepw_n   !: w- depth              [m]
+  195.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   gde3w_0           , gde3w_n   !: w- depth (sum of e3w) [m]
+  196.       
+  197.       !                                                      !  ref. ! before  !   now   !  after  !
+  198.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   ht_0            ,    ht_n             !: t-depth              [m]
+  199.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   hu_0  ,    hu_b ,    hu_n ,    hu_a   !: u-depth              [m]
+  200.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   hv_0  ,    hv_b ,    hv_n ,    hv_a   !: u-depth              [m]
+  201.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::           r1_hu_b , r1_hu_n , r1_hu_a   !: inverse of u-depth [1/m]
+  202.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::           r1_hv_b , r1_hv_n , r1_hv_a   !: inverse of v-depth [1/m]
+  203.    
+  204.    
+  205.       INTEGER, PUBLIC ::   nla10              !: deepest    W level Above  ~10m (nlb10 - 1)
+  206.       INTEGER, PUBLIC ::   nlb10              !: shallowest W level Bellow ~10m (nla10 + 1) 
+  207.    
+  208.       !! 1D reference  vertical coordinate
+  209.       !! =-----------------====------
+  210.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:)   ::   gdept_1d, gdepw_1d !: reference depth of t- and w-points (m)
+  211.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:)   ::   e3t_1d  , e3w_1d   !: reference vertical scale factors at T- and W-pts (m)
+  212.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   e3tp    , e3wp     !: ocean bottom level thickness at T and W points
+  213.    
+  214.    !!gm  This should be removed from here....  ==>>> only used in domzgr at initialization phase
+  215.       !! s-coordinate and hybrid z-s-coordinate
+  216.       !! =----------------======---------------
+  217.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:)   ::   gsigt, gsigw       !: model level depth coefficient at t-, w-levels (analytic)
+  218.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:)   ::   gsi3w              !: model level depth coefficient at w-level (sum of gsigw)
+  219.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:)   ::   esigt, esigw       !: vertical scale factor coef. at t-, w-levels
+  220.    
+  221.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   hbatv , hbatf      !: ocean depth at the vertical of  v--f
+  222.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   hbatt , hbatu      !:                                 t--u points (m)
+  223.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   scosrf, scobot     !: ocean surface and bottom topographies 
+  224.       !                                                                           !  (if deviating from coordinate surfaces in HYBRID)
+  225.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   hifv  , hiff       !: interface depth between stretching at v--f
+  226.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   hift  , hifu       !: and quasi-uniform spacing             t--u points (m)
+  227.    !!gm end
+  228.    
+  229.       !!----------------------------------------------------------------------
+  230.       !! masks, bathymetry
+  231.       !! ---------------------------------------------------------------------
+  232.       INTEGER , PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   mbathy             !: number of ocean level (=0, 1, ... , jpk-1)
+  233.       INTEGER , PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   mbkt               !: vertical index of the bottom last T- ocean level
+  234.       INTEGER , PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   mbku, mbkv         !: vertical index of the bottom last U- and W- ocean level
+  235.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   bathy              !: ocean depth (meters)
+  236.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   tmask_i            !: interior domain T-point mask
+  237.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   tmask_h            !: internal domain T-point mask (Figure 8.5 NEMO book)
+  238.    
+  239.       INTEGER , PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   misfdep                 !: top first ocean level                (ISF)
+  240.       INTEGER , PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   mikt, miku, mikv, mikf  !: first wet T-, U-, V-, F- ocean level (ISF)
+  241.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   risfdep                 !: Iceshelf draft                       (ISF)
+  242.    
+  243.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   ssmask, ssumask, ssvmask, ssfmask    !: surface mask at T-,U-, V- and F-pts
+  244.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:), TARGET :: tmask, umask, vmask, fmask   !: land/ocean mask at T-, U-, V- and F-pts
+  245.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:), TARGET :: wmask, wumask, wvmask        !: land/ocean mask at WT-, WU- and WV-pts
+  246.    
+  247.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:) ::   tpol, fpol          !: north fold mask (jperio= 3 or 4)
+  248.    
+  249.       ! LOCAL VERTICAL COORDINATE SYSTEM 
+  250.       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) :: l2g_msk ! mask for identifying areas using
+  251.                                                                      ! -) the local coord. system (=2),
+  252.                                                                      ! -) transitioning from local to global (=1),
+  253.                                                                      ! -) using global coord. system (=0)
+  254.                                                                      ! If ln_loc_zgr=.FALSE. then l2g_msk(:,:)=2
+  255.    
+  256.       !!----------------------------------------------------------------------
+  257.       !! calendar variables
+  258.       !! ---------------------------------------------------------------------
+  259.       INTEGER , PUBLIC ::   nyear         !: current year
+  260.       INTEGER , PUBLIC ::   nmonth        !: current month
+  261.       INTEGER , PUBLIC ::   nday          !: current day of the month
+  262.       INTEGER , PUBLIC ::   nhour         !: current hour
+  263.       INTEGER , PUBLIC ::   nminute       !: current minute
+  264.       INTEGER , PUBLIC ::   ndastp        !: time step date in yyyymmdd format
+  265.       INTEGER , PUBLIC ::   nday_year     !: current day counted from jan 1st of the current year
+  266.       INTEGER , PUBLIC ::   nsec_year     !: current time step counted in second since 00h jan 1st of the current year
+  267.       INTEGER , PUBLIC ::   nsec_month    !: current time step counted in second since 00h 1st day of the current month
+  268.       INTEGER , PUBLIC ::   nsec_week     !: current time step counted in second since 00h of last monday
+  269.       INTEGER , PUBLIC ::   nsec_day      !: current time step counted in second since 00h of the current day
+  270.       REAL(wp), PUBLIC ::   fjulday       !: current julian day 
+  271.       REAL(wp), PUBLIC ::   fjulstartyear !: first day of the current year in julian days
+  272.       REAL(wp), PUBLIC ::   adatrj        !: number of elapsed days since the begining of the whole simulation
+  273.       !                                   !: (cumulative duration of previous runs that may have used different time-step size)
+  274.       INTEGER , PUBLIC, DIMENSION(0: 2) ::   nyear_len     !: length in days of the previous/current/next year
+  275.       INTEGER , PUBLIC, DIMENSION(0:13) ::   nmonth_len    !: length in days of the months of the current year
+  276.       INTEGER , PUBLIC, DIMENSION(0:13) ::   nmonth_half   !: second since Jan 1st 0h of the current year and the half of the months
+  277.       INTEGER , PUBLIC, DIMENSION(0:13) ::   nmonth_end    !: second since Jan 1st 0h of the current year and the end of the months
+  278.       INTEGER , PUBLIC                  ::   nsec1jan000   !: second since Jan 1st 0h of nit000 year and Jan 1st 0h the current year
+  279.    
+  280.       !!----------------------------------------------------------------------
+  281.       !! mpp reproducibility
+  282.       !!----------------------------------------------------------------------
+  283.    
+  284.    
+  285.    
+  286.       LOGICAL, PUBLIC, PARAMETER ::   lk_mpp_rep = .FALSE.   !: agrif flag
+  287.    
+  288.    
+  289.       !!----------------------------------------------------------------------
+  290.       !! agrif domain
+  291.       !!----------------------------------------------------------------------
+  292.    
+  293.    
+  294.    
+  295.       LOGICAL, PUBLIC, PARAMETER ::   lk_agrif = .FALSE.   !: agrif flag
+  296.    
+  297.    
+  298.       !!----------------------------------------------------------------------
+  299.       !! NEMO/OPA 4.0 , NEMO Consortium (2011)
+  300.       !! $Id: dom_oce.F90 6140 2015-12-21 11:35:23Z timgraham $
+  301.       !! Software governed by the CeCILL licence     (./LICENSE)
+  302.       !!----------------------------------------------------------------------
+  303.    CONTAINS
+  304.    
+  305.    
+  306.       !!----------------------------------------------------------------------
+  307.       !! NOT 'key_agrif'      dummy function                     No AGRIF zoom
+  308.       !!----------------------------------------------------------------------
+  309.       LOGICAL FUNCTION Agrif_Root()
+  310.          Agrif_Root = .TRUE.
+  311.       END FUNCTION Agrif_Root
+  312.    
+  313.       CHARACTER(len=3) FUNCTION Agrif_CFixed()
+  314.          Agrif_CFixed = '0' 
+  315.       END FUNCTION Agrif_CFixed
+  316.    
+  317.    
+  318.       INTEGER FUNCTION dom_oce_alloc()
+  319.          !!----------------------------------------------------------------------
+  320.          INTEGER, DIMENSION(13) :: ierr
+  321.          !!----------------------------------------------------------------------
+  322.          ierr(:) = 0
+ftn-6204 ftn: VECTOR File = dom_oce.f90, Line = 322 
+  A loop starting at line 322 was vectorized.
+
+  323.          !
+  324.          ALLOCATE( mig(jpi), mjg(jpj), nfiimpp(jpni,jpnj),  &
+  325.             &      nfipproc(jpni,jpnj), nfilcit(jpni,jpnj), STAT=ierr(1) )
+  326.             !
+  327.          ALLOCATE( nimppt(jpnij) , ibonit(jpnij) , nlcit(jpnij) , nlcjt(jpnij) ,     &
+  328.             &      njmppt(jpnij) , ibonjt(jpnij) , nldit(jpnij) , nldjt(jpnij) ,     &
+  329.             &                                      nleit(jpnij) , nlejt(jpnij) ,     &
+  330.             &      mi0(jpidta)   , mi1 (jpidta),  mj0(jpjdta)   , mj1 (jpjdta),      &
+  331.             &      tpol(jpiglo)  , fpol(jpiglo)                               , STAT=ierr(2) )
+  332.             !
+  333.          ALLOCATE( glamt(jpi,jpj) ,    glamu(jpi,jpj) ,  glamv(jpi,jpj) ,  glamf(jpi,jpj) ,     &
+  334.             &      gphit(jpi,jpj) ,    gphiu(jpi,jpj) ,  gphiv(jpi,jpj) ,  gphif(jpi,jpj) ,     &
+  335.             &       e1t (jpi,jpj) ,     e2t (jpi,jpj) , r1_e1t(jpi,jpj) , r1_e2t(jpi,jpj) ,     &
+  336.             &       e1u (jpi,jpj) ,     e2u (jpi,jpj) , r1_e1u(jpi,jpj) , r1_e2u(jpi,jpj) ,     &
+  337.             &       e1v (jpi,jpj) ,     e2v (jpi,jpj) , r1_e1v(jpi,jpj) , r1_e2v(jpi,jpj) ,     &
+  338.             &       e1f (jpi,jpj) ,     e2f (jpi,jpj) , r1_e1f(jpi,jpj) , r1_e2f(jpi,jpj) ,     &
+  339.             &      e1e2t(jpi,jpj) , r1_e1e2t(jpi,jpj)                                     ,     &
+  340.             &      e1e2u(jpi,jpj) , r1_e1e2u(jpi,jpj) , e2_e1u(jpi,jpj)                   ,     &
+  341.             &      e1e2v(jpi,jpj) , r1_e1e2v(jpi,jpj) , e1_e2v(jpi,jpj)                   ,     &
+  342.             &      e1e2f(jpi,jpj) , r1_e1e2f(jpi,jpj)                                     ,     &
+  343.             &       ff_f(jpi,jpj) ,     ff_t(jpi,jpj)                                     , STAT=ierr(3) )
+  344.             !
+  345.          ALLOCATE( gdept_0(jpi,jpj,jpk) , gdepw_0(jpi,jpj,jpk) , gde3w_0(jpi,jpj,jpk) ,     &
+  346.             &      gdept_b(jpi,jpj,jpk) , gdepw_b(jpi,jpj,jpk) ,                             &
+  347.             &      gdept_n(jpi,jpj,jpk) , gdepw_n(jpi,jpj,jpk) , gde3w_n(jpi,jpj,jpk) , STAT=ierr(4) )
+  348.             !
+  349.          ALLOCATE( e3t_0(jpi,jpj,jpk) , e3u_0(jpi,jpj,jpk) , e3v_0(jpi,jpj,jpk) , e3f_0(jpi,jpj,jpk) , e3w_0(jpi,jpj,jpk) ,   &
+  350.             &      e3t_b(jpi,jpj,jpk) , e3u_b(jpi,jpj,jpk) , e3v_b(jpi,jpj,jpk) ,                      e3w_b(jpi,jpj,jpk) ,   & 
+  351.             &      e3t_n(jpi,jpj,jpk) , e3u_n(jpi,jpj,jpk) , e3v_n(jpi,jpj,jpk) , e3f_n(jpi,jpj,jpk) , e3w_n(jpi,jpj,jpk) ,   & 
+  352.             &      e3t_a(jpi,jpj,jpk) , e3u_a(jpi,jpj,jpk) , e3v_a(jpi,jpj,jpk) ,                                             &
+  353.             !                                                          !
+  354.             &      e3uw_0(jpi,jpj,jpk) , e3vw_0(jpi,jpj,jpk) ,         &
+  355.             &      e3uw_b(jpi,jpj,jpk) , e3vw_b(jpi,jpj,jpk) ,         &               
+  356.             &      e3uw_n(jpi,jpj,jpk) , e3vw_n(jpi,jpj,jpk) ,     STAT=ierr(5) )                       
+  357.             !
+  358.          ALLOCATE( ht_0(jpi,jpj) , hu_0(jpi,jpj) , hv_0(jpi,jpj) ,                                           &
+  359.             &                      hu_b(jpi,jpj) , hv_b(jpi,jpj) , r1_hu_b(jpi,jpj) , r1_hv_b(jpi,jpj) ,     &
+  360.             &      ht_n(jpi,jpj) , hu_n(jpi,jpj) , hv_n(jpi,jpj) , r1_hu_n(jpi,jpj) , r1_hv_n(jpi,jpj) ,     &
+  361.             &                      hu_a(jpi,jpj) , hv_a(jpi,jpj) , r1_hu_a(jpi,jpj) , r1_hv_a(jpi,jpj) , STAT=ierr(6)  )
+  362.             !
+  363.             !
+  364.          ALLOCATE( gdept_1d(jpk) , gdepw_1d(jpk) ,                                     &
+  365.             &      e3t_1d  (jpk) , e3w_1d  (jpk) , e3tp (jpi,jpj), e3wp(jpi,jpj) ,     &
+  366.             &      gsigt   (jpk) , gsigw   (jpk) , gsi3w(jpk)    ,                     &
+  367.             &      esigt   (jpk) , esigw   (jpk)                                 , STAT=ierr(7) )
+  368.             !
+  369.          ALLOCATE( hbatv (jpi,jpj) , hbatf (jpi,jpj) ,     &
+  370.             &      hbatt (jpi,jpj) , hbatu (jpi,jpj) ,     &
+  371.             &      scosrf(jpi,jpj) , scobot(jpi,jpj) ,     &
+  372.             &      hifv  (jpi,jpj) , hiff  (jpi,jpj) ,     &
+  373.             &      hift  (jpi,jpj) , hifu  (jpi,jpj) , STAT=ierr(8) )
+  374.    
+  375.          ALLOCATE( mbathy(jpi,jpj) , bathy  (jpi,jpj) ,                                       &
+  376.             &      tmask_i(jpi,jpj) , tmask_h(jpi,jpj) ,                                      &
+  377.             &      ssmask (jpi,jpj) , ssumask(jpi,jpj) , ssvmask(jpi,jpj) , ssfmask(jpi,jpj), &
+  378.             &      mbkt   (jpi,jpj) , mbku   (jpi,jpj) , mbkv   (jpi,jpj) ,                   &
+  379.             &      l2g_msk(jpi,jpj) , STAT=ierr(9) )
+  380.    
+  381.    ! (ISF) Allocation of basic array   
+  382.          ALLOCATE( misfdep(jpi,jpj) , risfdep(jpi,jpj),     &
+  383.             &     mikt(jpi,jpj), miku(jpi,jpj), mikv(jpi,jpj) ,           &
+  384.             &     mikf(jpi,jpj), STAT=ierr(10) )
+  385.    
+  386.          ALLOCATE( tmask(jpi,jpj,jpk) , umask(jpi,jpj,jpk),     & 
+  387.             &      vmask(jpi,jpj,jpk) , fmask(jpi,jpj,jpk), STAT=ierr(11) )
+  388.    
+  389.          ALLOCATE( wmask(jpi,jpj,jpk) , wumask(jpi,jpj,jpk), wvmask(jpi,jpj,jpk) , STAT=ierr(12) )
+  390.          !
+  391.          dom_oce_alloc = MAXVAL(ierr)
+ftn-6297 ftn: VECTOR File = dom_oce.f90, Line = 391 
+  A loop starting at line 391 was not vectorized because a recurrence was found at line 391.
+
+  392.          !
+  393.       END FUNCTION dom_oce_alloc
+  394.    
+  395.       !!======================================================================
+  396.    END MODULE dom_oce
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                         E x t e r n a l   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Name  Messages
+----  --------
+AGRIF_CFIXED in DOM_OCE
+      Defined as:  Function (line 313, file dom_oce.f90)
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+AGRIF_ROOT in DOM_OCE
+      Defined as:  Function (line 309, file dom_oce.f90)
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+DOM_OCE
+      Defined as:  Module (line 1, file dom_oce.f90)
+
+        Uses:      PAR_KIND  (indirectly)
+
+Name  Messages
+----  --------
+DOM_OCE_ALLOC in DOM_OCE
+      Defined as:  Function (line 26, file dom_oce.f90)
+
+      Interface:   None
+
+      Calls:       MAXVAL(Intrinsic) (Line 391, file dom_oce.f90)
+
+Name  Messages
+----  --------
+MAXVAL(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   DOM_OCE_ALLOC in DOM_OCE (Line 391, file dom_oce.f90)
+
+Name  Messages
+----  --------
+PAR_KIND
+      Defined as:  No definitions.
+
+      Used By:     DOM_OCE  (indirectly)
+
+Name  Messages
+----  --------
+PAR_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

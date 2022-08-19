@@ -1,0 +1,625 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S u m m a r y   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Compilation
+-----------
+File     : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/lbclnk.f90
+Compiled : 04/29/22  10:43:16
+Compiler : Version 8.3.4
+Ftnlx    : Version 8318 (libcif 83016)
+Target   : x86-64
+Command  : ftn_driver.exe -hcpu=haswell -hstatic -D__CRAYXC -D__CRAY_HASWELL
+           -D__CRAYXT_COMPUTE_LINUX_TARGET -hnetwork=aries -olbclnk.o
+           -I/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HE
+           AD_test_MEs/tools/DOMAINcfg/BLD/inc -sreal64 -sinteger32 -Ovector0
+           -hfp0 -O0 -hflex_mp=intolerant -eCID
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/common/moci/modules/packages/XIOS/2.0/24708/952/inc
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/m
+           ct
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/p
+           smile.MPI1 -c -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/opt/cray/libsci/13.0.1/CRAY/83/haswell/include
+           -I/opt/cray/mpt/7.0.4/gni/mpich2-cray/83/include
+           -I/opt/cray/rca/1.0.0-2.0502.60530.1.62.ari/include
+           -I/opt/cray/alps/5.2.4-2.0502.9774.31.11.ari/include
+           -I/opt/cray/xpmem/0.1-2.0502.64982.5.3.ari/include
+           -I/opt/cray/gni-headers/4.0-1.0502.10859.7.8.ari/include
+           -I/opt/cray/dmapp/7.0.1-1.0502.11080.8.76.ari/include
+           -I/opt/cray/pmi/5.0.5-1.0000.10300.134.8.ari/include
+           -I/opt/cray/ugni/6.0-1.0502.10863.8.29.ari/include
+           -I/opt/cray/udreg/2.3.2-1.0502.10518.2.17.ari/include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/pkgconfig/../include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/wlm_detect/1.0-1.0502.64649.2.1.ari/include
+           -I/opt/cray/krca/1.0.0-2.0502.63139.4.31.ari/include
+           -I/opt/cray-hss-devel/7.2.0/include /projects/jmmp/dbruciaf/NEMO/CHEC
+           KOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/lbc
+           lnk.f90
+
+ftnlx report
+------------
+Source   : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp//projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/lbclnk.f90
+Date     : 04/29/2022  10:43:16
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S o u r c e   L i s t i n g
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    1.    MODULE lbclnk
+    2.       !!======================================================================
+    3.       !!                       ***  MODULE  lbclnk  ***
+    4.       !! Ocean        : lateral boundary conditions
+    5.       !!=====================================================================
+    6.       !! History :  OPA  ! 1997-06  (G. Madec)  Original code
+    7.       !!   NEMO     1.0  ! 2002-09  (G. Madec)  F90: Free form and module
+    8.       !!            3.2  ! 2009-03  (R. Benshila)  External north fold treatment  
+    9.       !!            3.5  ! 2012     (S.Mocavero, I. Epicoco) optimization of BDY comm. via lbc_bdy_lnk and lbc_obc_lnk
+   10.       !!            3.4  ! 2012-12  (R. Bourdalle-Badie, G. Reffray)  add a C1D case  
+   11.       !!            3.6  ! 2015-06  (O. Tintó and M. Castrillo)  add lbc_lnk_multi  
+   12.       !!----------------------------------------------------------------------
+   13.    
+   14.       !!----------------------------------------------------------------------
+   15.       !!   'key_mpp_mpi'             MPI massively parallel processing library
+   16.       !!----------------------------------------------------------------------
+   17.       !!   lbc_lnk      : generic interface for mpp_lnk_3d and mpp_lnk_2d routines defined in lib_mpp
+   18.       !!   lbc_sum      : generic interface for mpp_lnk_sum_3d and mpp_lnk_sum_2d routines defined in lib_mpp
+   19.       !!   lbc_lnk_e    : generic interface for mpp_lnk_2d_e routine defined in lib_mpp
+   20.       !!   lbc_bdy_lnk  : generic interface for mpp_lnk_bdy_2d and mpp_lnk_bdy_3d routines defined in lib_mpp
+   21.       !!----------------------------------------------------------------------
+   22.       USE lib_mpp        ! distributed memory computing library
+                 ^                                                     
+ftn-1193 ftn: CAUTION LBCLNK, File = lbclnk.f90, Line = 22, Column = 8 
+  Module "PAR_OCE" is indirectly used in module "LIB_MPP" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_oce.o".  That file no
+  longer exists.
+
+                 ^                                                     
+ftn-1193 ftn: CAUTION LBCLNK, File = lbclnk.f90, Line = 22, Column = 8 
+  Module "DOM_OCE" is indirectly used in module "LIB_MPP" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/dom_oce.o".  That file no
+  longer exists.
+
+   23.    
+   24.       INTERFACE lbc_lnk_multi
+   25.          MODULE PROCEDURE mpp_lnk_2d_9, mpp_lnk_2d_multiple
+   26.       END INTERFACE
+   27.       !
+   28.       INTERFACE lbc_lnk
+   29.          MODULE PROCEDURE mpp_lnk_3d_gather, mpp_lnk_3d, mpp_lnk_2d
+   30.       END INTERFACE
+   31.       !
+   32.       INTERFACE lbc_sum
+   33.          MODULE PROCEDURE mpp_lnk_sum_3d, mpp_lnk_sum_2d
+   34.       END INTERFACE
+   35.       !
+   36.       INTERFACE lbc_bdy_lnk
+   37.          MODULE PROCEDURE mpp_lnk_bdy_2d, mpp_lnk_bdy_3d
+   38.       END INTERFACE
+   39.       !
+   40.       INTERFACE lbc_lnk_e
+   41.          MODULE PROCEDURE mpp_lnk_2d_e
+   42.       END INTERFACE
+   43.       !
+   44.       INTERFACE lbc_lnk_icb
+   45.          MODULE PROCEDURE mpp_lnk_2d_icb
+   46.       END INTERFACE
+   47.    
+   48.       PUBLIC   lbc_lnk       ! ocean lateral boundary conditions
+   49.       PUBLIC   lbc_lnk_multi ! modified ocean lateral boundary conditions
+   50.       PUBLIC   lbc_sum
+   51.       PUBLIC   lbc_lnk_e     !
+   52.       PUBLIC   lbc_bdy_lnk   ! ocean lateral BDY boundary conditions
+   53.       PUBLIC   lbc_lnk_icb   !
+   54.    
+   55.       !!----------------------------------------------------------------------
+   56.       !! NEMO/OCE 4.0 , NEMO Consortium (2018)
+   57.       !! $Id: lbclnk.F90 6493 2016-04-22 13:52:52Z mathiot $
+   58.       !! Software governed by the CeCILL licence     (./LICENSE)
+   59.       !!----------------------------------------------------------------------
+   60.    
+   61.       !!======================================================================
+   62.    END MODULE lbclnk
+   63.    
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                         E x t e r n a l   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Name  Messages
+----  --------
+CTL_NAM in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+CTL_OPN in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+CTL_STOP in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+CTL_WARN in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+DOM_OCE
+      Defined as:  No definitions.
+
+      Used By:     LBCLNK  (indirectly)
+
+Name  Messages
+----  --------
+GET_UNIT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+LBCLNK
+      Defined as:  Module (line 1, file lbclnk.f90)
+
+        Uses:      PAR_OCE  (indirectly)
+                   DOM_OCE  (indirectly)
+
+Name  Messages
+----  --------
+LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+Name  Messages
+----  --------
+MPPBCAST_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPGATHER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_REAL_MULTIPLE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPRECV in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSCATTER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSEND in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSTOP in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_REALDD in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_REALDD in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSYNC in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_COMM_FREE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_ICE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_NORTH in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_ZNL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_E in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_ICB in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_9 in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_E in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_ICB in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_MULTIPLE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_3D_GATHER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_BDY_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_BDY_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_SUM_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_SUM_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MAXLOC2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MAXLOC3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MINLOC2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MINLOC3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MYNODE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+PAR_OCE
+      Defined as:  No definitions.
+
+      Used By:     LBCLNK  (indirectly)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,264 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S u m m a r y   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Compilation
+-----------
+File     : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/in_out_manager.f90
+Compiled : 04/29/22  10:43:08
+Compiler : Version 8.3.4
+Ftnlx    : Version 8318 (libcif 83016)
+Target   : x86-64
+Command  : ftn_driver.exe -hcpu=haswell -hstatic -D__CRAYXC -D__CRAY_HASWELL
+           -D__CRAYXT_COMPUTE_LINUX_TARGET -hnetwork=aries -oin_out_manager.o
+           -I/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HE
+           AD_test_MEs/tools/DOMAINcfg/BLD/inc -sreal64 -sinteger32 -Ovector0
+           -hfp0 -O0 -hflex_mp=intolerant -eCID
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/common/moci/modules/packages/XIOS/2.0/24708/952/inc
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/m
+           ct
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/p
+           smile.MPI1 -c -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/opt/cray/libsci/13.0.1/CRAY/83/haswell/include
+           -I/opt/cray/mpt/7.0.4/gni/mpich2-cray/83/include
+           -I/opt/cray/rca/1.0.0-2.0502.60530.1.62.ari/include
+           -I/opt/cray/alps/5.2.4-2.0502.9774.31.11.ari/include
+           -I/opt/cray/xpmem/0.1-2.0502.64982.5.3.ari/include
+           -I/opt/cray/gni-headers/4.0-1.0502.10859.7.8.ari/include
+           -I/opt/cray/dmapp/7.0.1-1.0502.11080.8.76.ari/include
+           -I/opt/cray/pmi/5.0.5-1.0000.10300.134.8.ari/include
+           -I/opt/cray/ugni/6.0-1.0502.10863.8.29.ari/include
+           -I/opt/cray/udreg/2.3.2-1.0502.10518.2.17.ari/include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/pkgconfig/../include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/wlm_detect/1.0-1.0502.64649.2.1.ari/include
+           -I/opt/cray/krca/1.0.0-2.0502.63139.4.31.ari/include
+           -I/opt/cray-hss-devel/7.2.0/include /projects/jmmp/dbruciaf/NEMO/CHEC
+           KOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/in_
+           out_manager.f90
+
+ftnlx report
+------------
+Source   : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp//projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/in_out_manager.f90
+Date     : 04/29/2022  10:43:08
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S o u r c e   L i s t i n g
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    1.    MODULE in_out_manager   
+    2.       !!======================================================================
+    3.       !!                       ***  MODULE  in_out_manager  ***
+    4.       !! I/O manager utilities : Defines run parameters together with logical units
+    5.       !!=====================================================================
+    6.       !! History :   1.0  !  2002-06  (G. Madec)   original code
+    7.       !!             2.0  !  2006-07  (S. Masson)  iom, add ctl_stop, ctl_warn
+    8.       !!             3.0  !  2008-06  (G. Madec)   add ctmp4 to ctmp10
+    9.       !!             3.2  !  2009-08  (S. MAsson)  add new ctl_opn
+   10.       !!             3.3  !  2010-10  (A. Coward)  add NetCDF4 usage
+   11.       !!----------------------------------------------------------------------
+   12.    
+   13.       !!----------------------------------------------------------------------
+   14.       USE par_oce       ! ocean parameter
+                 ^                               
+ftn-1193 ftn: CAUTION IN_OUT_MANAGER, File = in_out_manager.f90, Line = 14, Column = 8 
+  Module "PAR_KIND" is indirectly used in module "PAR_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_kind.o".  That file no
+  longer exists.
+
+   15.       USE nc4interface  ! NetCDF4 interface
+   16.    
+   17.       IMPLICIT NONE
+   18.       PUBLIC
+   19.    
+   20.     
+   21.       !
+   22.       !!----------------------------------------------------------------------
+   23.       !!                   namrun namelist parameters
+   24.       !!----------------------------------------------------------------------
+   25.       CHARACTER(lc) ::   cn_exp           !: experiment name used for output filename
+   26.       CHARACTER(lc) ::   cn_ocerst_in     !: suffix of ocean restart name (input)
+   27.       CHARACTER(lc) ::   cn_ocerst_indir  !: restart input directory
+   28.       CHARACTER(lc) ::   cn_ocerst_out    !: suffix of ocean restart name (output)
+   29.       CHARACTER(lc) ::   cn_ocerst_outdir !: restart output directory
+   30.       LOGICAL       ::   ln_rstart        !: start from (F) rest or (T) a restart file
+   31.       LOGICAL       ::   ln_rst_list      !: output restarts at list of times (T) or by frequency (F)
+   32.       INTEGER       ::   nn_no            !: job number
+   33.       INTEGER       ::   nn_rstctl        !: control of the time step (0, 1 or 2)
+   34.       INTEGER       ::   nn_rstssh   = 0  !: hand made initilization of ssh or not (1/0)
+   35.       INTEGER       ::   nn_it000         !: index of the first time step
+   36.       INTEGER       ::   nn_itend         !: index of the last time step
+   37.       INTEGER       ::   nn_date0         !: initial calendar date aammjj
+   38.       INTEGER       ::   nn_time0         !: initial time of day in hhmm
+   39.       INTEGER       ::   nn_leapy         !: Leap year calendar flag (0/1 or 30)
+   40.       INTEGER       ::   nn_istate        !: initial state output flag (0/1)
+   41.       INTEGER       ::   nn_write         !: model standard output frequency
+   42.       INTEGER       ::   nn_stock         !: restart file frequency
+   43.       INTEGER, DIMENSION(10) :: nn_stocklist  !: restart dump times
+   44.       LOGICAL       ::   ln_mskland       !: mask land points in NetCDF outputs (costly: + ~15%)
+   45.       LOGICAL       ::   ln_cfmeta        !: output additional data to netCDF files required for compliance with the CF metadata standard
+   46.       LOGICAL       ::   ln_clobber       !: clobber (overwrite) an existing file
+   47.       INTEGER       ::   nn_chunksz       !: chunksize (bytes) for NetCDF file (works only with iom_nf90 routines)
+   48.    !$AGRIF_DO_NOT_TREAT
+   49.       TYPE(snc4_ctl)     :: snc4set        !: netcdf4 chunking control structure (always needed for decision making)
+   50.    !$AGRIF_END_DO_NOT_TREAT
+   51.    
+   52.    
+   53.       !! conversion of DOCTOR norm namelist name into model name
+   54.       !! (this should disappear in a near futur)
+   55.    
+   56.       CHARACTER(lc) ::   cexper                      !: experiment name used for output filename
+   57.       INTEGER       ::   no                          !: job number
+   58.       INTEGER       ::   nrstdt                      !: control of the time step (0, 1 or 2)
+   59.       INTEGER       ::   nit000                      !: index of the first time step
+   60.       INTEGER       ::   nitend                      !: index of the last time step
+   61.       INTEGER       ::   ndate0                      !: initial calendar date aammjj
+   62.       INTEGER       ::   nleapy                      !: Leap year calendar flag (0/1 or 30)
+   63.       INTEGER       ::   ninist                      !: initial state output flag (0/1)
+   64.       INTEGER       ::   nwrite                      !: model standard output frequency
+   65.       INTEGER       ::   nstock                      !: restart file frequency
+   66.       INTEGER, DIMENSION(10) :: nstocklist           !: restart dump times
+   67.    
+   68.       !!----------------------------------------------------------------------
+   69.       !! was in restart but moved here because of the OFF line... better solution should be found...
+   70.       !!----------------------------------------------------------------------
+   71.       INTEGER ::   nitrst                !: time step at which restart file should be written
+   72.       LOGICAL ::   lrst_oce              !: logical to control the oce restart write 
+   73.       INTEGER ::   numror = 0            !: logical unit for ocean restart (read). Init to 0 is needed for SAS (in daymod.F90)
+   74.       INTEGER ::   numrow                !: logical unit for ocean restart (write)
+   75.       INTEGER ::   nrst_lst              !: number of restart to output next
+   76.    
+   77.       !!----------------------------------------------------------------------
+   78.       !!                    output monitoring
+   79.       !!----------------------------------------------------------------------
+   80.       LOGICAL ::   ln_ctl       !: run control for debugging
+   81.       INTEGER ::   nn_timing    !: run control for timing
+   82.       INTEGER ::   nn_diacfl    !: flag whether to create CFL diagnostics
+   83.       INTEGER ::   nn_print     !: level of print (0 no print)
+   84.       INTEGER ::   nn_ictls     !: Start i indice for the SUM control
+   85.       INTEGER ::   nn_ictle     !: End   i indice for the SUM control
+   86.       INTEGER ::   nn_jctls     !: Start j indice for the SUM control
+   87.       INTEGER ::   nn_jctle     !: End   j indice for the SUM control
+   88.       INTEGER ::   nn_isplt     !: number of processors following i
+   89.       INTEGER ::   nn_jsplt     !: number of processors following j
+   90.       INTEGER ::   nn_bench     !: benchmark parameter (0/1)
+   91.       INTEGER ::   nn_bit_cmp   =    0    !: bit reproducibility  (0/1)
+   92.    
+   93.       !                                          
+   94.       INTEGER ::   nprint, nictls, nictle, njctls, njctle, isplt, jsplt, nbench    !: OLD namelist names
+   95.    
+   96.       INTEGER ::   ijsplt     =    1      !: nb of local domain = nb of processors
+   97.    
+   98.       !!----------------------------------------------------------------------
+   99.       !!                        logical units
+  100.       !!----------------------------------------------------------------------
+  101.       INTEGER ::   numstp          =   -1      !: logical unit for time step
+  102.       INTEGER ::   numtime         =   -1      !: logical unit for timing
+  103.       INTEGER ::   numout          =    6      !: logical unit for output print; Set to stdout to ensure any early
+  104.                                                !  output can be collected; do not change
+  105.       INTEGER ::   numnam_ref      =   -1      !: logical unit for reference namelist
+  106.       INTEGER ::   numnam_cfg      =   -1      !: logical unit for configuration specific namelist
+  107.       INTEGER ::   numond          =   -1      !: logical unit for Output Namelist Dynamics
+  108.       INTEGER ::   numnam_ice_ref  =   -1      !: logical unit for ice reference namelist
+  109.       INTEGER ::   numnam_ice_cfg  =   -1      !: logical unit for ice reference namelist
+  110.       INTEGER ::   numoni          =   -1      !: logical unit for Output Namelist Ice
+  111.       INTEGER ::   numevo_ice      =   -1      !: logical unit for ice variables (temp. evolution)
+  112.       INTEGER ::   numsol          =   -1      !: logical unit for solver statistics
+  113.       INTEGER ::   numdct_in       =   -1      !: logical unit for transports computing
+  114.       INTEGER ::   numdct_vol      =   -1      !: logical unit for voulume transports output
+  115.       INTEGER ::   numdct_heat     =   -1      !: logical unit for heat    transports output
+  116.       INTEGER ::   numdct_salt     =   -1      !: logical unit for salt    transports output
+  117.       INTEGER ::   numfl           =   -1      !: logical unit for floats ascii output
+  118.       INTEGER ::   numflo          =   -1      !: logical unit for floats ascii output
+  119.    
+  120.       !!----------------------------------------------------------------------
+  121.       !!                          Run control  
+  122.       !!----------------------------------------------------------------------
+  123.       INTEGER       ::   nstop = 0             !: error flag (=number of reason for a premature stop run)
+  124.       INTEGER       ::   nwarn = 0             !: warning flag (=number of warning found during the run)
+  125.       CHARACTER(lc) ::   ctmp1, ctmp2, ctmp3   !: temporary characters 1 to 3
+  126.       CHARACTER(lc) ::   ctmp4, ctmp5, ctmp6   !: temporary characters 4 to 6
+  127.       CHARACTER(lc) ::   ctmp7, ctmp8, ctmp9   !: temporary characters 7 to 9
+  128.       CHARACTER(lc) ::   ctmp10                !: temporary character 10
+  129.       CHARACTER(lc) ::   cform_err = "(/,' ===>>> : E R R O R',     /,'         ===========',/)"       !:
+  130.       CHARACTER(lc) ::   cform_war = "(/,' ===>>> : W A R N I N G', /,'         ===============',/)"   !:
+  131.       LOGICAL       ::   lwm      = .FALSE.    !: boolean : true on the 1st processor only (always)
+  132.       LOGICAL       ::   lwp      = .FALSE.    !: boolean : true on the 1st processor only .OR. ln_ctl
+  133.       LOGICAL       ::   lsp_area = .TRUE.     !: to make a control print over a specific area
+  134.    
+  135.       !!----------------------------------------------------------------------
+  136.       !! NEMO/OCE 4.0 , NEMO Consortium (2018)
+  137.       !! $Id: in_out_manager.F90 6140 2015-12-21 11:35:23Z timgraham $
+  138.       !! Software governed by the CeCILL licence     (./LICENSE)
+  139.       !!=====================================================================
+  140.    END MODULE in_out_manager
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                         E x t e r n a l   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Name  Messages
+----  --------
+GET_NF90_SYMBOL in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IN_OUT_MANAGER
+      Defined as:  Module (line 1, file in_out_manager.f90)
+
+        Uses:      PAR_KIND  (indirectly)
+                   NC4INTERFACE
+
+Name  Messages
+----  --------
+NC4INTERFACE
+      Defined as:  No definitions.
+
+      Used By:     IN_OUT_MANAGER
+
+Name  Messages
+----  --------
+PAR_KIND
+      Defined as:  No definitions.
+
+      Used By:     IN_OUT_MANAGER  (indirectly)
+
+Name  Messages
+----  --------
+PAR_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+Name  Messages
+----  --------
+SET_NF90_DEF_VAR_CHUNKING in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SET_NF90_DEF_VAR_DEFLATE in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

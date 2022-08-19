@@ -1,0 +1,4135 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S u m m a r y   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Compilation
+-----------
+File     : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/mppini.f90
+Compiled : 04/29/22  10:44:28
+Compiler : Version 8.3.4
+Ftnlx    : Version 8318 (libcif 83016)
+Target   : x86-64
+Command  : ftn_driver.exe -hcpu=haswell -hstatic -D__CRAYXC -D__CRAY_HASWELL
+           -D__CRAYXT_COMPUTE_LINUX_TARGET -hnetwork=aries -omppini.o
+           -I/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HE
+           AD_test_MEs/tools/DOMAINcfg/BLD/inc -sreal64 -sinteger32 -Ovector0
+           -hfp0 -O0 -hflex_mp=intolerant -eCID
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/common/moci/modules/packages/XIOS/2.0/24708/952/inc
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/m
+           ct
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/p
+           smile.MPI1 -c -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/opt/cray/libsci/13.0.1/CRAY/83/haswell/include
+           -I/opt/cray/mpt/7.0.4/gni/mpich2-cray/83/include
+           -I/opt/cray/rca/1.0.0-2.0502.60530.1.62.ari/include
+           -I/opt/cray/alps/5.2.4-2.0502.9774.31.11.ari/include
+           -I/opt/cray/xpmem/0.1-2.0502.64982.5.3.ari/include
+           -I/opt/cray/gni-headers/4.0-1.0502.10859.7.8.ari/include
+           -I/opt/cray/dmapp/7.0.1-1.0502.11080.8.76.ari/include
+           -I/opt/cray/pmi/5.0.5-1.0000.10300.134.8.ari/include
+           -I/opt/cray/ugni/6.0-1.0502.10863.8.29.ari/include
+           -I/opt/cray/udreg/2.3.2-1.0502.10518.2.17.ari/include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/pkgconfig/../include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/wlm_detect/1.0-1.0502.64649.2.1.ari/include
+           -I/opt/cray/krca/1.0.0-2.0502.63139.4.31.ari/include
+           -I/opt/cray-hss-devel/7.2.0/include /projects/jmmp/dbruciaf/NEMO/CHEC
+           KOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/mpp
+           ini.f90
+
+ftnlx report
+------------
+Source   : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp//projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/mppini.f90
+Date     : 04/29/2022  10:44:31
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S o u r c e   L i s t i n g
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    1.    MODULE mppini
+    2.       !!==============================================================================
+    3.       !!                       ***  MODULE mppini   ***
+    4.       !! Ocean initialization : distributed memory computing initialization
+    5.       !!==============================================================================
+    6.    
+    7.       !!----------------------------------------------------------------------
+    8.       !!   mpp_init       : Lay out the global domain over processors
+    9.       !!   mpp_init2      : Lay out the global domain over processors 
+   10.       !!                    with land processor elimination
+   11.       !!   mpp_init_ioispl: IOIPSL initialization in mpp
+   12.       !!----------------------------------------------------------------------
+   13.       USE dom_oce         ! ocean space and time domain 
+                 ^                                              
+ftn-1193 ftn: CAUTION MPPINI, File = mppini.f90, Line = 13, Column = 8 
+  Module "PAR_KIND" is indirectly used in module "DOM_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_kind.o".  That file no
+  longer exists.
+
+                 ^                                              
+ftn-1193 ftn: CAUTION MPPINI, File = mppini.f90, Line = 13, Column = 8 
+  Module "PAR_OCE" is indirectly used in module "DOM_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_oce.o".  That file no
+  longer exists.
+
+   14.       USE in_out_manager  ! I/O Manager
+                 ^                             
+ftn-1193 ftn: CAUTION MPPINI, File = mppini.f90, Line = 14, Column = 8 
+  Module "NC4INTERFACE" is indirectly used in module "IN_OUT_MANAGER" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/nc4interface.o".  That file no
+  longer exists.
+
+   15.       USE lib_mpp         ! distribued memory computing library
+   16.       USE ioipsl
+                 ^      
+ftn-1193 ftn: CAUTION MPPINI, File = mppini.f90, Line = 16, Column = 8 
+  Module "RESTCOM" is indirectly used in module "IOIPSL" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/restcom.o".  That file no
+  longer exists.
+
+                 ^      
+ftn-1193 ftn: CAUTION MPPINI, File = mppini.f90, Line = 16, Column = 8 
+  Module "HISTCOM" is indirectly used in module "IOIPSL" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/histcom.o".  That file no
+  longer exists.
+
+                 ^      
+ftn-1193 ftn: CAUTION MPPINI, File = mppini.f90, Line = 16, Column = 8 
+  Module "FLINCOM" is indirectly used in module "IOIPSL" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/flincom.o".  That file no
+  longer exists.
+
+                 ^      
+ftn-1193 ftn: CAUTION MPPINI, File = mppini.f90, Line = 16, Column = 8 
+  Module "FLIOCOM" is indirectly used in module "IOIPSL" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/fliocom.o".  That file no
+  longer exists.
+
+                 ^      
+ftn-1193 ftn: CAUTION MPPINI, File = mppini.f90, Line = 16, Column = 8 
+  Module "CALENDAR" is indirectly used in module "IOIPSL" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/calendar.o".  That file no
+  longer exists.
+
+                 ^      
+ftn-1193 ftn: CAUTION MPPINI, File = mppini.f90, Line = 16, Column = 8 
+  Module "GETINCOM" is indirectly used in module "IOIPSL" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/getincom.o".  That file no
+  longer exists.
+
+                 ^      
+ftn-1193 ftn: CAUTION MPPINI, File = mppini.f90, Line = 16, Column = 8 
+  Module "MATHELP" is indirectly used in module "IOIPSL" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/mathelp.o".  That file no
+  longer exists.
+
+                 ^      
+ftn-1193 ftn: CAUTION MPPINI, File = mppini.f90, Line = 16, Column = 8 
+  Module "STRINGOP" is indirectly used in module "IOIPSL" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/stringop.o".  That file no
+  longer exists.
+
+                 ^      
+ftn-1193 ftn: CAUTION MPPINI, File = mppini.f90, Line = 16, Column = 8 
+  Module "ERRIOIPSL" is indirectly used in module "IOIPSL" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/errioipsl.o".  That file no
+  longer exists.
+
+   17.    
+   18.       IMPLICIT NONE
+   19.       PRIVATE
+   20.    
+   21.       PUBLIC mpp_init       ! called by opa.F90
+   22.       PUBLIC mpp_init2      ! called by opa.F90
+   23.    
+   24.       !!----------------------------------------------------------------------
+   25.       !! NEMO/OCE 4.0 , NEMO Consortium (2018)
+   26.       !! $Id: mppini.F90 6412 2016-03-31 16:22:32Z lovato $ 
+   27.       !! Software governed by the CeCILL licence     (./LICENSE)
+   28.       !!----------------------------------------------------------------------
+   29.    CONTAINS
+   30.    
+   31.       !!----------------------------------------------------------------------
+   32.       !!   'key_mpp_mpi'          OR         MPI massively parallel processing
+   33.       !!----------------------------------------------------------------------
+   34.    
+   35.       SUBROUTINE mpp_init
+   36.          !!----------------------------------------------------------------------
+   37.          !!                  ***  ROUTINE mpp_init  ***
+   38.          !!                    
+   39.          !! ** Purpose :   Lay out the global domain over processors.
+   40.          !!
+   41.          !! ** Method  :   Global domain is distributed in smaller local domains.
+   42.          !!      Periodic condition is a function of the local domain position
+   43.          !!      (global boundary or neighbouring domain) and of the global
+   44.          !!      periodic
+   45.          !!      Type :         jperio global periodic condition
+   46.          !!                     nperio local  periodic condition
+   47.          !!
+   48.          !! ** Action  : - set domain parameters
+   49.          !!                    nimpp     : longitudinal index 
+   50.          !!                    njmpp     : latitudinal  index
+   51.          !!                    nperio    : lateral condition type 
+   52.          !!                    narea     : number for local area
+   53.          !!                    nlci      : first dimension
+   54.          !!                    nlcj      : second dimension
+   55.          !!                    nbondi    : mark for "east-west local boundary"
+   56.          !!                    nbondj    : mark for "north-south local boundary"
+   57.          !!                    nproc     : number for local processor
+   58.          !!                    noea      : number for local neighboring processor
+   59.          !!                    nowe      : number for local neighboring processor
+   60.          !!                    noso      : number for local neighboring processor
+   61.          !!                    nono      : number for local neighboring processor
+   62.          !!
+   63.          !! History :
+   64.          !!        !  94-11  (M. Guyon)  Original code
+   65.          !!        !  95-04  (J. Escobar, M. Imbard)
+   66.          !!        !  98-02  (M. Guyon)  FETI method
+   67.          !!        !  98-05  (M. Imbard, J. Escobar, L. Colombet )  SHMEM and MPI versions
+   68.          !!   8.5  !  02-08  (G. Madec)  F90 : free form
+   69.          !!   3.4  !  11-11  (C. Harris) decomposition changes for running with CICE
+   70.          !!----------------------------------------------------------------------
+   71.          INTEGER  ::   ji, jj, jn   ! dummy loop indices
+   72.          INTEGER  ::   ii, ij, ifreq, il1, il2            ! local integers
+   73.          INTEGER  ::   iresti, irestj, ijm1, imil, inum   !   -      -
+   74.          REAL(wp) ::   zidom, zjdom                       ! local scalars
+   75.          INTEGER, DIMENSION(jpni,jpnj) ::   iimppt, ijmppt, ilcit, ilcjt   ! local workspace
+   76.          !!----------------------------------------------------------------------
+   77.    
+   78.          IF(lwp) WRITE(numout,*)
+   79.          IF(lwp) WRITE(numout,*) 'mpp_init : Message Passing MPI'
+   80.          IF(lwp) WRITE(numout,*) '~~~~~~~~'
+   81.    
+   82.    
+   83.          !  1. Dimension arrays for subdomains
+   84.          ! -----------------------------------
+   85.          !  Computation of local domain sizes ilcit() ilcjt()
+   86.          !  These dimensions depend on global sizes jpni,jpnj and jpiglo,jpjglo
+   87.          !  The subdomains are squares leeser than or equal to the global
+   88.          !  dimensions divided by the number of processors minus the overlap
+   89.          !  array (cf. par_oce.F90).
+   90.          
+   91.          nreci  = 2 * jpreci
+   92.          nrecj  = 2 * jprecj
+   93.          iresti = MOD( jpiglo - nreci , jpni )
+   94.          irestj = MOD( jpjglo - nrecj , jpnj )
+   95.    
+   96.          IF(  iresti == 0 )   iresti = jpni
+   97.    
+   98.    
+   99.          DO jj = 1, jpnj
+  100.             DO ji = 1, iresti
+  101.                ilcit(ji,jj) = jpi
+  102.             END DO
+  103.             DO ji = iresti+1, jpni
+  104.                ilcit(ji,jj) = jpi -1
+  105.             END DO
+  106.          END DO
+  107.          
+  108.          nfilcit(:,:) = ilcit(:,:)
+ftn-6262 ftn: VECTOR File = mppini.f90, Line = 108 
+  A loop starting at line 108 was not vectorized because it contains a call to a subroutine or function on line 108.
+
+  109.          IF( irestj == 0 )   irestj = jpnj
+  110.    
+  111.    
+  112.          DO ji = 1, jpni
+  113.             DO jj = 1, irestj
+  114.                ilcjt(ji,jj) = jpj
+  115.             END DO
+  116.             DO jj = irestj+1, jpnj
+  117.                ilcjt(ji,jj) = jpj -1
+  118.             END DO
+  119.          END DO
+  120.          
+  121.    
+  122.          !  2. Index arrays for subdomains
+  123.          ! -------------------------------
+  124.          
+  125.          iimppt(:,:) = 1
+ftn-6263 ftn: VECTOR File = mppini.f90, Line = 125 
+  A loop starting at line 125 was not vectorized because it contains a reference to a non-vector intrinsic on line 125.
+
+  126.          ijmppt(:,:) = 1
+ftn-6263 ftn: VECTOR File = mppini.f90, Line = 126 
+  A loop starting at line 126 was not vectorized because it contains a reference to a non-vector intrinsic on line 126.
+
+  127.          
+  128.          IF( jpni > 1 ) THEN
+  129.             DO jj = 1, jpnj
+  130.                DO ji = 2, jpni
+  131.                   iimppt(ji,jj) = iimppt(ji-1,jj) + ilcit(ji-1,jj) - nreci
+  132.                END DO
+  133.             END DO
+  134.          ENDIF
+  135.          nfiimpp(:,:)=iimppt(:,:)
+ftn-6262 ftn: VECTOR File = mppini.f90, Line = 135 
+  A loop starting at line 135 was not vectorized because it contains a call to a subroutine or function on line 135.
+
+  136.    
+  137.          IF( jpnj > 1 ) THEN
+  138.             DO jj = 2, jpnj
+  139.                DO ji = 1, jpni
+  140.                   ijmppt(ji,jj) = ijmppt(ji,jj-1)+ilcjt(ji,jj-1)-nrecj
+  141.                END DO
+  142.             END DO
+  143.          ENDIF
+  144.          
+  145.          ! 3. Subdomain description
+  146.          ! ------------------------
+  147.    
+  148.          DO jn = 1, jpnij
+  149.             ii = 1 + MOD( jn-1, jpni )
+  150.             ij = 1 + (jn-1) / jpni
+  151.             nfipproc(ii,ij) = jn - 1
+  152.             nimppt(jn) = iimppt(ii,ij)
+  153.             njmppt(jn) = ijmppt(ii,ij)
+  154.             nlcit (jn) = ilcit (ii,ij)     
+  155.             nlci       = nlcit (jn)     
+  156.             nlcjt (jn) = ilcjt (ii,ij)     
+  157.             nlcj       = nlcjt (jn)
+  158.             nbondj = -1                                   ! general case
+  159.             IF( jn   >  jpni          )   nbondj = 0      ! first row of processor
+  160.             IF( jn   >  (jpnj-1)*jpni )   nbondj = 1      ! last  row of processor
+  161.             IF( jpnj == 1             )   nbondj = 2      ! one processor only in j-direction
+  162.             ibonjt(jn) = nbondj
+  163.             
+  164.             nbondi = 0                                    ! 
+  165.             IF( MOD( jn, jpni ) == 1 )   nbondi = -1      !
+  166.             IF( MOD( jn, jpni ) == 0 )   nbondi =  1      !
+  167.             IF( jpni            == 1 )   nbondi =  2      ! one processor only in i-direction
+  168.             ibonit(jn) = nbondi
+  169.             
+  170.             nldi =  1   + jpreci
+  171.             nlei = nlci - jpreci
+  172.             IF( nbondi == -1 .OR. nbondi == 2 )   nldi = 1
+  173.             IF( nbondi ==  1 .OR. nbondi == 2 )   nlei = nlci
+  174.             nldj =  1   + jprecj
+  175.             nlej = nlcj - jprecj
+  176.             IF( nbondj == -1 .OR. nbondj == 2 )   nldj = 1
+  177.             IF( nbondj ==  1 .OR. nbondj == 2 )   nlej = nlcj
+  178.             nldit(jn) = nldi
+  179.             nleit(jn) = nlei
+  180.             nldjt(jn) = nldj
+  181.             nlejt(jn) = nlej
+  182.          END DO
+  183.    
+  184.          ! 4. Subdomain print
+  185.          ! ------------------
+  186.          
+  187.          IF(lwp) WRITE(numout,*)
+  188.          IF(lwp) WRITE(numout,*) ' mpp_init: defines mpp subdomains'
+  189.          IF(lwp) WRITE(numout,*) ' ~~~~~~  ----------------------'
+  190.          IF(lwp) WRITE(numout,*)
+  191.          IF(lwp) WRITE(numout,*) 'iresti=',iresti,' irestj=',irestj
+  192.          IF(lwp) WRITE(numout,*)
+  193.          IF(lwp) WRITE(numout,*) 'jpni=',jpni,' jpnj=',jpnj
+  194.          zidom = nreci
+  195.          DO ji = 1, jpni
+  196.             zidom = zidom + ilcit(ji,1) - nreci
+  197.          END DO
+  198.          IF(lwp) WRITE(numout,*)
+  199.          IF(lwp) WRITE(numout,*)' sum ilcit(i,1)=', zidom, ' jpiglo=', jpiglo
+  200.    
+  201.          zjdom = nrecj
+  202.          DO jj = 1, jpnj
+  203.             zjdom = zjdom + ilcjt(1,jj) - nrecj
+  204.          END DO
+  205.          IF(lwp) WRITE(numout,*)' sum ilcit(1,j)=', zjdom, ' jpjglo=', jpjglo
+  206.          IF(lwp) WRITE(numout,*)
+  207.    
+  208.          IF(lwp) THEN
+  209.             ifreq = 4
+  210.             il1   = 1
+  211.             DO jn = 1, (jpni-1)/ifreq+1
+  212.                il2 = MIN( jpni, il1+ifreq-1 )
+  213.                WRITE(numout,*)
+  214.                WRITE(numout,9200) ('***',ji = il1,il2-1)
+  215.                DO jj = jpnj, 1, -1
+  216.                   WRITE(numout,9203) ('   ',ji = il1,il2-1)
+  217.                   WRITE(numout,9202) jj, ( ilcit(ji,jj),ilcjt(ji,jj),ji = il1,il2 )
+  218.                   WRITE(numout,9204) (nfipproc(ji,jj),ji=il1,il2)
+  219.                   WRITE(numout,9203) ('   ',ji = il1,il2-1)
+  220.                   WRITE(numout,9200) ('***',ji = il1,il2-1)
+  221.                END DO
+  222.                WRITE(numout,9201) (ji,ji = il1,il2)
+  223.                il1 = il1+ifreq
+  224.             END DO
+  225.     9200     FORMAT('     ***',20('*************',a3))
+  226.     9203     FORMAT('     *     ',20('         *   ',a3))
+  227.     9201     FORMAT('        ',20('   ',i3,'          '))
+  228.     9202     FORMAT(' ',i3,' *  ',20(i3,'  x',i3,'   *   '))
+  229.     9204     FORMAT('     *  ',20('      ',i3,'   *   '))
+  230.          ENDIF
+  231.    
+  232.          ! 5. From global to local
+  233.          ! -----------------------
+  234.    
+  235.          nperio = 0
+  236.          IF( jperio == 2 .AND. nbondj == -1 )   nperio = 2
+  237.    
+  238.    
+  239.          ! 6. Subdomain neighbours
+  240.          ! ----------------------
+  241.    
+  242.          nproc = narea - 1
+  243.          noso  = nproc - jpni
+  244.          nowe  = nproc - 1
+  245.          noea  = nproc + 1
+  246.          nono  = nproc + jpni
+  247.          ! great neighbours
+  248.          npnw = nono - 1
+  249.          npne = nono + 1
+  250.          npsw = noso - 1
+  251.          npse = noso + 1
+  252.          nbsw = 1
+  253.          nbnw = 1
+  254.          IF( MOD( nproc, jpni ) == 0 ) THEN
+  255.             nbsw = 0
+  256.             nbnw = 0
+  257.          ENDIF
+  258.          nbse = 1
+  259.          nbne = 1
+  260.          IF( MOD( nproc, jpni ) == jpni-1 ) THEN
+  261.             nbse = 0
+  262.             nbne = 0
+  263.          ENDIF
+  264.          IF(nproc < jpni) THEN
+  265.             nbsw = 0
+  266.             nbse = 0
+  267.          ENDIF
+  268.          IF( nproc >= (jpnj-1)*jpni ) THEN
+  269.             nbnw = 0
+  270.             nbne = 0
+  271.          ENDIF
+  272.          nlcj = nlcjt(narea)  
+  273.          nlci = nlcit(narea)  
+  274.          nldi = nldit(narea)
+  275.          nlei = nleit(narea)
+  276.          nldj = nldjt(narea)
+  277.          nlej = nlejt(narea)
+  278.          nbondi = ibonit(narea)
+  279.          nbondj = ibonjt(narea)
+  280.          nimpp  = nimppt(narea)  
+  281.          njmpp  = njmppt(narea)  
+  282.    
+  283.         ! Save processor layout in layout.dat file 
+  284.           IF (lwp) THEN
+  285.            CALL ctl_opn( inum, 'layout.dat', 'REPLACE', 'FORMATTED', 'SEQUENTIAL', -1, numout, .FALSE., narea )
+  286.            WRITE(inum,'(a)') '   jpnij     jpi     jpj     jpk  jpiglo  jpjglo'
+  287.            WRITE(inum,'(6i8)') jpnij,jpi,jpj,jpk,jpiglo,jpjglo
+  288.            WRITE(inum,'(a)') 'NAREA nlci nlcj nldi nldj nlei nlej nimpp njmpp'
+  289.    
+  290.            DO  jn = 1, jpnij
+  291.             WRITE(inum,'(9i5)') jn, nlcit(jn), nlcjt(jn), &
+  292.                                          nldit(jn), nldjt(jn), &
+  293.                                          nleit(jn), nlejt(jn), &
+  294.                                          nimppt(jn), njmppt(jn)
+  295.            END DO
+  296.            CLOSE(inum)   
+  297.          END IF
+  298.    
+  299.    
+  300.          ! w a r n i n g  narea (zone) /= nproc (processors)!
+  301.    
+  302.          IF( jperio == 1 .OR. jperio == 4 .OR. jperio == 6 ) THEN
+  303.             IF( jpni == 1 )THEN
+  304.                nbondi = 2
+  305.                nperio = 1
+  306.             ELSE
+  307.                nbondi = 0
+  308.             ENDIF
+  309.             IF( MOD( narea, jpni ) == 0 ) THEN
+  310.                noea = nproc-(jpni-1)
+  311.                npne = npne-jpni
+  312.                npse = npse-jpni
+  313.             ENDIF
+  314.             IF( MOD( narea, jpni ) == 1 ) THEN
+  315.                nowe = nproc+(jpni-1)
+  316.                npnw = npnw+jpni
+  317.                npsw = npsw+jpni
+  318.             ENDIF
+  319.             nbsw = 1
+  320.             nbnw = 1
+  321.             nbse = 1
+  322.             nbne = 1
+  323.             IF( nproc < jpni ) THEN
+  324.                nbsw = 0
+  325.                nbse = 0
+  326.             ENDIF
+  327.             IF( nproc >= (jpnj-1)*jpni ) THEN
+  328.                nbnw = 0
+  329.                nbne = 0
+  330.             ENDIF
+  331.          ENDIF
+  332.          npolj = 0
+  333.          IF( jperio == 3 .OR. jperio == 4 ) THEN
+  334.             ijm1 = jpni*(jpnj-1)
+  335.             imil = ijm1+(jpni+1)/2
+  336.             IF( narea > ijm1 ) npolj = 3
+  337.             IF( MOD(jpni,2) == 1 .AND. narea == imil ) npolj = 4
+  338.             IF( npolj == 3 ) nono = jpni*jpnj-narea+ijm1
+  339.          ENDIF
+  340.          IF( jperio == 5 .OR. jperio == 6 ) THEN
+  341.              ijm1 = jpni*(jpnj-1)
+  342.              imil = ijm1+(jpni+1)/2
+  343.              IF( narea > ijm1) npolj = 5
+  344.              IF( MOD(jpni,2) == 1 .AND. narea == imil ) npolj = 6
+  345.              IF( npolj == 5 ) nono = jpni*jpnj-narea+ijm1
+  346.          ENDIF
+  347.    
+  348.          ! Periodicity : no corner if nbondi = 2 and nperio != 1
+  349.    
+  350.          IF(lwp) THEN
+  351.             WRITE(numout,*) ' nproc  = ', nproc
+  352.             WRITE(numout,*) ' nowe   = ', nowe  , ' noea   =  ', noea
+  353.             WRITE(numout,*) ' nono   = ', nono  , ' noso   =  ', noso
+  354.             WRITE(numout,*) ' nbondi = ', nbondi
+  355.             WRITE(numout,*) ' nbondj = ', nbondj
+  356.             WRITE(numout,*) ' npolj  = ', npolj
+  357.             WRITE(numout,*) ' nperio = ', nperio
+  358.             WRITE(numout,*) ' nlci   = ', nlci
+  359.             WRITE(numout,*) ' nlcj   = ', nlcj
+  360.             WRITE(numout,*) ' nimpp  = ', nimpp
+  361.             WRITE(numout,*) ' njmpp  = ', njmpp
+  362.             WRITE(numout,*) ' nreci  = ', nreci  , ' npse   = ', npse
+  363.             WRITE(numout,*) ' nrecj  = ', nrecj  , ' npsw   = ', npsw
+  364.             WRITE(numout,*) ' jpreci = ', jpreci , ' npne   = ', npne
+  365.             WRITE(numout,*) ' jprecj = ', jprecj , ' npnw   = ', npnw
+  366.             WRITE(numout,*)
+  367.          ENDIF
+  368.    
+  369.          IF( nperio == 1 .AND. jpni /= 1 ) CALL ctl_stop( ' mpp_init: error on cyclicity' )
+  370.    
+  371.          ! Prepare mpp north fold
+  372.    
+  373.          IF( jperio >= 3 .AND. jperio <= 6 .AND. jpni > 1 ) THEN
+  374.             CALL mpp_ini_north
+  375.             IF(lwp) WRITE(numout,*) ' mpp_init : North fold boundary prepared for jpni >1'
+  376.          ENDIF
+  377.    
+  378.          ! Prepare NetCDF output file (if necessary)
+  379.          CALL mpp_init_ioipsl
+  380.    
+  381.       END SUBROUTINE mpp_init
+  382.    
+  383.       SUBROUTINE mpp_init2
+  384.          !!----------------------------------------------------------------------
+  385.          !!                  ***  ROUTINE mpp_init2  ***
+  386.          !!
+  387.          !! * Purpose :   Lay out the global domain over processors.
+  388.          !!     FOR USING THIS VERSION, A PREPROCESSING TRAITMENT IS RECOMMENDED
+  389.          !!     FOR DEFINING BETTER CUTTING OUT.
+  390.          !!       This routine is used with a the bathymetry file.
+  391.          !!       In this version, the land processors are avoided and the adress
+  392.          !!     processor (nproc, narea,noea, ...) are calculated again.
+  393.          !!     The jpnij parameter can be lesser than jpni x jpnj
+  394.          !!     and this jpnij parameter must be calculated before with an
+  395.          !!     algoritmic preprocessing program.
+  396.          !!
+  397.          !! ** Method  :   Global domain is distributed in smaller local domains.
+  398.          !!      Periodic condition is a function of the local domain position
+  399.          !!      (global boundary or neighbouring domain) and of the global
+  400.          !!      periodic
+  401.          !!      Type :         jperio global periodic condition
+  402.          !!                     nperio local  periodic condition
+  403.          !!
+  404.          !! ** Action :        nimpp     : longitudinal index 
+  405.          !!                    njmpp     : latitudinal  index
+  406.          !!                    nperio    : lateral condition type 
+  407.          !!                    narea     : number for local area
+  408.          !!                    nlci      : first dimension
+  409.          !!                    nlcj      : second dimension
+  410.          !!                    nproc     : number for local processor
+  411.          !!                    noea      : number for local neighboring processor
+  412.          !!                    nowe      : number for local neighboring processor
+  413.          !!                    noso      : number for local neighboring processor
+  414.          !!                    nono      : number for local neighboring processor
+  415.          !!
+  416.          !! History :
+  417.          !!        !  94-11  (M. Guyon)  Original code
+  418.          !!        !  95-04  (J. Escobar, M. Imbard)
+  419.          !!        !  98-02  (M. Guyon)  FETI method
+  420.          !!        !  98-05  (M. Imbard, J. Escobar, L. Colombet )  SHMEM and MPI versions
+  421.          !!   9.0  !  04-01  (G. Madec, J.M Molines)  F90 : free form , north fold jpni > 1
+  422.          !!----------------------------------------------------------------------
+  423.          USE in_out_manager  ! I/O Manager
+                    ^                             
+ftn-1193 ftn: CAUTION MPP_INIT2, File = mppini.f90, Line = 423, Column = 11 
+  Module "PAR_KIND" is indirectly used in module "IN_OUT_MANAGER" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_kind.o".  That file no
+  longer exists.
+
+                    ^                             
+ftn-1193 ftn: CAUTION MPP_INIT2, File = mppini.f90, Line = 423, Column = 11 
+  Module "NC4INTERFACE" is indirectly used in module "IN_OUT_MANAGER" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/nc4interface.o".  That file no
+  longer exists.
+
+                    ^                             
+ftn-1193 ftn: CAUTION MPP_INIT2, File = mppini.f90, Line = 423, Column = 11 
+  Module "PAR_OCE" is indirectly used in module "IN_OUT_MANAGER" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_oce.o".  That file no
+  longer exists.
+
+  424.          USE iom
+                    ^   
+ftn-1193 ftn: CAUTION MPP_INIT2, File = mppini.f90, Line = 424, Column = 11 
+  Module "LIB_MPP" is indirectly used in module "IOM" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/lib_mpp.o".  That file no
+  longer exists.
+
+                    ^   
+ftn-1193 ftn: CAUTION MPP_INIT2, File = mppini.f90, Line = 424, Column = 11 
+  Module "IOM_NF90" is indirectly used in module "IOM" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/iom_nf90.o".  That file no
+  longer exists.
+
+                    ^   
+ftn-1193 ftn: CAUTION MPP_INIT2, File = mppini.f90, Line = 424, Column = 11 
+  Module "IOM_DEF" is indirectly used in module "IOM" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/iom_def.o".  That file no
+  longer exists.
+
+                    ^   
+ftn-1193 ftn: CAUTION MPP_INIT2, File = mppini.f90, Line = 424, Column = 11 
+  Module "LBCLNK" is indirectly used in module "IOM" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/lbclnk.o".  That file no
+  longer exists.
+
+                    ^   
+ftn-1193 ftn: CAUTION MPP_INIT2, File = mppini.f90, Line = 424, Column = 11 
+  Module "DOM_OCE" is indirectly used in module "IOM" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/dom_oce.o".  That file no
+  longer exists.
+
+  425.          !! 
+  426.          INTEGER :: ji, jj, jn, jproc, jarea     ! dummy loop indices
+  427.          INTEGER ::  inum                        ! temporary logical unit
+  428.          INTEGER ::  idir                        ! temporary integers
+  429.          INTEGER ::  jstartrow                   ! temporary integers
+  430.          INTEGER ::   ios                        ! Local integer output status for namelist read
+  431.          INTEGER ::   &
+  432.             ii, ij, ifreq, il1, il2,          &  ! temporary integers
+  433.             icont, ili, ilj,                  &  !    "          "
+  434.             isurf, ijm1, imil,                &  !    "          "
+  435.             iino, ijno, iiso, ijso,           &  !    "          " 
+  436.             iiea, ijea, iiwe, ijwe,           &  !    "          "
+  437.             iinw, ijnw, iine, ijne,           &  !    "          "
+  438.             iisw, ijsw, iise, ijse,           &  !    "          "
+  439.             iresti, irestj, iproc                !    "          "
+  440.          INTEGER, DIMENSION(jpnij) ::   &
+  441.             iin, ijn          
+  442.          INTEGER, DIMENSION(jpni,jpnj) ::   &
+  443.             iimppt, ijmppt, ilci  , ilcj  ,   &  ! temporary workspace
+  444.             ipproc, ibondj, ibondi, ipolj ,   &  !    "           "
+  445.             ilei  , ilej  , ildi  , ildj  ,   &  !    "           "
+  446.             ioea  , iowe  , ioso  , iono  ,   &  !    "           "
+  447.             ione  , ionw  , iose  , iosw  ,   &  !    "           "
+  448.             ibne  , ibnw  , ibse  , ibsw         !    "           "
+  449.          INTEGER,  DIMENSION(jpiglo,jpjglo) ::   &
+  450.             imask                                ! temporary global workspace
+  451.          REAL(wp), DIMENSION(jpiglo,jpjglo) ::   &
+  452.             zdta, zdtaisf                     ! temporary data workspace
+  453.          REAL(wp) ::   zidom , zjdom          ! temporary scalars
+  454.    
+  455.          ! read namelist for ln_zco
+  456.          NAMELIST/namzgr/ ln_zco, ln_zps, ln_sco, ln_isfcav, ln_linssh
+  457.    
+  458.          !!----------------------------------------------------------------------
+  459.          !!  OPA 9.0 , LOCEAN-IPSL (2005) 
+  460.          !! $Id: mppini_2.h90 6412 2016-03-31 16:22:32Z lovato $
+  461.          !! This software is governed by the CeCILL licence see modipsl/doc/NEMO_CeCILL.txt
+  462.          !!----------------------------------------------------------------------
+  463.    
+  464.          REWIND( numnam_ref )              ! Namelist namzgr in reference namelist : Vertical coordinate
+  465.          READ  ( numnam_ref, namzgr, IOSTAT = ios, ERR = 901)
+  466.    901   IF( ios /= 0 ) CALL ctl_nam ( ios , 'namzgr in reference namelist', lwp )
+  467.    
+  468.          REWIND( numnam_cfg )              ! Namelist namzgr in configuration namelist : Vertical coordinate
+  469.          READ  ( numnam_cfg, namzgr, IOSTAT = ios, ERR = 902 )
+  470.    902   IF( ios /= 0 ) CALL ctl_nam ( ios , 'namzgr in configuration namelist', lwp )
+  471.          IF(lwm) WRITE ( numond, namzgr )
+  472.    
+  473.          IF(lwp)WRITE(numout,*)
+  474.          IF(lwp)WRITE(numout,*) 'mpp_init : Message Passing MPI'
+  475.          IF(lwp)WRITE(numout,*) '~~~~~~~~'
+  476.          IF(lwp)WRITE(numout,*) ' '
+  477.    
+  478.          IF( jpni*jpnj < jpnij ) CALL ctl_stop( ' jpnij > jpni x jpnj impossible' )
+  479.    
+  480.          ! 0. initialisation
+  481.          ! -----------------
+  482.    
+  483.          ! open the file
+  484.          ! Remember that at this level in the code, mpp is not yet initialized, so
+  485.          ! the file must be open with jpdom_unknown, and kstart and kcount forced 
+  486.          jstartrow = 1
+  487.          IF ( ln_zco ) THEN 
+  488.             CALL iom_open ( 'bathy_level.nc', inum )   ! Level bathymetry
+  489.              ! Optionally use a file attribute (open_ocean_jstart) to set a start row for reading from the global file
+  490.              ! This allows the unextended grid bathymetry to be stored in the same file as the under ice-shelf extended bathymetry
+  491.             CALL iom_getatt(inum, 'open_ocean_jstart', jstartrow ) ! -999 is returned if the attribute is not found
+  492.             jstartrow = MAX(1,jstartrow)
+  493.             CALL iom_get ( inum, jpdom_unknown, 'Bathy_level', zdta, kstart=(/jpizoom,jpjzoom+jstartrow-1/), kcount=(/jpiglo,jpjglo/) )
+  494.          ELSE
+  495.             CALL iom_open ( 'bathy_meter.nc', inum )   ! Meter bathy in case of partial steps
+  496.             IF ( ln_isfcav ) THEN
+  497.                 CALL iom_get ( inum, jpdom_unknown, 'Bathymetry_isf' , zdta, kstart=(/jpizoom,jpjzoom/), kcount=(/jpiglo,jpjglo/) )
+  498.             ELSE
+  499.                 ! Optionally use a file attribute (open_ocean_jstart) to set a start row for reading from the global file
+  500.                 ! This allows the unextended grid bathymetry to be stored in the same file as the under ice-shelf extended bathymetry
+  501.                 CALL iom_getatt(inum, 'open_ocean_jstart', jstartrow ) ! -999 is returned if the attribute is not found
+  502.                 jstartrow = MAX(1,jstartrow)
+  503.                 CALL iom_get ( inum, jpdom_unknown, 'Bathymetry' , zdta, kstart=(/jpizoom,jpjzoom+jstartrow-1/)   &
+  504.                    &                                                   , kcount=(/jpiglo,jpjglo/) )
+  505.             ENDIF
+  506.          ENDIF
+  507.          CALL iom_close (inum)
+  508.          
+  509.          ! used to compute the land processor in case of not masked bathy file.
+  510.          zdtaisf(:,:) = 0.0_wp
+ftn-6263 ftn: VECTOR File = mppini.f90, Line = 510 
+  A loop starting at line 510 was not vectorized because it contains a reference to a non-vector intrinsic on line 510.
+
+  511.          IF ( ln_isfcav ) THEN
+  512.             CALL iom_open ( 'bathy_meter.nc', inum )   ! Meter bathy in case of partial steps
+  513.             CALL iom_get ( inum, jpdom_unknown, 'isf_draft' , zdtaisf, kstart=(/jpizoom,jpjzoom/), kcount=(/jpiglo,jpjglo/) )
+  514.          END IF
+  515.          CALL iom_close (inum)
+  516.    
+  517.          ! land/sea mask over the global/zoom domain
+  518.    
+  519.          imask(:,:)=1
+ftn-6263 ftn: VECTOR File = mppini.f90, Line = 519 
+  A loop starting at line 519 was not vectorized because it contains a reference to a non-vector intrinsic on line 519.
+
+  520.          WHERE ( zdta(:,:) - zdtaisf(:,:) <= rn_isfhmin ) imask = 0
+ftn-6262 ftn: VECTOR File = mppini.f90, Line = 520 
+  A loop starting at line 520 was not vectorized because it contains a call to a subroutine or function on line 520.
+
+  521.    
+  522.          !  1. Dimension arrays for subdomains
+  523.          ! -----------------------------------
+  524.    
+  525.          !  Computation of local domain sizes ilci() ilcj()
+  526.          !  These dimensions depend on global sizes jpni,jpnj and jpiglo,jpjglo
+  527.          !  The subdomains are squares leeser than or equal to the global
+  528.          !  dimensions divided by the number of processors minus the overlap
+  529.          !  array.
+  530.    
+  531.          nreci=2*jpreci
+  532.          nrecj=2*jprecj
+  533.          iresti = 1 + MOD( jpiglo - nreci -1 , jpni )
+  534.          irestj = 1 + MOD( jpjglo - nrecj -1 , jpnj )
+  535.    
+  536.          ilci(1:iresti      ,:) = jpi
+ftn-6263 ftn: VECTOR File = mppini.f90, Line = 536 
+  A loop starting at line 536 was not vectorized because it contains a reference to a non-vector intrinsic on line 536.
+
+  537.          ilci(iresti+1:jpni ,:) = jpi-1
+ftn-6263 ftn: VECTOR File = mppini.f90, Line = 537 
+  A loop starting at line 537 was not vectorized because it contains a reference to a non-vector intrinsic on line 537.
+
+  538.    
+  539.          ilcj(:,      1:irestj) = jpj
+ftn-6263 ftn: VECTOR File = mppini.f90, Line = 539 
+  A loop starting at line 539 was not vectorized because it contains a reference to a non-vector intrinsic on line 539.
+
+  540.          ilcj(:, irestj+1:jpnj) = jpj-1
+ftn-6263 ftn: VECTOR File = mppini.f90, Line = 540 
+  A loop starting at line 540 was not vectorized because it contains a reference to a non-vector intrinsic on line 540.
+
+  541.    
+  542.          nfilcit(:,:) = ilci(:,:)
+ftn-6262 ftn: VECTOR File = mppini.f90, Line = 542 
+  A loop starting at line 542 was not vectorized because it contains a call to a subroutine or function on line 542.
+
+  543.    
+  544.          IF(lwp) WRITE(numout,*)
+  545.          IF(lwp) WRITE(numout,*) ' mpp_init2: defines mpp subdomains'
+  546.          IF(lwp) WRITE(numout,*) ' ~~~~~~  ----------------------'
+  547.          IF(lwp) WRITE(numout,*)
+  548.          IF(lwp) WRITE(numout,*) 'iresti=',iresti,' irestj=',irestj
+  549.          IF(lwp) WRITE(numout,*)
+  550.          IF(lwp) WRITE(numout,*) 'jpni=',jpni,' jpnj=',jpnj
+  551.    
+  552.          zidom = nreci + sum(ilci(:,1) - nreci ) 
+ftn-6263 ftn: VECTOR File = mppini.f90, Line = 552 
+  A loop starting at line 552 was not vectorized because it contains a reference to a non-vector intrinsic on line 552.
+
+  553.          IF(lwp) WRITE(numout,*)
+  554.          IF(lwp) WRITE(numout,*)' sum ilci(i,1)=',zidom,' jpiglo=',jpiglo
+  555.    
+  556.          zjdom = nrecj + sum(ilcj(1,:) - nrecj ) 
+ftn-6263 ftn: VECTOR File = mppini.f90, Line = 556 
+  A loop starting at line 556 was not vectorized because it contains a reference to a non-vector intrinsic on line 556.
+
+  557.          IF(lwp) WRITE(numout,*) ' sum ilcj(1,j)=',zjdom,' jpjglo=',jpjglo
+  558.          IF(lwp) WRITE(numout,*)
+  559.    
+  560.    
+  561.          !  2. Index arrays for subdomains
+  562.          ! -------------------------------
+  563.    
+  564.          iimppt(:,:) = 1
+ftn-6263 ftn: VECTOR File = mppini.f90, Line = 564 
+  A loop starting at line 564 was not vectorized because it contains a reference to a non-vector intrinsic on line 564.
+
+  565.          ijmppt(:,:) = 1
+ftn-6263 ftn: VECTOR File = mppini.f90, Line = 565 
+  A loop starting at line 565 was not vectorized because it contains a reference to a non-vector intrinsic on line 565.
+
+  566.          ipproc(:,:) = -1
+ftn-6263 ftn: VECTOR File = mppini.f90, Line = 566 
+  A loop starting at line 566 was not vectorized because it contains a reference to a non-vector intrinsic on line 566.
+
+  567.    
+  568.          IF( jpni > 1 )THEN
+  569.             DO jj = 1, jpnj
+  570.                DO ji = 2, jpni
+  571.                   iimppt(ji,jj) = iimppt(ji-1,jj) + ilci(ji-1,jj) - nreci
+  572.                END DO
+  573.             END DO
+  574.          ENDIF
+  575.          nfiimpp(:,:) = iimppt(:,:)
+ftn-6262 ftn: VECTOR File = mppini.f90, Line = 575 
+  A loop starting at line 575 was not vectorized because it contains a call to a subroutine or function on line 575.
+
+  576.    
+  577.          IF( jpnj > 1 )THEN
+  578.             DO jj = 2, jpnj
+  579.                DO ji = 1, jpni
+  580.                   ijmppt(ji,jj) = ijmppt(ji,jj-1) + ilcj(ji,jj-1) - nrecj
+  581.                END DO
+  582.             END DO
+  583.          ENDIF
+  584.    
+  585.    
+  586.          ! 3. Subdomain description in the Regular Case
+  587.          ! --------------------------------------------
+  588.    
+  589.          nperio = 0
+  590.          icont = -1
+  591.          DO jarea = 1, jpni*jpnj
+  592.             ii = 1 + MOD(jarea-1,jpni)
+  593.             ij = 1 +    (jarea-1)/jpni
+  594.             ili = ilci(ii,ij)
+  595.             ilj = ilcj(ii,ij)
+  596.             ibondj(ii,ij) = -1
+  597.             IF( jarea >  jpni          )   ibondj(ii,ij) = 0
+  598.             IF( jarea >  (jpnj-1)*jpni )   ibondj(ii,ij) = 1
+  599.             IF( jpnj  == 1             )   ibondj(ii,ij) = 2
+  600.             ibondi(ii,ij) = 0
+  601.             IF( MOD(jarea,jpni) == 1 )   ibondi(ii,ij) = -1
+  602.             IF( MOD(jarea,jpni) == 0 )   ibondi(ii,ij) =  1
+  603.             IF( jpni            == 1 )   ibondi(ii,ij) =  2
+  604.    
+  605.             ! 2.4 Subdomain neighbors
+  606.    
+  607.             iproc = jarea - 1
+  608.             ioso(ii,ij) = iproc - jpni
+  609.             iowe(ii,ij) = iproc - 1
+  610.             ioea(ii,ij) = iproc + 1
+  611.             iono(ii,ij) = iproc + jpni
+  612.             ildi(ii,ij) = 1 + jpreci
+  613.             ilei(ii,ij) = ili -jpreci
+  614.             ionw(ii,ij) = iono(ii,ij) - 1
+  615.             ione(ii,ij) = iono(ii,ij) + 1
+  616.             iosw(ii,ij) = ioso(ii,ij) - 1
+  617.             iose(ii,ij) = ioso(ii,ij) + 1
+  618.             ibsw(ii,ij) = 1
+  619.             ibnw(ii,ij) = 1
+  620.             IF( MOD(iproc,jpni) == 0 ) THEN
+  621.                ibsw(ii,ij) = 0
+  622.                ibnw(ii,ij) = 0
+  623.             ENDIF
+  624.             ibse(ii,ij) = 1
+  625.             ibne(ii,ij) = 1
+  626.             IF( MOD(iproc,jpni) == jpni-1 ) THEN
+  627.                ibse(ii,ij) = 0
+  628.                ibne(ii,ij) = 0
+  629.             ENDIF
+  630.             IF( iproc < jpni ) THEN
+  631.                ibsw(ii,ij) = 0
+  632.                ibse(ii,ij) = 0
+  633.             ENDIF
+  634.             IF( iproc >= (jpnj-1)*jpni ) THEN
+  635.                ibnw(ii,ij) = 0
+  636.                ibne(ii,ij) = 0
+  637.             ENDIF
+  638.             IF( ibondi(ii,ij) == -1 .OR. ibondi(ii,ij) == 2 ) ildi(ii,ij) = 1
+  639.             IF( ibondi(ii,ij) ==  1 .OR. ibondi(ii,ij) == 2 ) ilei(ii,ij) = ili
+  640.             ildj(ii,ij) =  1  + jprecj
+  641.             ilej(ii,ij) = ilj - jprecj
+  642.             IF( ibondj(ii,ij) == -1 .OR. ibondj(ii,ij) == 2 ) ildj(ii,ij) = 1
+  643.             IF( ibondj(ii,ij) ==  1 .OR. ibondj(ii,ij) == 2 ) ilej(ii,ij) = ilj
+  644.    
+  645.             ! warning ii*ij (zone) /= nproc (processors)!
+  646.    
+  647.             IF( jperio == 1 .OR. jperio == 4 .OR. jperio == 6 ) THEN
+  648.                IF( jpni == 1 )THEN
+  649.                   ibondi(ii,ij) = 2
+  650.                   nperio = 1
+  651.                ELSE
+  652.                   ibondi(ii,ij) = 0
+  653.                ENDIF
+  654.                IF( MOD(jarea,jpni) == 0 ) THEN
+  655.                   ioea(ii,ij) = iproc - (jpni-1)
+  656.                   ione(ii,ij) = ione(ii,ij) - jpni
+  657.                   iose(ii,ij) = iose(ii,ij) - jpni
+  658.                ENDIF
+  659.                IF( MOD(jarea,jpni) == 1 ) THEN
+  660.                   iowe(ii,ij) = iproc + jpni - 1
+  661.                   ionw(ii,ij) = ionw(ii,ij) + jpni
+  662.                   iosw(ii,ij) = iosw(ii,ij) + jpni 
+  663.                ENDIF
+  664.                ibsw(ii,ij) = 1
+  665.                ibnw(ii,ij) = 1
+  666.                ibse(ii,ij) = 1
+  667.                ibne(ii,ij) = 1
+  668.                IF( iproc < jpni ) THEN
+  669.                   ibsw(ii,ij) = 0
+  670.                   ibse(ii,ij) = 0
+  671.                ENDIF
+  672.                IF( iproc >= (jpnj-1)*jpni ) THEN
+  673.                   ibnw(ii,ij) = 0
+  674.                   ibne(ii,ij) = 0
+  675.                ENDIF
+  676.             ENDIF
+  677.             ipolj(ii,ij) = 0
+  678.             IF( jperio == 3 .OR. jperio == 4 ) THEN
+  679.                ijm1 = jpni*(jpnj-1)
+  680.                imil = ijm1+(jpni+1)/2
+  681.                IF( jarea > ijm1 ) ipolj(ii,ij) = 3
+  682.                IF( MOD(jpni,2) == 1 .AND. jarea == imil ) ipolj(ii,ij) = 4
+  683.                IF( ipolj(ii,ij) == 3 ) iono(ii,ij) = jpni*jpnj-jarea+ijm1   ! MPI rank of northern neighbour
+  684.             ENDIF
+  685.             IF( jperio == 5 .OR. jperio == 6 ) THEN
+  686.                ijm1 = jpni*(jpnj-1)
+  687.                imil = ijm1+(jpni+1)/2
+  688.                IF( jarea > ijm1) ipolj(ii,ij) = 5
+  689.                IF( MOD(jpni,2) == 1 .AND. jarea == imil ) ipolj(ii,ij) = 6
+  690.                IF( ipolj(ii,ij) == 5) iono(ii,ij) = jpni*jpnj-jarea+ijm1    ! MPI rank of northern neighbour
+  691.             ENDIF
+  692.    
+  693.             ! Check wet points over the entire domain to preserve the MPI communication stencil
+  694.             isurf = 0
+  695.             DO jj = 1, ilj
+  696.                DO  ji = 1, ili
+  697.                   IF( imask(ji+iimppt(ii,ij)-1, jj+ijmppt(ii,ij)-1) == 1) isurf = isurf+1
+  698.                END DO
+  699.             END DO
+  700.    
+  701.             IF(isurf /= 0) THEN
+  702.                icont = icont + 1
+  703.                ipproc(ii,ij) = icont
+  704.                iin(icont+1) = ii
+  705.                ijn(icont+1) = ij
+  706.             ENDIF
+  707.          END DO
+  708.    
+  709.          nfipproc(:,:) = ipproc(:,:)
+ftn-6262 ftn: VECTOR File = mppini.f90, Line = 709 
+  A loop starting at line 709 was not vectorized because it contains a call to a subroutine or function on line 709.
+
+  710.    
+  711.          ! Control
+  712.          IF(icont+1 /= jpnij) THEN
+  713.             WRITE(ctmp1,*) ' jpni =',jpni,' jpnj =',jpnj
+  714.             WRITE(ctmp2,*) ' jpnij =',jpnij, '< jpni x jpnj' 
+  715.             WRITE(ctmp3,*) ' ***********, mpp_init2 finds jpnij=',icont+1
+  716.             CALL ctl_stop( ' Eliminate land processors algorithm', '', ctmp1, ctmp2, '', ctmp3 )
+  717.          ENDIF
+  718.    
+  719.          ! 4. Subdomain print
+  720.          ! ------------------
+  721.    
+  722.          IF(lwp) THEN
+  723.             ifreq = 4
+  724.             il1 = 1
+  725.             DO jn = 1,(jpni-1)/ifreq+1
+  726.                il2 = MIN(jpni,il1+ifreq-1)
+  727.                WRITE(numout,*)
+  728.                WRITE(numout,9400) ('***',ji=il1,il2-1)
+  729.                DO jj = jpnj, 1, -1
+  730.                   WRITE(numout,9403) ('   ',ji=il1,il2-1)
+  731.                   WRITE(numout,9402) jj, (ilci(ji,jj),ilcj(ji,jj),ji=il1,il2)
+  732.                   WRITE(numout,9404) (ipproc(ji,jj),ji=il1,il2)
+  733.                   WRITE(numout,9403) ('   ',ji=il1,il2-1)
+  734.                   WRITE(numout,9400) ('***',ji=il1,il2-1)
+  735.                END DO
+  736.                WRITE(numout,9401) (ji,ji=il1,il2)
+  737.                il1 = il1+ifreq
+  738.             END DO
+  739.     9400     FORMAT('     ***',20('*************',a3))
+  740.     9403     FORMAT('     *     ',20('         *   ',a3))
+  741.     9401     FORMAT('        ',20('   ',i3,'          '))
+  742.     9402     FORMAT(' ',i3,' *  ',20(i3,'  x',i3,'   *   '))
+  743.     9404     FORMAT('     *  ',20('      ',i3,'   *   '))
+  744.          ENDIF
+  745.    
+  746.    
+  747.          ! 5. neighbour treatment
+  748.          ! ----------------------
+  749.    
+  750.          DO jarea = 1, jpni*jpnj
+  751.             iproc = jarea-1
+  752.             ii = 1 + MOD(jarea-1,jpni)
+  753.             ij = 1 +    (jarea-1)/jpni
+  754.             IF( ipproc(ii,ij) == -1 .AND. iono(ii,ij) >= 0   &
+  755.                .AND. iono(ii,ij) <= jpni*jpnj-1 ) THEN
+  756.                iino = 1 + MOD(iono(ii,ij),jpni)
+  757.                ijno = 1 +    (iono(ii,ij))/jpni
+  758.                  ! Need to reverse the logical direction of communication 
+  759.                  ! for northern neighbours of northern row processors (north-fold)
+  760.                  ! i.e. need to check that the northern neighbour only communicates
+  761.                  ! to the SOUTH (or not at all) if this area is land-only (#1057)
+  762.                idir = 1
+  763.                IF( ij .eq. jpnj .AND. ijno .eq. jpnj ) idir = -1    
+  764.                IF( ibondj(iino,ijno) == idir ) ibondj(iino,ijno)=2
+  765.                IF( ibondj(iino,ijno) == 0 ) ibondj(iino,ijno) = -idir
+  766.             ENDIF
+  767.             IF( ipproc(ii,ij) == -1 .AND. ioso(ii,ij) >= 0   &
+  768.                .AND. ioso(ii,ij) <= jpni*jpnj-1 ) THEN
+  769.                iiso = 1 + MOD(ioso(ii,ij),jpni)
+  770.                ijso = 1 +    (ioso(ii,ij))/jpni
+  771.                IF( ibondj(iiso,ijso) == -1 ) ibondj(iiso,ijso) = 2
+  772.                IF( ibondj(iiso,ijso) ==  0 ) ibondj(iiso,ijso) = 1
+  773.             ENDIF
+  774.             IF( ipproc(ii,ij) == -1 .AND. ioea(ii,ij) >= 0   &
+  775.                .AND. ioea(ii,ij) <= jpni*jpnj-1) THEN
+  776.                iiea = 1 + MOD(ioea(ii,ij),jpni)
+  777.                ijea = 1 +    (ioea(ii,ij))/jpni
+  778.                IF( ibondi(iiea,ijea) == 1 ) ibondi(iiea,ijea) = 2
+  779.                IF( ibondi(iiea,ijea) == 0 ) ibondi(iiea,ijea) = -1
+  780.             ENDIF
+  781.             IF( ipproc(ii,ij) == -1 .AND. iowe(ii,ij) >= 0   &
+  782.                .AND. iowe(ii,ij) <= jpni*jpnj-1) THEN
+  783.                iiwe = 1 + MOD(iowe(ii,ij),jpni)
+  784.                ijwe = 1 +    (iowe(ii,ij))/jpni
+  785.                IF( ibondi(iiwe,ijwe) == -1 ) ibondi(iiwe,ijwe) = 2
+  786.                IF( ibondi(iiwe,ijwe) ==  0 ) ibondi(iiwe,ijwe) = 1
+  787.             ENDIF
+  788.             IF( ipproc(ii,ij) == -1 .AND. ibne(ii,ij) == 1 ) THEN
+  789.                iine = 1 + MOD(ione(ii,ij),jpni)
+  790.                ijne = 1 +    (ione(ii,ij))/jpni
+  791.                IF( ibsw(iine,ijne) == 1 ) ibsw(iine,ijne) = 0
+  792.             ENDIF
+  793.             IF( ipproc(ii,ij) == -1 .AND. ibsw(ii,ij) == 1 ) THEN
+  794.                iisw = 1 + MOD(iosw(ii,ij),jpni)
+  795.                ijsw = 1 +    (iosw(ii,ij))/jpni
+  796.                IF( ibne(iisw,ijsw) == 1 ) ibne(iisw,ijsw) = 0
+  797.             ENDIF
+  798.             IF( ipproc(ii,ij) == -1 .AND. ibnw(ii,ij) == 1 ) THEN
+  799.                iinw = 1 + MOD(ionw(ii,ij),jpni)
+  800.                ijnw = 1 +    (ionw(ii,ij))/jpni
+  801.                IF( ibse(iinw,ijnw) == 1 ) ibse(iinw,ijnw)=0
+  802.             ENDIF
+  803.             IF( ipproc(ii,ij) == -1 .AND. ibse(ii,ij) == 1 ) THEN
+  804.                iise = 1 + MOD(iose(ii,ij),jpni)
+  805.                ijse = 1 +    (iose(ii,ij))/jpni
+  806.                IF( ibnw(iise,ijse) == 1 ) ibnw(iise,ijse) = 0
+  807.             ENDIF
+  808.          END DO
+  809.    
+  810.    
+  811.          ! 6. Change processor name
+  812.          ! ------------------------
+  813.    
+  814.          nproc = narea-1
+  815.          ii = iin(narea)
+  816.          ij = ijn(narea)
+  817.    
+  818.          ! set default neighbours
+  819.          noso = ioso(ii,ij)
+  820.          nowe = iowe(ii,ij)
+  821.          noea = ioea(ii,ij)
+  822.          nono = iono(ii,ij) 
+  823.          npse = iose(ii,ij)
+  824.          npsw = iosw(ii,ij)
+  825.          npne = ione(ii,ij)
+  826.          npnw = ionw(ii,ij)
+  827.    
+  828.          ! check neighbours location
+  829.          IF( ioso(ii,ij) >= 0 .AND. ioso(ii,ij) <= (jpni*jpnj-1) ) THEN 
+  830.             iiso = 1 + MOD(ioso(ii,ij),jpni)
+  831.             ijso = 1 +    (ioso(ii,ij))/jpni
+  832.             noso = ipproc(iiso,ijso)
+  833.          ENDIF
+  834.          IF( iowe(ii,ij) >= 0 .AND. iowe(ii,ij) <= (jpni*jpnj-1) ) THEN 
+  835.             iiwe = 1 + MOD(iowe(ii,ij),jpni)
+  836.             ijwe = 1 +    (iowe(ii,ij))/jpni
+  837.             nowe = ipproc(iiwe,ijwe)
+  838.          ENDIF
+  839.          IF( ioea(ii,ij) >= 0 .AND. ioea(ii,ij) <= (jpni*jpnj-1) ) THEN 
+  840.             iiea = 1 + MOD(ioea(ii,ij),jpni)
+  841.             ijea = 1 +    (ioea(ii,ij))/jpni
+  842.             noea = ipproc(iiea,ijea)
+  843.          ENDIF
+  844.          IF( iono(ii,ij) >= 0 .AND. iono(ii,ij) <= (jpni*jpnj-1) ) THEN 
+  845.             iino = 1 + MOD(iono(ii,ij),jpni)
+  846.             ijno = 1 +    (iono(ii,ij))/jpni
+  847.             nono = ipproc(iino,ijno)
+  848.          ENDIF
+  849.          IF( iose(ii,ij) >= 0 .AND. iose(ii,ij) <= (jpni*jpnj-1) ) THEN 
+  850.             iise = 1 + MOD(iose(ii,ij),jpni)
+  851.             ijse = 1 +    (iose(ii,ij))/jpni
+  852.             npse = ipproc(iise,ijse)
+  853.          ENDIF
+  854.          IF( iosw(ii,ij) >= 0 .AND. iosw(ii,ij) <= (jpni*jpnj-1) ) THEN 
+  855.             iisw = 1 + MOD(iosw(ii,ij),jpni)
+  856.             ijsw = 1 +    (iosw(ii,ij))/jpni
+  857.             npsw = ipproc(iisw,ijsw)
+  858.          ENDIF
+  859.          IF( ione(ii,ij) >= 0 .AND. ione(ii,ij) <= (jpni*jpnj-1) ) THEN 
+  860.             iine = 1 + MOD(ione(ii,ij),jpni)
+  861.             ijne = 1 +    (ione(ii,ij))/jpni
+  862.             npne = ipproc(iine,ijne)
+  863.          ENDIF
+  864.          IF( ionw(ii,ij) >= 0 .AND. ionw(ii,ij) <= (jpni*jpnj-1) ) THEN 
+  865.             iinw = 1 + MOD(ionw(ii,ij),jpni)
+  866.             ijnw = 1 +    (ionw(ii,ij))/jpni
+  867.             npnw = ipproc(iinw,ijnw)
+  868.          ENDIF
+  869.          nbnw = ibnw(ii,ij)
+  870.          nbne = ibne(ii,ij)
+  871.          nbsw = ibsw(ii,ij)
+  872.          nbse = ibse(ii,ij)
+  873.          nlcj = ilcj(ii,ij)  
+  874.          nlci = ilci(ii,ij)  
+  875.          nldi = ildi(ii,ij)
+  876.          nlei = ilei(ii,ij)
+  877.          nldj = ildj(ii,ij)
+  878.          nlej = ilej(ii,ij)
+  879.          nbondi = ibondi(ii,ij)
+  880.          nbondj = ibondj(ii,ij)
+  881.          nimpp = iimppt(ii,ij)  
+  882.          njmpp = ijmppt(ii,ij)  
+  883.          DO jproc = 1, jpnij
+  884.             ii = iin(jproc)
+  885.             ij = ijn(jproc)
+  886.             nimppt(jproc) = iimppt(ii,ij)  
+  887.             njmppt(jproc) = ijmppt(ii,ij)  
+  888.             nlcjt(jproc) = ilcj(ii,ij)
+  889.             nlcit(jproc) = ilci(ii,ij)
+  890.             nldit(jproc) = ildi(ii,ij)
+  891.             nleit(jproc) = ilei(ii,ij)
+  892.             nldjt(jproc) = ildj(ii,ij)
+  893.             nlejt(jproc) = ilej(ii,ij)
+  894.          END DO
+  895.    
+  896.          ! Save processor layout in ascii file
+  897.          IF (lwp) THEN
+  898.             CALL ctl_opn( inum, 'layout.dat', 'REPLACE', 'FORMATTED', 'SEQUENTIAL', -1, numout, .FALSE., narea )
+  899.             WRITE(inum,'(a)') '   jpnij     jpi     jpj     jpk  jpiglo  jpjglo'
+  900.             WRITE(inum,'(6i8)') jpnij,jpi,jpj,jpk,jpiglo,jpjglo
+  901.             WRITE(inum,'(a)') 'NAREA nlci nlcj nldi nldj nlei nlej nimpp njmpp'
+  902.    
+  903.            DO  jproc = 1, jpnij
+  904.             WRITE(inum,'(9i5)') jproc, nlcit(jproc), nlcjt(jproc), &
+  905.                                          nldit(jproc), nldjt(jproc), &
+  906.                                          nleit(jproc), nlejt(jproc), &
+  907.                                          nimppt(jproc), njmppt(jproc)
+  908.            END DO
+  909.            CLOSE(inum)   
+  910.          END IF
+  911.    
+  912.          ! Defined npolj, either 0, 3 , 4 , 5 , 6
+  913.          ! In this case the important thing is that npolj /= 0
+  914.          ! Because if we go through these line it is because jpni >1 and thus
+  915.          ! we must use lbcnorthmpp, which tests only npolj =0 or npolj /= 0
+  916.    
+  917.          npolj = 0
+  918.          ij = ijn(narea)
+  919.    
+  920.          IF( jperio == 3 .OR. jperio == 4 ) THEN
+  921.             IF( ij == jpnj ) npolj = 3
+  922.          ENDIF
+  923.    
+  924.          IF( jperio == 5 .OR. jperio == 6 ) THEN
+  925.             IF( ij == jpnj ) npolj = 5
+  926.          ENDIF
+  927.    
+  928.          ! Periodicity : no corner if nbondi = 2 and nperio != 1
+  929.    
+  930.          IF(lwp) THEN
+  931.             WRITE(numout,*) ' nproc  = ', nproc
+  932.             WRITE(numout,*) ' nowe   = ', nowe  , ' noea   =  ', noea
+  933.             WRITE(numout,*) ' nono   = ', nono  , ' noso   =  ', noso
+  934.             WRITE(numout,*) ' nbondi = ', nbondi
+  935.             WRITE(numout,*) ' nbondj = ', nbondj
+  936.             WRITE(numout,*) ' npolj  = ', npolj
+  937.             WRITE(numout,*) ' nperio = ', nperio
+  938.             WRITE(numout,*) ' nlci   = ', nlci
+  939.             WRITE(numout,*) ' nlcj   = ', nlcj
+  940.             WRITE(numout,*) ' nimpp  = ', nimpp
+  941.             WRITE(numout,*) ' njmpp  = ', njmpp
+  942.             WRITE(numout,*) ' nreci  = ', nreci  , ' npse   = ', npse
+  943.             WRITE(numout,*) ' nrecj  = ', nrecj  , ' npsw   = ', npsw
+  944.             WRITE(numout,*) ' jpreci = ', jpreci , ' npne   = ', npne
+  945.             WRITE(numout,*) ' jprecj = ', jprecj , ' npnw   = ', npnw
+  946.             WRITE(numout,*)
+  947.          ENDIF
+  948.    
+  949.          IF( nperio == 1 .AND. jpni /= 1 ) CALL ctl_stop( ' mpp_init2: error on cyclicity' )
+  950.    
+  951.          ! Prepare mpp north fold
+  952.    
+  953.          IF( jperio >= 3 .AND. jperio <= 6 .AND. jpni > 1 ) THEN
+  954.             CALL mpp_ini_north
+  955.             IF(lwp) WRITE(numout,*) ' mpp_init2 : North fold boundary prepared for jpni >1'
+  956.          ENDIF
+  957.    
+  958.          ! Prepare NetCDF output file (if necessary)
+  959.          CALL mpp_init_ioipsl
+  960.    
+  961.    
+  962.       END SUBROUTINE mpp_init2
+  963.    
+  964.       SUBROUTINE mpp_init_ioipsl
+  965.          !!----------------------------------------------------------------------
+  966.          !!                  ***  ROUTINE mpp_init_ioipsl  ***
+  967.          !!
+  968.          !! ** Purpose :   
+  969.          !!
+  970.          !! ** Method  :   
+  971.          !!
+  972.          !! History :
+  973.          !!   9.0  !  04-03  (G. Madec )  MPP-IOIPSL 
+  974.          !!   " "  !  08-12  (A. Coward)  addition in case of jpni*jpnj < jpnij
+  975.          !!----------------------------------------------------------------------
+  976.          INTEGER, DIMENSION(2) ::   iglo, iloc, iabsf, iabsl, ihals, ihale, idid
+  977.          !!----------------------------------------------------------------------
+  978.    
+  979.          ! The domain is split only horizontally along i- or/and j- direction
+  980.          ! So we need at the most only 1D arrays with 2 elements.
+  981.          ! Set idompar values equivalent to the jpdom_local_noextra definition
+  982.          ! used in IOM. This works even if jpnij .ne. jpni*jpnj.
+  983.          iglo(1) = jpiglo
+  984.          iglo(2) = jpjglo
+  985.          iloc(1) = nlci
+  986.          iloc(2) = nlcj
+  987.          iabsf(1) = nimppt(narea)
+  988.          iabsf(2) = njmppt(narea)
+  989.          iabsl(:) = iabsf(:) + iloc(:) - 1
+ftn-6271 ftn: VECTOR File = mppini.f90, Line = 989 
+  A loop starting at line 989 was not vectorized because its trip count is too small.
+
+  990.          ihals(1) = nldi - 1
+  991.          ihals(2) = nldj - 1
+  992.          ihale(1) = nlci - nlei
+  993.          ihale(2) = nlcj - nlej
+  994.          idid(1) = 1
+  995.          idid(2) = 2
+  996.    
+  997.          IF(lwp) THEN
+  998.              WRITE(numout,*)
+  999.              WRITE(numout,*) 'mpp_init_ioipsl :   iloc  = ', iloc (1), iloc (2)
+ 1000.              WRITE(numout,*) '~~~~~~~~~~~~~~~     iabsf = ', iabsf(1), iabsf(2)
+ 1001.              WRITE(numout,*) '                    ihals = ', ihals(1), ihals(2)
+ 1002.              WRITE(numout,*) '                    ihale = ', ihale(1), ihale(2)
+ 1003.          ENDIF
+ 1004.          !
+ 1005.          CALL flio_dom_set ( jpnij, nproc, idid, iglo, iloc, iabsf, iabsl, ihals, ihale, 'BOX', nidom)
+ 1006.          !
+ 1007.       END SUBROUTINE mpp_init_ioipsl  
+ 1008.    
+ 1009.    
+ 1010.       !!======================================================================
+ 1011.    END MODULE mppini
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                         E x t e r n a l   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Name  Messages
+----  --------
+AGRIF_CFIXED in DOM_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+AGRIF_ROOT in DOM_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+BUILDOP in MATHELP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+CALENDAR
+      Defined as:  No definitions.
+
+      Used By:     MPPINI  (indirectly)
+
+Name  Messages
+----  --------
+CMPBLANK in STRINGOP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+CNTPOS in STRINGOP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+CTL_NAM in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   MPP_INIT2 in MPPINI (Line 466, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 470, file mppini.f90)
+
+Name  Messages
+----  --------
+CTL_OPN in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   MPP_INIT in MPPINI (Line 285, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 898, file mppini.f90)
+
+Name  Messages
+----  --------
+CTL_STOP in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   MPP_INIT in MPPINI (Line 369, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 478, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 716, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 949, file mppini.f90)
+
+Name  Messages
+----  --------
+CTL_WARN in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+DOM_OCE
+      Defined as:  No definitions.
+
+      Used By:     MPPINI  (indirectly)
+                   MPPINI  (indirectly)
+
+Name  Messages
+----  --------
+DOM_OCE_ALLOC in DOM_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+ERRIOIPSL
+      Defined as:  No definitions.
+
+      Used By:     MPPINI  (indirectly)
+
+Name  Messages
+----  --------
+FINDPOS in STRINGOP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FIND_STR in STRINGOP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLINCLO in FLINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLINCOM
+      Defined as:  No definitions.
+
+      Used By:     MPPINI  (indirectly)
+
+Name  Messages
+----  --------
+FLINCRE in FLINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLINGET_R1D in FLINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLINGET_R2D in FLINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLINGET_R2D_ZOOM2D in FLINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLINGET_R3D in FLINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLINGET_R3D_ZOOM2D in FLINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLINGET_R4D in FLINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLINGET_R4D_ZOOM2D in FLINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLINGET_SCAL in FLINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLININFO in FLINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLININSPECT in FLINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLINOPEN_NOZOOM in FLINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLINOPEN_ZOOM2D in FLINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLINPUT_R1D in FLINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLINPUT_R2D in FLINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLINPUT_R3D in FLINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLINPUT_R4D in FLINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLINPUT_SCAL in FLINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLINQUERY_VAR in FLINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOCLO in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOCOM
+      Defined as:  No definitions.
+
+      Used By:     MPPINI  (indirectly)
+
+Name  Messages
+----  --------
+FLIOCPYA in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOCRFD in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIODELA in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIODMPF in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIODV_R0D in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIODV_RND in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGA_I4_0D in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGA_I4_1D in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGA_R4_0D in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGA_R4_1D in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGA_R8_0D in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGA_R8_1D in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGA_TX_0D in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGSTC in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_I20 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_I21 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_I22 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_I23 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_I24 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_I25 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_I40 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_I41 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_I42 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_I43 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_I44 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_I45 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_R40 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_R41 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_R42 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_R43 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_R44 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_R45 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_R80 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_R81 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_R82 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_R83 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_R84 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOGV_R85 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOINQA in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOINQF in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOINQN in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOINQV in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOOPFD in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPA_I4_0D in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPA_I4_1D in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPA_R4_0D in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPA_R4_1D in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPA_R8_0D in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPA_R8_1D in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPA_TX_0D in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPSTC in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_I20 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_I21 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_I22 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_I23 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_I24 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_I25 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_I40 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_I41 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_I42 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_I43 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_I44 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_I45 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_R40 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_R41 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_R42 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_R43 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_R44 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_R45 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_R80 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_R81 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_R82 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_R83 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_R84 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOPV_R85 in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOQSTC in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIORENA in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIORENV in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIOSYNC in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIO_DOM_ATT in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIO_DOM_DEFINQ in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIO_DOM_DEFSET in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIO_DOM_DEFUNSET in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIO_DOM_FILE in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+FLIO_DOM_SET in FLIOCOM
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   MPP_INIT_IOIPSL in MPPINI (Line 1005, file mppini.f90)
+
+Name  Messages
+----  --------
+FLIO_DOM_UNSET in FLIOCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GETINC1D in GETINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GETINC2D in GETINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GETINCOM
+      Defined as:  No definitions.
+
+      Used By:     MPPINI  (indirectly)
+
+Name  Messages
+----  --------
+GETINCS in GETINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GETINI1D in GETINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GETINI2D in GETINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GETINIS in GETINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GETINL1D in GETINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GETINL2D in GETINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GETINLS in GETINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GETINR1D in GETINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GETINR2D in GETINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GETINRS in GETINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GETIN_DUMP in GETINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GETIN_NAME in GETINCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GET_NF90_SYMBOL in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GET_UNIT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+HISTB_IRREG in HISTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+HISTB_REG1D in HISTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+HISTB_REG2D in HISTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+HISTCLO in HISTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+HISTCOM
+      Defined as:  No definitions.
+
+      Used By:     MPPINI  (indirectly)
+
+Name  Messages
+----  --------
+HISTDEF in HISTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+HISTEND in HISTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+HISTERR in ERRIOIPSL
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+HISTH_IRREG in HISTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+HISTH_REG1D in HISTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+HISTH_REG2D in HISTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+HISTSYNC in HISTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+HISTVERT in HISTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+HISTWRITE_R1D in HISTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+HISTWRITE_R2D in HISTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+HISTWRITE_R3D in HISTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IN_OUT_MANAGER
+      Defined as:  No definitions.
+
+      Used By:     MPPINI
+                   MPPINI
+                   MPPINI  (indirectly)
+
+Name  Messages
+----  --------
+IOCONF_CALENDAR in CALENDAR
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOCONF_EXPVAL in RESTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOCONF_MODNAME in HISTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOCONF_SETATT in RESTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOCONF_STARTDATE_INTERNAL in CALENDAR
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOCONF_STARTDATE_SIMPLE in CALENDAR
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOCONF_STARTDATE_YMDS in CALENDAR
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOGET_CALENDAR_REAL1 in CALENDAR
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOGET_CALENDAR_REAL2 in CALENDAR
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOGET_CALENDAR_STR in CALENDAR
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOGET_EXPVAL in RESTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOGET_MON_LEN in CALENDAR
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOGET_TIMESTAMP in CALENDAR
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOGET_VDIM in RESTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOGET_VNAME in RESTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOGET_YEAR_LEN in CALENDAR
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOIPSL
+      Defined as:  No definitions.
+
+      Used By:     MPPINI
+
+Name  Messages
+----  --------
+IOM
+      Defined as:  No definitions.
+
+      Used By:     MPPINI
+
+Name  Messages
+----  --------
+IOM_CLOSE in IOM
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   MPP_INIT2 in MPPINI (Line 507, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 515, file mppini.f90)
+
+Name  Messages
+----  --------
+IOM_CONTEXT_FINALIZE in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_DEF
+      Defined as:  No definitions.
+
+      Used By:     MPPINI  (indirectly)
+
+Name  Messages
+----  --------
+IOM_G0D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_G0D_INTATT in IOM
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   MPP_INIT2 in MPPINI (Line 491, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 501, file mppini.f90)
+
+Name  Messages
+----  --------
+IOM_G1D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_G2D in IOM
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   MPP_INIT2 in MPPINI (Line 493, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 497, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 503, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 513, file mppini.f90)
+
+Name  Messages
+----  --------
+IOM_G3D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_GETTIME in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_INIT in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90
+      Defined as:  No definitions.
+
+      Used By:     MPPINI  (indirectly)
+
+Name  Messages
+----  --------
+IOM_NF90_CLOSE in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_G0D in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_G123D in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_GETTIME in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_INTATT in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_OPEN in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_RP0123D in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_VARID in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_OPEN in IOM
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   MPP_INIT2 in MPPINI (Line 488, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 495, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 512, file mppini.f90)
+
+Name  Messages
+----  --------
+IOM_P0D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_P1D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_P2D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_P3D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_RP0D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_RP1D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_RP2D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_RP3D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_SETKT in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_SWAP in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_USE in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_VARID in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IPSLDBG in ERRIOIPSL
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IPSLERR in ERRIOIPSL
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IPSLERR_ACT in ERRIOIPSL
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IPSLERR_INQ in ERRIOIPSL
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IPSLNLF in ERRIOIPSL
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+ISITTIME in CALENDAR
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+ITAU2DATE in CALENDAR
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+ITAU2YMDS in CALENDAR
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+JU2YMDS in CALENDAR
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+LBCLNK
+      Defined as:  No definitions.
+
+      Used By:     MPPINI  (indirectly)
+
+Name  Messages
+----  --------
+LIB_MPP
+      Defined as:  No definitions.
+
+      Used By:     MPPINI
+                   MPPINI  (indirectly)
+
+Name  Messages
+----  --------
+LOCK_CALENDAR in CALENDAR
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MATHELP
+      Defined as:  No definitions.
+
+      Used By:     MPPINI  (indirectly)
+
+Name  Messages
+----  --------
+MATHOP_R11 in MATHELP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MATHOP_R21 in MATHELP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MATHOP_R31 in MATHELP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MAX(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   MPP_INIT2 in MPPINI (Line 492, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 502, file mppini.f90)
+
+Name  Messages
+----  --------
+MIN(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   MPP_INIT in MPPINI (Line 212, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 726, file mppini.f90)
+
+Name  Messages
+----  --------
+MOD(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   MPP_INIT in MPPINI (Line 93, file mppini.f90)
+                   MPP_INIT in MPPINI (Line 94, file mppini.f90)
+                   MPP_INIT in MPPINI (Line 149, file mppini.f90)
+                   MPP_INIT in MPPINI (Line 165, file mppini.f90)
+                   MPP_INIT in MPPINI (Line 166, file mppini.f90)
+                   MPP_INIT in MPPINI (Line 254, file mppini.f90)
+                   MPP_INIT in MPPINI (Line 260, file mppini.f90)
+                   MPP_INIT in MPPINI (Line 309, file mppini.f90)
+                   MPP_INIT in MPPINI (Line 314, file mppini.f90)
+                   MPP_INIT in MPPINI (Line 337, file mppini.f90)
+                   MPP_INIT in MPPINI (Line 344, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 533, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 534, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 592, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 601, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 602, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 620, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 626, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 654, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 659, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 682, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 689, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 752, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 756, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 769, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 776, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 783, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 789, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 794, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 799, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 804, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 830, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 835, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 840, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 845, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 850, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 855, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 860, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 865, file mppini.f90)
+
+Name  Messages
+----  --------
+MOYCUM in MATHELP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPBCAST_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPGATHER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPINI
+      Defined as:  Module (line 1, file mppini.f90)
+
+        Uses:      PAR_KIND  (indirectly)
+                   PAR_OCE  (indirectly)
+                   IN_OUT_MANAGER
+                   PAR_KIND  (indirectly)
+                   NC4INTERFACE  (indirectly)
+                   PAR_OCE  (indirectly)
+                   LIB_MPP
+                   PAR_OCE  (indirectly)
+                   DOM_OCE  (indirectly)
+                   IOIPSL
+                   NC4INTERFACE  (indirectly)
+                   RESTCOM  (indirectly)
+                   HISTCOM  (indirectly)
+                   FLINCOM  (indirectly)
+                   FLIOCOM  (indirectly)
+                   CALENDAR  (indirectly)
+                   GETINCOM  (indirectly)
+                   MATHELP  (indirectly)
+                   STRINGOP  (indirectly)
+                   ERRIOIPSL  (indirectly)
+                   IN_OUT_MANAGER
+                   PAR_KIND  (indirectly)
+                   NC4INTERFACE  (indirectly)
+                   PAR_OCE  (indirectly)
+                   IOM
+                   NC4INTERFACE  (indirectly)
+                   PAR_KIND  (indirectly)
+                   PAR_OCE  (indirectly)
+                   LIB_MPP  (indirectly)
+                   IN_OUT_MANAGER  (indirectly)
+                   IOM_NF90  (indirectly)
+                   IOM_DEF  (indirectly)
+                   LBCLNK  (indirectly)
+                   DOM_OCE  (indirectly)
+
+Name  Messages
+----  --------
+MPPMAX_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_REAL_MULTIPLE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPRECV in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSCATTER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSEND in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSTOP in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_REALDD in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_REALDD in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSYNC in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_COMM_FREE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INIT in MPPINI
+      Defined as:  Subroutine (line 21, file mppini.f90)
+
+      Interface:   None
+
+      Calls:       MPP_INIT_IOIPSL in MPPINI (Line 379, file mppini.f90)
+                   CTL_OPN in LIB_MPP (Line 285, file mppini.f90)
+                   CTL_STOP in LIB_MPP (Line 369, file mppini.f90)
+                   MPP_INI_NORTH in LIB_MPP (Line 374, file mppini.f90)
+                   MOD(Intrinsic) (Line 93, file mppini.f90)
+                   MOD(Intrinsic) (Line 94, file mppini.f90)
+                   MOD(Intrinsic) (Line 149, file mppini.f90)
+                   MOD(Intrinsic) (Line 165, file mppini.f90)
+                   MOD(Intrinsic) (Line 166, file mppini.f90)
+                   MOD(Intrinsic) (Line 254, file mppini.f90)
+                   MOD(Intrinsic) (Line 260, file mppini.f90)
+                   MOD(Intrinsic) (Line 309, file mppini.f90)
+                   MOD(Intrinsic) (Line 314, file mppini.f90)
+                   MOD(Intrinsic) (Line 337, file mppini.f90)
+                   MOD(Intrinsic) (Line 344, file mppini.f90)
+                   MIN(Intrinsic) (Line 212, file mppini.f90)
+
+Name  Messages
+----  --------
+MPP_INIT2 in MPPINI
+      Defined as:  Subroutine (line 22, file mppini.f90)
+
+      Interface:   None
+
+      Calls:       MPP_INIT_IOIPSL in MPPINI (Line 959, file mppini.f90)
+                   CTL_NAM in LIB_MPP (Line 466, file mppini.f90)
+                   CTL_NAM in LIB_MPP (Line 470, file mppini.f90)
+                   CTL_STOP in LIB_MPP (Line 478, file mppini.f90)
+                   CTL_STOP in LIB_MPP (Line 716, file mppini.f90)
+                   CTL_STOP in LIB_MPP (Line 949, file mppini.f90)
+                   IOM_OPEN in IOM (Line 488, file mppini.f90)
+                   IOM_OPEN in IOM (Line 495, file mppini.f90)
+                   IOM_OPEN in IOM (Line 512, file mppini.f90)
+                   IOM_G0D_INTATT in IOM (Line 491, file mppini.f90)
+                   IOM_G0D_INTATT in IOM (Line 501, file mppini.f90)
+                   MAX(Intrinsic) (Line 492, file mppini.f90)
+                   MAX(Intrinsic) (Line 502, file mppini.f90)
+                   IOM_G2D in IOM (Line 493, file mppini.f90)
+                   IOM_G2D in IOM (Line 497, file mppini.f90)
+                   IOM_G2D in IOM (Line 503, file mppini.f90)
+                   IOM_G2D in IOM (Line 513, file mppini.f90)
+                   IOM_CLOSE in IOM (Line 507, file mppini.f90)
+                   IOM_CLOSE in IOM (Line 515, file mppini.f90)
+                   MOD(Intrinsic) (Line 533, file mppini.f90)
+                   MOD(Intrinsic) (Line 534, file mppini.f90)
+                   MOD(Intrinsic) (Line 592, file mppini.f90)
+                   MOD(Intrinsic) (Line 601, file mppini.f90)
+                   MOD(Intrinsic) (Line 602, file mppini.f90)
+                   MOD(Intrinsic) (Line 620, file mppini.f90)
+                   MOD(Intrinsic) (Line 626, file mppini.f90)
+                   MOD(Intrinsic) (Line 654, file mppini.f90)
+                   MOD(Intrinsic) (Line 659, file mppini.f90)
+                   MOD(Intrinsic) (Line 682, file mppini.f90)
+                   MOD(Intrinsic) (Line 689, file mppini.f90)
+                   MOD(Intrinsic) (Line 752, file mppini.f90)
+                   MOD(Intrinsic) (Line 756, file mppini.f90)
+                   MOD(Intrinsic) (Line 769, file mppini.f90)
+                   MOD(Intrinsic) (Line 776, file mppini.f90)
+                   MOD(Intrinsic) (Line 783, file mppini.f90)
+                   MOD(Intrinsic) (Line 789, file mppini.f90)
+                   MOD(Intrinsic) (Line 794, file mppini.f90)
+                   MOD(Intrinsic) (Line 799, file mppini.f90)
+                   MOD(Intrinsic) (Line 804, file mppini.f90)
+                   MOD(Intrinsic) (Line 830, file mppini.f90)
+                   MOD(Intrinsic) (Line 835, file mppini.f90)
+                   MOD(Intrinsic) (Line 840, file mppini.f90)
+                   MOD(Intrinsic) (Line 845, file mppini.f90)
+                   MOD(Intrinsic) (Line 850, file mppini.f90)
+                   MOD(Intrinsic) (Line 855, file mppini.f90)
+                   MOD(Intrinsic) (Line 860, file mppini.f90)
+                   MOD(Intrinsic) (Line 865, file mppini.f90)
+                   SUM(Intrinsic) (Line 552, file mppini.f90)
+                   SUM(Intrinsic) (Line 556, file mppini.f90)
+                   MIN(Intrinsic) (Line 726, file mppini.f90)
+                   CTL_OPN in LIB_MPP (Line 898, file mppini.f90)
+                   MPP_INI_NORTH in LIB_MPP (Line 954, file mppini.f90)
+
+Name  Messages
+----  --------
+MPP_INIT_IOIPSL in MPPINI
+      Defined as:  Subroutine (line 964, file mppini.f90)
+
+      Interface:   None
+
+      Called By:   MPP_INIT in MPPINI (Line 379, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 959, file mppini.f90)
+
+      Calls:       FLIO_DOM_SET in FLIOCOM (Line 1005, file mppini.f90)
+
+Name  Messages
+----  --------
+MPP_INI_ICE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_NORTH in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   MPP_INIT in MPPINI (Line 374, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 954, file mppini.f90)
+
+Name  Messages
+----  --------
+MPP_INI_ZNL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_E in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_ICB in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_9 in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_E in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_ICB in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_MULTIPLE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_3D_GATHER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_BDY_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_BDY_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_SUM_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_SUM_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MAXLOC2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MAXLOC3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MINLOC2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MINLOC3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MYNODE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NC4INTERFACE
+      Defined as:  No definitions.
+
+      Used By:     MPPINI  (indirectly)
+                   MPPINI  (indirectly)
+                   MPPINI  (indirectly)
+                   MPPINI  (indirectly)
+
+Name  Messages
+----  --------
+NOCOMMA in STRINGOP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+PAR_KIND
+      Defined as:  No definitions.
+
+      Used By:     MPPINI  (indirectly)
+                   MPPINI  (indirectly)
+                   MPPINI  (indirectly)
+                   MPPINI  (indirectly)
+
+Name  Messages
+----  --------
+PAR_OCE
+      Defined as:  No definitions.
+
+      Used By:     MPPINI  (indirectly)
+                   MPPINI  (indirectly)
+                   MPPINI  (indirectly)
+                   MPPINI  (indirectly)
+                   MPPINI  (indirectly)
+
+Name  Messages
+----  --------
+RESTCLO in RESTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+RESTCOM
+      Defined as:  No definitions.
+
+      Used By:     MPPINI  (indirectly)
+
+Name  Messages
+----  --------
+RESTGET_OPP_R1D in RESTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+RESTGET_OPP_R2D in RESTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+RESTGET_R1D in RESTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+RESTGET_R2D in RESTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+RESTGET_R3D in RESTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+RESTINI in RESTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+RESTPUT_OPP_R1D in RESTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+RESTPUT_OPP_R2D in RESTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+RESTPUT_R1D in RESTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+RESTPUT_R2D in RESTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+RESTPUT_R3D in RESTCOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SET_NF90_DEF_VAR_CHUNKING in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SET_NF90_DEF_VAR_DEFLATE in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+STRINGOP
+      Defined as:  No definitions.
+
+      Used By:     MPPINI  (indirectly)
+
+Name  Messages
+----  --------
+STRLOWERCASE in STRINGOP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+STRUPPERCASE in STRINGOP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+STR_XFW in STRINGOP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SUM(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   MPP_INIT2 in MPPINI (Line 552, file mppini.f90)
+                   MPP_INIT2 in MPPINI (Line 556, file mppini.f90)
+
+Name  Messages
+----  --------
+TIME_ADD in CALENDAR
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIME_DIFF in CALENDAR
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TLEN2ITAU in CALENDAR
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+YMDS2JU in CALENDAR
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

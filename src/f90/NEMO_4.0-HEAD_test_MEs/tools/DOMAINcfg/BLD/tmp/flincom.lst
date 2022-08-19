@@ -1,0 +1,5163 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S u m m a r y   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Compilation
+-----------
+File     : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/flincom.f90
+Compiled : 04/29/22  10:44:13
+Compiler : Version 8.3.4
+Ftnlx    : Version 8318 (libcif 83016)
+Target   : x86-64
+Command  : ftn_driver.exe -hcpu=haswell -hstatic -D__CRAYXC -D__CRAY_HASWELL
+           -D__CRAYXT_COMPUTE_LINUX_TARGET -hnetwork=aries -oflincom.o
+           -I/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HE
+           AD_test_MEs/tools/DOMAINcfg/BLD/inc -sreal64 -sinteger32 -Ovector0
+           -hfp0 -O0 -hflex_mp=intolerant -eCID
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/common/moci/modules/packages/XIOS/2.0/24708/952/inc
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/m
+           ct
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/p
+           smile.MPI1 -c -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/opt/cray/libsci/13.0.1/CRAY/83/haswell/include
+           -I/opt/cray/mpt/7.0.4/gni/mpich2-cray/83/include
+           -I/opt/cray/rca/1.0.0-2.0502.60530.1.62.ari/include
+           -I/opt/cray/alps/5.2.4-2.0502.9774.31.11.ari/include
+           -I/opt/cray/xpmem/0.1-2.0502.64982.5.3.ari/include
+           -I/opt/cray/gni-headers/4.0-1.0502.10859.7.8.ari/include
+           -I/opt/cray/dmapp/7.0.1-1.0502.11080.8.76.ari/include
+           -I/opt/cray/pmi/5.0.5-1.0000.10300.134.8.ari/include
+           -I/opt/cray/ugni/6.0-1.0502.10863.8.29.ari/include
+           -I/opt/cray/udreg/2.3.2-1.0502.10518.2.17.ari/include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/pkgconfig/../include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/wlm_detect/1.0-1.0502.64649.2.1.ari/include
+           -I/opt/cray/krca/1.0.0-2.0502.63139.4.31.ari/include
+           -I/opt/cray-hss-devel/7.2.0/include /projects/jmmp/dbruciaf/NEMO/CHEC
+           KOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/fli
+           ncom.f90
+
+ftnlx report
+------------
+Source   : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp//projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/flincom.f90
+Date     : 04/29/2022  10:44:14
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S o u r c e   L i s t i n g
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    1.    MODULE flincom
+    2.    !-
+    3.    !$Id: flincom.f90 2281 2010-10-15 14:21:13Z smasson $
+    4.    !-
+    5.    ! This software is governed by the CeCILL license
+    6.    ! See IOIPSL/IOIPSL_License_CeCILL.txt
+    7.    !---------------------------------------------------------------------
+    8.      USE netcdf
+                ^      
+ftn-1494 ftn: CAUTION FLINCOM, File = flincom.f90, Line = 8, Column = 7 
+  Module or submodule "NETCDF" and this compilation should both be compiled with the "-s real64" option.
+
+    9.    !-
+   10.      USE calendar,  ONLY : ju2ymds, ymds2ju, ioconf_calendar
+   11.      USE errioipsl, ONLY : histerr
+   12.      USE stringop,  ONLY : strlowercase
+   13.    !-
+   14.      IMPLICIT NONE
+   15.    !-
+   16.      PRIVATE
+   17.      PUBLIC :: flinput, flincre, flinget, flinclo, &
+   18.                flinopen, flininfo, flininspect, flinquery_var
+   19.    !-
+   20.      INTERFACE flinopen
+   21.    !---------------------------------------------------------------------
+   22.    !- The "flinopen" routines will open an input file
+   23.    !-
+   24.    !- INPUT
+   25.    !-
+   26.    !- filename  : Name of the netCDF file to be opened
+   27.    !-
+   28.    !- iideb     : index i for zoom     !
+   29.    !- iilen     : length  of  zoom     !   for
+   30.    !- jjdeb     : index j for zoom     !   zoom
+   31.    !- jjlen     : length  of  zoom     !
+   32.    !-
+   33.    !- do_test   : A flag that enables the testing of the content
+   34.    !-             of the file against the input from the model
+   35.    !-
+   36.    !- INPUT if do_test=TRUE      OUTPUT else
+   37.    !-
+   38.    !- iim       : size in the x direction in the file (longitude)
+   39.    !- jjm       : size in the y direction
+   40.    !- llm       : number of levels
+   41.    !-             (llm = 0 means no axis to be expected)
+   42.    !- lon       : array of (iilen,jjlen) (zoom), or (iim,jjm) (no zoom),
+   43.    !-             that contains the longitude of each point
+   44.    !- lat       : same for latitude
+   45.    !- lev       : An array of llm for the latitude
+   46.    !-
+   47.    !- WARNING :
+   48.    !- In the case of do_test=FALSE it is for the user to check
+   49.    !- that the dimensions of lon lat and lev are correct when passed to
+   50.    !- flinopen. This can be done after the call when iim and jjm have
+   51.    !- been retrieved from the netCDF file. In F90 this problem will
+   52.    !- be solved with an internal assign
+   53.    !- IF iim, jjm, llm or ttm are parameters in the calling program and
+   54.    !- you use the option do_test=FALSE it will create a segmentation fault
+   55.    !-
+   56.    !-  OUTPUT
+   57.    !-
+   58.    !-  ttm       : size of time axis
+   59.    !-  itaus     : Time steps within this file
+   60.    !-  date0     : Julian date at which itau = 0
+   61.    !-  dt        : length of the time steps of the data
+   62.    !-  fid       : returned file ID which is later used to read the data
+   63.    !---------------------------------------------------------------------
+   64.        MODULE PROCEDURE flinopen_zoom2d, flinopen_nozoom
+   65.      END INTERFACE
+   66.    !-
+   67.      INTERFACE flinput
+   68.    !---------------------------------------------------------------------
+   69.    !- The "flinput" routines will put a variable
+   70.    !- on the netCDF file created by flincre.
+   71.    !- If the sizes of the axis do not match the one of the IDs
+   72.    !- then a new axis is created.
+   73.    !- That is we loose the possibility of writting hyperslabs of data.
+   74.    !-
+   75.    !- Again here if iim = jjm = llm = ttm = 0
+   76.    !- then a global attribute is added to the file.
+   77.    !-
+   78.    !- INPUT
+   79.    !-
+   80.    !- fid      : Identification of the file in which we will write
+   81.    !- varname  : Name of variable to be written
+   82.    !- iim      : size in x of variable
+   83.    !- nlonid   : ID of x axis which could fit for this axis
+   84.    !- jjm      : size in y of variable
+   85.    !- nlatid   : ID of y axis which could fit for this axis
+   86.    !- llm      : size in z of variable
+   87.    !- zdimid   : ID of z axis which could fit for this axis
+   88.    !- ttm      : size in t of variable
+   89.    !- tdimid   : ID of t axis which could fit for this axis
+   90.    !-
+   91.    !- OUTPUT
+   92.    !-
+   93.    !- NONE
+   94.    !---------------------------------------------------------------------
+   95.        MODULE PROCEDURE flinput_r4d, flinput_r3d, flinput_r2d, &
+   96.                         flinput_r1d, flinput_scal
+   97.      END INTERFACE
+   98.    !-
+   99.      INTERFACE flinget
+  100.        MODULE PROCEDURE flinget_r4d, flinget_r3d, flinget_r2d, &
+  101.                         flinget_r1d, flinget_scal, &
+  102.                         flinget_r4d_zoom2d, flinget_r3d_zoom2d, &
+  103.                         flinget_r2d_zoom2d
+  104.      END INTERFACE
+  105.    !-
+  106.    ! This is the data we keep on each file we open
+  107.    !-
+  108.      INTEGER, PARAMETER :: nbfile_max = 200
+  109.      INTEGER, SAVE :: nbfiles = 0
+  110.      INTEGER, SAVE :: ncids(nbfile_max), ncnbd(nbfile_max), &
+  111.                       ncfunli(nbfile_max), ncnba(nbfile_max)
+  112.      INTEGER, SAVE :: ncnbva(nbfile_max), ncdims(nbfile_max,4)
+  113.      LOGICAL, SAVE :: ncfileopen(nbfile_max)=.FALSE.
+  114.    !-
+  115.      INTEGER, SAVE :: cind_vid, cind_fid, cind_len
+  116.      INTEGER,DIMENSION(:),ALLOCATABLE,SAVE :: cindex
+  117.    !-
+  118.      INTEGER,DIMENSION(4) :: w_sta, w_len, w_dim
+  119.    !-
+  120.    CONTAINS
+  121.    !-
+  122.    !===
+  123.    !-
+  124.    SUBROUTINE flincre &
+  125.      (filename, iim1, jjm1, lon1, lat1, llm1, lev1, ttm1, itaus, &
+  126.       time0, dt, fid_out, nlonid1, nlatid1, zdimid1, tdimid1)
+  127.    !---------------------------------------------------------------------
+  128.    !- This is a "low level" subroutine for opening netCDF files wich
+  129.    !- contain the major coordinate system of the model.
+  130.    !- Other coordinates needed for other variables
+  131.    !- will be added as they are needed.
+  132.    !-
+  133.    !- INPUT
+  134.    !-
+  135.    !- filename    : Name of the file to be created
+  136.    !- iim1, jjm1  : Horizontal size of the grid
+  137.    !-               which will be stored in the file
+  138.    !- lon1, lat1  : Horizontal grids
+  139.    !- llm1        : Size of the vertical grid
+  140.    !- lev1        : Vertical grid
+  141.    !- ttm1        : Size of time axis
+  142.    !- itaus       : time steps on the time axis
+  143.    !- time0       : Time in julian days at which itau = 0
+  144.    !- dt          : time step in seconds between itaus
+  145.    !-               (one step of itau)
+  146.    !-
+  147.    !- OUTPUT
+  148.    !-
+  149.    !- fid         : File identification
+  150.    !- nlonid1     : Identification of longitudinal axis
+  151.    !- nlatid1     : Identification of latitudinal axis
+  152.    !- zdimid1     : ID of vertical axis
+  153.    !- tdimid1     : ID of time axis
+  154.    !---------------------------------------------------------------------
+  155.      IMPLICIT NONE
+  156.    !-
+  157.    ! ARGUMENTS
+  158.    !-
+  159.      CHARACTER(LEN=*) :: filename
+  160.      INTEGER :: iim1, jjm1, llm1, ttm1
+  161.      REAL :: lon1(iim1,jjm1)
+  162.      REAL :: lat1(iim1,jjm1)
+  163.      REAL :: lev1(llm1)
+  164.      INTEGER :: itaus(ttm1)
+  165.      REAL :: time0
+  166.      REAL :: dt
+  167.      INTEGER :: fid_out, zdimid1, nlonid1, nlatid1, tdimid1
+  168.    !-
+  169.    ! LOCAL
+  170.    !-
+  171.      INTEGER :: iret, lll, fid
+  172.      INTEGER :: lonid, latid, levid, timeid
+  173.      INTEGER :: year, month, day
+  174.      REAL :: sec
+  175.      CHARACTER(LEN=250):: name
+  176.    !-
+  177.      LOGICAL :: check = .FALSE.
+  178.    !---------------------------------------------------------------------
+  179.      lll = LEN_TRIM(filename)
+  180.      IF (filename(lll-2:lll) /= '.nc') THEN
+  181.        name=filename(1:lll)//'.nc'
+  182.      ELSE
+  183.        name=filename(1:lll)
+  184.      ENDIF
+  185.    !-
+  186.      iret = NF90_CREATE (name, NF90_CLOBBER, fid)
+  187.    !-
+  188.      iret = NF90_DEF_DIM (fid, 'x',     iim1, nlonid1)
+  189.      iret = NF90_DEF_DIM (fid, 'y',     jjm1, nlatid1)
+  190.      iret = NF90_DEF_DIM (fid, 'lev',   llm1, zdimid1)
+  191.      iret = NF90_DEF_DIM (fid, 'tstep', ttm1, tdimid1)
+  192.    !-
+  193.    ! Vertical axis
+  194.    !-
+  195.      IF (check) WRITE(*,*) 'flincre Vertical axis'
+  196.    !-
+  197.      iret = NF90_DEF_VAR (fid, 'lev', NF90_FLOAT, zdimid1, levid)
+  198.      iret = NF90_PUT_ATT (fid, levid, 'units',     '-')
+  199.      iret = NF90_PUT_ATT (fid, levid, 'title',     'levels')
+  200.      iret = NF90_PUT_ATT (fid, levid, 'long_name', 'Sigma Levels')
+  201.    !-
+  202.    ! Time axis
+  203.    !-
+  204.      IF (check) WRITE(*,*) 'flincre time axis'
+  205.    !-
+  206.      iret = NF90_DEF_VAR (fid, 'tstep', NF90_FLOAT, tdimid1, timeid)
+  207.      iret = NF90_PUT_ATT (fid, timeid, 'units',     '-')
+  208.      iret = NF90_PUT_ATT (fid, timeid, 'title',     'time')
+  209.      iret = NF90_PUT_ATT (fid, timeid, 'long_name', 'time steps')
+  210.    !-
+  211.    ! The longitude
+  212.    !-
+  213.      IF (check) WRITE(*,*) 'flincre Longitude axis'
+  214.    !-
+  215.      iret = NF90_DEF_VAR (fid, "nav_lon", NF90_FLOAT, &
+  216.                           (/ nlonid1, nlatid1 /), lonid)
+  217.      iret = NF90_PUT_ATT (fid, lonid, 'units', "degrees_east")
+  218.      iret = NF90_PUT_ATT (fid, lonid, 'title', "Longitude")
+  219.      iret = NF90_PUT_ATT (fid, lonid, 'nav_model', &
+  220.                           "Lambert projection of PROMES")
+  221.      iret = NF90_PUT_ATT (fid, lonid, 'valid_min', &
+  222.                           REAL(MINVAL(lon1),KIND=4))
+  223.      iret = NF90_PUT_ATT (fid, lonid, 'valid_max', &
+  224.                           REAL(MAXVAL(lon1),KIND=4))
+  225.    !-
+  226.    ! The Latitude
+  227.    !-
+  228.      IF (check) WRITE(*,*) 'flincre Latitude axis'
+  229.    !-
+  230.      iret = NF90_DEF_VAR (fid, "nav_lat", NF90_FLOAT, &
+  231.                         (/ nlonid1, nlatid1 /), latid)
+  232.      iret = NF90_PUT_ATT (fid, latid, 'units', "degrees_north")
+  233.      iret = NF90_PUT_ATT (fid, latid, 'title', "Latitude")
+  234.      iret = NF90_PUT_ATT (fid, latid, 'nav_model', &
+  235.                           "Lambert projection of PROMES")
+  236.      iret = NF90_PUT_ATT (fid, latid, 'valid_min', &
+  237.                           REAL(MINVAL(lat1),KIND=4))
+  238.      iret = NF90_PUT_ATT (fid, latid, 'valid_max', &
+  239.                           REAL(MAXVAL(lat1),KIND=4))
+  240.    !-
+  241.    ! The time coordinates
+  242.    !-
+  243.      iret = NF90_PUT_ATT (fid, NF90_GLOBAL, 'delta_tstep_sec', &
+  244.                           REAL(dt,KIND=4))
+  245.    !-
+  246.      CALL ju2ymds (time0, year, month, day, sec)
+  247.    !-
+  248.      iret = NF90_PUT_ATT (fid, NF90_GLOBAL, 'year0',  REAL(year,KIND=4))
+  249.      iret = NF90_PUT_ATT (fid, NF90_GLOBAL, 'month0', REAL(month,KIND=4))
+  250.      iret = NF90_PUT_ATT (fid, NF90_GLOBAL, 'day0',   REAL(day,KIND=4))
+  251.      iret = NF90_PUT_ATT (fid, NF90_GLOBAL, 'sec0',   REAL(sec,KIND=4))
+  252.    !-
+  253.      iret = NF90_ENDDEF (fid)
+  254.    !-
+  255.      IF (check) WRITE(*,*) 'flincre Variable'
+  256.    !-
+  257.      iret = NF90_PUT_VAR (fid, levid, lev1(1:llm1))
+  258.    !-
+  259.      IF (check) WRITE(*,*) 'flincre Time Variable'
+  260.    !-
+  261.      iret = NF90_PUT_VAR (fid, timeid, REAL(itaus(1:ttm1)))
+                                              ^                    
+ftn-1438 ftn: CAUTION FLINCRE, File = flincom.f90, Line = 261, Column = 37 
+  This argument produces a copy in to a temporary variable.
+
+  262.    !-
+  263.      IF (check) WRITE(*,*) 'flincre Longitude'
+  264.    !-
+  265.      iret = NF90_PUT_VAR (fid, lonid, lon1(1:iim1,1:jjm1))
+  266.    !-
+  267.      IF (check) WRITE(*,*) 'flincre Latitude'
+  268.    !-
+  269.      iret = NF90_PUT_VAR (fid, latid, lat1(1:iim1,1:jjm1))
+  270.    !-
+  271.    ! Keep all this information
+  272.    !-
+  273.      nbfiles = nbfiles+1
+  274.    !-
+  275.      IF (nbfiles > nbfile_max) THEN
+  276.        CALL histerr (3,'flincre', &
+  277.         'Too many files. Please increase nbfil_max', &
+  278.         'in program flincom.F90.',' ')
+  279.      ENDIF
+  280.    !-
+  281.      ncids(nbfiles) = fid
+  282.      ncnbd(nbfiles) = 4
+  283.    !-
+  284.      ncdims(nbfiles,1:4) = (/ iim1, jjm1, llm1, ttm1 /)
+ftn-6210 ftn: VECTOR File = flincom.f90, Line = 284 
+  A loop starting at line 284 was partially vectorized with a single vector iteration.
+
+  285.    !-
+  286.      ncfunli(nbfiles) = -1
+  287.      ncnba(nbfiles)   =  4
+  288.      ncnbva(nbfiles)  =  0
+  289.      ncfileopen(nbfiles) = .TRUE.
+  290.    !-
+  291.      fid_out = nbfiles
+  292.    !---------------------
+  293.    END SUBROUTINE flincre
+ftn-5001 ftn: NOTE File = flincom.f90, Line = 293 
+  Local variable "IRET" is assigned a value but never used.
+
+  294.    !-
+  295.    !===
+  296.    !-
+  297.    SUBROUTINE flinopen_zoom2d &
+  298.      (filename, iideb, iilen, jjdeb, jjlen, do_test, &
+  299.      iim, jjm, llm, lon, lat, lev, ttm, itaus, date0, dt, fid_out)
+  300.    !---------------------------------------------------------------------
+  301.      IMPLICIT NONE
+  302.    !-
+  303.    ! ARGUMENTS
+  304.    !-
+  305.      CHARACTER(LEN=*) :: filename
+  306.      LOGICAL :: do_test
+  307.      INTEGER :: iim, jjm, llm, ttm, iideb, iilen, jjdeb, jjlen
+  308.      REAL :: lon(iilen,jjlen), lat(iilen,jjlen), lev(llm)
+  309.      INTEGER :: itaus(ttm)
+  310.      REAL :: date0, dt
+  311.      INTEGER :: fid_out
+  312.    !-
+  313.      LOGICAL :: check = .FALSE.
+  314.    !---------------------------------------------------------------------
+  315.      IF (check) WRITE (*,*) ' iideb, iilen, jjdeb, jjlen, iim, jjm ', &
+  316.                               iideb, iilen, jjdeb, jjlen, iim, jjm
+  317.      IF (check) WRITE (*,*) ' lon ', lon(1,1), lon(iilen,jjlen)
+  318.      IF (check) WRITE (*,*) ' lat ', lat(1,1), lat(iilen,jjlen)
+  319.    !-
+  320.      CALL flinopen_work &
+  321.        (filename, iideb, iilen, jjdeb, jjlen, do_test, &
+  322.         iim, jjm, llm, lon, lat, lev, ttm, itaus, date0, dt, fid_out)
+  323.    !-----------------------------
+  324.    END SUBROUTINE flinopen_zoom2d
+  325.    !-
+  326.    !===
+  327.    !-
+  328.    SUBROUTINE flinopen_nozoom &
+  329.      (filename, do_test, iim, jjm, llm, lon, lat, lev, ttm, &
+  330.       itaus, date0, dt, fid_out)
+  331.    !---------------------------------------------------------------------
+  332.      IMPLICIT NONE
+  333.    !-
+  334.    ! ARGUMENTS
+  335.    !-
+  336.      CHARACTER(LEN=*) :: filename
+  337.      LOGICAL :: do_test
+  338.      INTEGER :: iim, jjm, llm, ttm
+  339.      REAL :: lon(iim,jjm), lat(iim,jjm), lev(llm)
+  340.      INTEGER :: itaus(ttm)
+  341.      REAL :: date0, dt
+  342.      INTEGER :: fid_out
+  343.    !---------------------------------------------------------------------
+  344.      CALL flinopen_work &
+  345.        (filename, 1, iim, 1, jjm, do_test, &
+  346.         iim, jjm, llm, lon, lat, lev, ttm, itaus, date0, dt, fid_out)
+  347.    !-------------------------
+  348.    END SUBROUTINE flinopen_nozoom
+  349.    !-
+  350.    !===
+  351.    !-
+  352.    SUBROUTINE flinopen_work &
+  353.      (filename, iideb, iilen, jjdeb, jjlen, do_test, &
+  354.       iim, jjm, llm, lon, lat, lev, ttm, itaus, date0, dt, fid_out)
+  355.    !---------------------------------------------------------------------
+  356.      IMPLICIT NONE
+  357.    !-
+  358.    ! ARGUMENTS
+  359.    !-
+  360.      CHARACTER(LEN=*) :: filename
+  361.      LOGICAL :: do_test
+  362.      INTEGER :: iim, jjm, llm, ttm, iideb, iilen, jjdeb, jjlen
+  363.      REAL :: lon(iilen,jjlen), lat(iilen,jjlen), lev(llm)
+  364.      INTEGER :: itaus(ttm)
+  365.      REAL :: date0, dt
+  366.      INTEGER :: fid_out
+  367.    !-
+  368.    ! LOCAL
+  369.    !-
+  370.      REAL, PARAMETER :: eps = 1.e-4
+  371.    !-
+  372.      INTEGER :: iret, vid, fid, nbdim, i, iilast, jjlast
+  373.      INTEGER :: gdtt_id, old_id, iv, gdtmaf_id
+  374.      CHARACTER(LEN=250) :: name
+  375.      CHARACTER(LEN=80) :: units, calendar
+  376.      INTEGER :: tmp_iim, tmp_jjm, tmp_llm, tmp_ttm
+  377.      REAL :: x_first, x_last
+  378.      INTEGER :: year, month, day
+  379.      REAL :: r_year, r_month, r_day
+  380.      INTEGER :: year0, month0, day0, hours0, minutes0, seci
+  381.      REAL :: sec, sec0
+  382.      CHARACTER :: strc
+  383.    !-
+  384.      REAL,DIMENSION(:),ALLOCATABLE :: vec_tmp
+  385.    !-
+  386.      LOGICAL :: open_file
+  387.      LOGICAL :: check = .FALSE.
+  388.    !---------------------------------------------------------------------
+  389.      iilast = iideb+iilen-1
+  390.      jjlast = jjdeb+jjlen-1
+  391.      IF (check) WRITE (*,*) &
+  392.        ' flinopen_work zoom 2D information '// &
+  393.        ' iideb, iilen, iilast, jjdeb, jjlen, jjlast ', &
+  394.          iideb, iilen, iilast, jjdeb, jjlen, jjlast
+  395.    !-
+  396.    ! 1.0 get all infos on the file
+  397.    !-
+  398.    ! Either the fid_out has not been initialized (0 or very large)
+  399.    ! then we have to open anyway. Else we only need to open the file
+  400.    ! if it has not been opened before.
+  401.    !-
+  402.      IF ( (fid_out < 1).OR.(fid_out > nbfile_max) ) THEN
+  403.        open_file = .TRUE.
+  404.      ELSE IF (.NOT.ncfileopen(fid_out)) THEN
+  405.        open_file = .TRUE.
+  406.      ELSE
+  407.        open_file = .FALSE.
+  408.      ENDIF
+  409.    !-
+  410.      IF (open_file) THEN
+  411.        CALL flininfo (filename,tmp_iim,tmp_jjm,tmp_llm,tmp_ttm,fid_out)
+  412.      ELSE
+  413.    !-- The user has already opened the file
+  414.    !-- and we trust that he knows the dimensions
+  415.        tmp_iim = iim
+  416.        tmp_jjm = jjm
+  417.        tmp_llm = llm
+  418.        tmp_ttm = ttm
+  419.      ENDIF
+  420.    !-
+  421.      IF (check) &
+  422.        WRITE(*,*) 'OUT OF flininfo :',tmp_iim,tmp_jjm,tmp_llm,tmp_ttm
+  423.    !-
+  424.      fid = ncids(fid_out)
+  425.    !-
+  426.    ! 2.0 get the sizes and names of the different coordinates
+  427.    !     and do a first set of verification.
+  428.    !-
+  429.    ! 2.2 We test the axis if we have to.
+  430.    !-
+  431.      IF (check) &
+  432.        WRITE(*,*) 'flininfo 2.2 We test if we have to test : ',do_test
+  433.    !-
+  434.      IF (do_test) THEN
+  435.        IF      (iim /= tmp_iim) THEN
+  436.          CALL histerr (3,'flinopen', &
+  437.            'file '//filename//' does not have the ', &
+  438.            'required dimension in x direction (longitude)',' ')
+  439.        ELSE IF (jjm /= tmp_jjm) THEN
+  440.          CALL histerr (3,'flinopen', &
+  441.            'file '//filename//' does not have the ', &
+  442.            'required dimension in y direction (latitude)',' ')
+  443.        ELSE IF ( llm /= tmp_llm .AND. llm > 0 ) THEN
+  444.          CALL histerr (3,'flinopen', &
+  445.            'file '//filename//' does not have the ', &
+  446.            'required dimension in the vertical',' ')
+  447.        ENDIF
+  448.      ELSE
+  449.    !---
+  450.    !-- 2.3 Else the sizes of the axes are returned to the user
+  451.    !---
+  452.        IF (check) WRITE(*,*) 'flinopen 2.3 Else sizes are returned'
+  453.    !---
+  454.        iim = tmp_iim
+  455.        jjm = tmp_jjm
+  456.        llm = tmp_llm
+  457.      ENDIF
+  458.    !-
+  459.      ttm = tmp_ttm
+  460.    !-
+  461.    ! 3.0 Check if we are realy talking about the same coodinate system
+  462.    !     if not then we get the lon, lat and lev variables from the file
+  463.    !-
+  464.      IF (check) WRITE(*,*) 'flinopen 3.0 we are realy talking'
+  465.    !-
+  466.      IF (do_test) THEN
+  467.    !---
+  468.        CALL flinfindcood (fid_out, 'lon', vid, nbdim)
+  469.        iret = NF90_GET_VAR (fid, vid, x_first, start=(/ iideb, jjdeb /))
+  470.        iret = NF90_GET_VAR (fid, vid, x_last, start=(/ iilast, jjlast /))
+  471.    !---
+  472.        IF (check) &
+  473.          WRITE(*,*) 'from file lon first and last, modulo 360. ', &
+  474.            x_first, x_last, MODULO(x_first,360.), MODULO(x_last,360.)
+  475.        IF (check) &
+  476.          WRITE(*,*) 'from model lon first and last, modulo 360. ', &
+  477.            lon(1,1),lon(iilen,jjlen), &
+  478.            MODULO(lon(1,1),360.), MODULO(lon(iilen,jjlen),360.)
+  479.        IF (    (ABS( MODULO(x_first,360.) &
+  480.                     -MODULO(lon(1,1),360.)) > eps) &
+  481.            .OR.(ABS( MODULO(x_last,360.) &
+  482.                     -MODULO(lon(iilen ,jjlen),360.)) > eps ) ) THEN
+  483.          CALL histerr (3,'flinopen', &
+  484.            'file '//filename//' and the model do not', &
+  485.            'share the same longitude coordinate', &
+  486.            'Obtained by comparing the first and last values ')
+  487.        ENDIF
+  488.    !---
+  489.        CALL flinfindcood (fid_out, 'lat', vid, nbdim)
+  490.        iret = NF90_GET_VAR (fid, vid, x_first, start=(/ iideb, jjdeb /))
+  491.        iret = NF90_GET_VAR (fid, vid, x_last, start=(/ iilast, jjlast /))
+  492.    !---
+  493.        IF (check) WRITE(*,*) &
+  494.          'from file lat first and last ',x_first,x_last
+  495.        IF (check) WRITE(*,*) &
+  496.          'from model lat first and last ',lat(1,1),lat(iilen,jjlen)
+  497.    !---
+  498.        IF (    (ABS(x_first-lat(1,1)) > eps) &
+  499.            .OR.(ABS(x_last-lat(iilen,jjlen)) > eps) ) THEN
+  500.          CALL histerr (3,'flinopen', &
+  501.            'file '//filename//' and the model do not', &
+  502.            'share the same latitude coordinate', &
+  503.            'Obtained by comparing the first and last values ')
+  504.        ENDIF
+  505.    !---
+  506.        IF (llm > 0) THEN
+  507.          CALL flinfindcood (fid_out, 'lev', vid, nbdim)
+  508.          iret = NF90_GET_VAR (fid, vid, x_first, start=(/ 1 /))
+  509.          iret = NF90_GET_VAR (fid, vid, x_last, start=(/ llm /))
+  510.    !-----
+  511.          IF (check) WRITE(*,*) &
+  512.            'from file lev first and last ',x_first ,x_last
+  513.          IF (check) WRITE(*,*) &
+  514.            'from model lev first and last ',lev(1),lev(llm)
+  515.    !-----
+  516.          IF (    (ABS(x_first-lev(1)) > eps) &
+  517.              .OR.(ABS(x_last-lev(llm)) > eps) ) THEN
+  518.            CALL histerr (3,'flinopen', &
+  519.              'file '//filename//' and the model do not', &
+  520.              'share the same vertical coordinate', &
+  521.              'Obtained by comparing the first and last values')
+  522.          ENDIF
+  523.        ENDIF
+  524.    !---
+  525.      ELSE
+  526.    !---
+  527.    !-- 4.0 extracting the coordinates if we do not check
+  528.    !---
+  529.        IF (check) WRITE(*,*) 'flinopen 4.0 extracting the coordinates'
+  530.    !---
+  531.        CALL flinfindcood (fid_out, 'lon', vid, nbdim)
+  532.        IF (nbdim == 2) THEN
+  533.          iret = NF90_GET_VAR (fid, vid, lon, &
+  534.                   start=(/ iideb, jjdeb /), count=(/ iilen, jjlen /))
+  535.        ELSE
+  536.          ALLOCATE(vec_tmp(iilen))
+  537.          iret = NF90_GET_VAR (fid, vid, vec_tmp, &
+  538.                   start=(/ iideb /), count=(/ iilen /))
+  539.          DO i=1,jjlen
+  540.            lon(:,i) = vec_tmp(:)
+ftn-6262 ftn: VECTOR File = flincom.f90, Line = 540 
+  A loop starting at line 540 was not vectorized because it contains a call to a subroutine or function on line 540.
+
+  541.          ENDDO
+  542.          DEALLOCATE(vec_tmp)
+  543.        ENDIF
+  544.    !---
+  545.        CALL flinfindcood (fid_out, 'lat', vid, nbdim)
+  546.        IF (nbdim == 2) THEN
+  547.          iret = NF90_GET_VAR (fid, vid, lat, &
+  548.                   start=(/ iideb, jjdeb /), count=(/ iilen, jjlen /))
+  549.        ELSE
+  550.          ALLOCATE(vec_tmp(jjlen))
+  551.          iret = NF90_GET_VAR (fid, vid, vec_tmp, &
+  552.                   start=(/ jjdeb /), count=(/ jjlen /))
+  553.          DO i=1,iilen
+  554.            lat(i,:) = vec_tmp(:)
+ftn-6262 ftn: VECTOR File = flincom.f90, Line = 554 
+  A loop starting at line 554 was not vectorized because it contains a call to a subroutine or function on line 554.
+
+  555.          ENDDO
+  556.          DEALLOCATE(vec_tmp)
+  557.        ENDIF
+  558.    !---
+  559.        IF (llm > 0) THEN
+  560.          CALL flinfindcood (fid_out, 'lev', vid, nbdim)
+  561.          IF (nbdim == 1) THEN
+  562.            iret = NF90_GET_VAR (fid, vid, lev, &
+  563.                     start=(/ 1 /), count=(/ llm /))
+  564.          ELSE
+  565.            CALL histerr (3,'flinopen', &
+  566.              'Can not handle vertical coordinates that have more',&
+  567.              'than 1 dimension',' ')
+  568.          ENDIF
+  569.        ENDIF
+  570.      ENDIF
+  571.    !-
+  572.    ! 5.0 Get all the details for the time if possible needed
+  573.    !-
+  574.      IF (check) WRITE(*,*) 'flinopen 5.0 Get time'
+  575.    !-
+  576.      IF (ttm > 0) THEN
+  577.    !---
+  578.    !-- 5.1 Find the time axis. Prefered method is the 'timestep since'
+  579.    !---
+  580.        gdtmaf_id = -1
+  581.        gdtt_id = -1
+  582.        old_id = -1
+  583.        DO iv=1,ncnbva(fid_out)
+  584.          name=''
+  585.          iret = NF90_INQUIRE_VARIABLE (fid, iv, name=name)
+  586.          units=''
+  587.          iret = NF90_GET_ATT (fid, iv, 'units', units)
+  588.          IF (INDEX(units,'seconds since') > 0) gdtmaf_id = iv
+  589.          IF (INDEX(units,'timesteps since') > 0) gdtt_id = iv
+  590.          IF (INDEX(name, 'tstep') > 0) old_id = iv
+  591.        ENDDO
+  592.    !---
+  593.        IF (gdtt_id > 0) THEN
+  594.          vid = gdtt_id
+  595.        ELSE IF (gdtmaf_id > 0) THEN
+  596.          vid = gdtmaf_id
+  597.        ELSE IF (old_id > 0) THEN
+  598.          vid = old_id
+  599.        ELSE
+  600.          CALL histerr (3, 'flinopen', 'No time axis found',' ',' ')
+  601.        ENDIF
+  602.    !---
+  603.        ALLOCATE(vec_tmp(ttm))
+  604.        iret = NF90_GET_VAR (fid,vid,vec_tmp,start=(/ 1 /),count=(/ ttm /))
+  605.        itaus(1:ttm) = NINT(vec_tmp(1:ttm))
+ftn-6263 ftn: VECTOR File = flincom.f90, Line = 605 
+  A loop starting at line 605 was not vectorized because it contains a reference to a non-vector intrinsic on line 605.
+
+  606.        DEALLOCATE(vec_tmp)
+  607.    !---
+  608.        IF (check) WRITE(*,*) 'flinopen 5.1 Times ',itaus
+  609.    !---
+  610.    !-- Getting all the details for the time axis
+  611.    !---
+  612.    !-- Find the calendar
+  613.        calendar = ''
+  614.        iret = NF90_GET_ATT (fid,gdtmaf_id,'calendar',calendar)
+  615.        IF (iret == NF90_NOERR) THEN
+  616.          CALL ioconf_calendar(calendar)
+  617.        ENDIF
+  618.    !--
+  619.        units = ''
+  620.        iret = NF90_GET_ATT (fid,vid,'units',units)
+  621.        IF (gdtt_id > 0) THEN
+  622.          units = units(INDEX(units,'since')+6:LEN_TRIM(units))
+  623.          READ (units,'(I4.4,5(a,I2.2))') &
+  624.            year0, strc, month0, strc, day0, &
+  625.                   strc, hours0, strc, minutes0, strc, seci
+  626.          sec0 = hours0*3600. + minutes0*60. + seci
+  627.          CALL ymds2ju (year0, month0, day0, sec0, date0)
+  628.          IF (check) &
+  629.            WRITE(*,*) 'flinopen 5.1 gdtt_id year0 ... date0 ', &
+  630.                       year0, month0, day0, sec0, date0
+  631.    !-----
+  632.          iret = NF90_GET_ATT (fid, gdtt_id, 'tstep_sec', dt)
+  633.        ELSE IF (gdtmaf_id > 0) THEN
+  634.          units = units(INDEX(units,'since')+6:LEN_TRIM(units))
+  635.          READ (units,'(I4.4,5(a,I2.2))') &
+  636.            year0, strc, month0, strc, day0, &
+  637.                   strc, hours0, strc, minutes0, strc, seci
+  638.          sec0 = hours0*3600. + minutes0*60. + seci
+  639.          CALL ymds2ju (year0, month0, day0, sec0, date0)
+  640.    !-----
+  641.          IF (check) &
+  642.            WRITE(*,*) 'flinopen 5.1 gdtmaf_id year0 ... date0 ', &
+  643.                       year0, month0, day0, sec0, date0
+  644.        ELSE IF (old_id > 0) THEN
+  645.          iret = NF90_GET_ATT (fid, NF90_GLOBAL, 'delta_tstep_sec', dt)
+  646.          iret = NF90_GET_ATT (fid, NF90_GLOBAL, 'day0', r_day)
+  647.          iret = NF90_GET_ATT (fid, NF90_GLOBAL, 'sec0', sec)
+  648.          iret = NF90_GET_ATT (fid, NF90_GLOBAL, 'year0', r_year)
+  649.          iret = NF90_GET_ATT (fid, NF90_GLOBAL, 'month0', r_month)
+  650.    !-----
+  651.          day = INT(r_day)
+  652.          month = INT(r_month)
+  653.          year = INT(r_year)
+  654.    !-----
+  655.          CALL ymds2ju (year, month, day, sec, date0)
+  656.        ENDIF
+  657.      ENDIF
+  658.    !-
+  659.      IF (check) WRITE(*,*) 'flinopen 6.0 File opened', date0, dt
+  660.    !---------------------------
+  661.    END SUBROUTINE flinopen_work
+ftn-5026 ftn: NOTE File = flincom.f90, Line = 661 
+  Dummy Argument "LLM" is used in a specification expression and then assigned a value.
+
+ftn-5026 ftn: NOTE File = flincom.f90, Line = 661 
+  Dummy Argument "TTM" is used in a specification expression and then assigned a value.
+
+  662.    !-
+  663.    !===
+  664.    !-
+  665.    SUBROUTINE flininfo (filename, iim, jjm, llm, ttm, fid_out)
+  666.    !---------------------------------------------------------------------
+  667.    !- This subroutine allows to get some information.
+  668.    !- It is usualy done within flinopen but the user may want to call
+  669.    !- it before in order to allocate the space needed to extract the
+  670.    !- data from the file.
+  671.    !---------------------------------------------------------------------
+  672.      IMPLICIT NONE
+  673.    !-
+  674.    ! ARGUMENTS
+  675.    !-
+  676.      CHARACTER(LEN=*) :: filename
+  677.      INTEGER :: iim, jjm, llm, ttm, fid_out
+  678.    !-
+  679.    ! LOCAL
+  680.    !-
+  681.      INTEGER :: iret, fid, ndims, nvars, nb_atts, id_unlim
+  682.      INTEGER :: iv, lll
+  683.      INTEGER :: xid, yid, zid, tid
+  684.      CHARACTER(LEN=80) :: name
+  685.      CHARACTER(LEN=30) :: axname
+  686.    !-
+  687.      LOGICAL :: check = .FALSE.
+  688.    !---------------------------------------------------------------------
+  689.      lll = LEN_TRIM(filename)
+  690.      IF (filename(lll-2:lll) /= '.nc') THEN
+  691.        name = filename(1:lll)//'.nc'
+  692.      ELSE
+  693.        name = filename(1:lll)
+  694.      ENDIF
+  695.    !-
+  696.      iret = NF90_OPEN (name, NF90_NOWRITE, fid)
+  697.      IF (iret /= NF90_NOERR) THEN
+  698.        CALL histerr(3, 'flininfo','Could not open file :',TRIM(name),' ')
+  699.      ENDIF
+  700.    !-
+  701.      iret = NF90_INQUIRE (fid, nDimensions=ndims, nVariables=nvars, &
+  702.                          nAttributes=nb_atts, unlimitedDimId=id_unlim)
+  703.    !-
+  704.      xid = -1; iim = 0;
+  705.      yid = -1; jjm = 0;
+  706.      zid = -1; llm = 0;
+  707.      tid = -1; ttm = 0;
+  708.    !-
+  709.      DO iv=1,ndims
+  710.    !---
+  711.        iret = NF90_INQUIRE_DIMENSION (fid, iv, name=axname, len=lll)
+  712.        CALL strlowercase (axname)
+  713.        axname = ADJUSTL(axname)
+  714.    !---
+  715.        IF (check) WRITE(*,*) &
+  716.          'flininfo - getting axname',iv,axname,lll
+  717.    !---
+  718.        IF      (    (INDEX(axname,'x') == 1) &
+  719.                 .OR.(INDEX(axname,'lon') == 1) ) THEN
+  720.          xid = iv; iim = lll;
+  721.        ELSE IF (    (INDEX(axname,'y') == 1) &
+  722.                 .OR.(INDEX(axname,'lat') == 1) ) THEN
+  723.          yid = iv; jjm = lll;
+  724.        ELSE IF (    (INDEX(axname,'lev') == 1) &
+  725.                 .OR.(INDEX(axname,'plev') == 1) &
+  726.                 .OR.(INDEX(axname,'z') == 1) &
+  727.                 .OR.(INDEX(axname,'depth') == 1) ) THEN
+  728.          zid = iv; llm = lll;
+  729.        ELSE IF (    (INDEX(axname,'tstep') == 1) &
+  730.                 .OR.(INDEX(axname,'time_counter') == 1) ) THEN
+  731.    !---- For the time we certainly need to allow for other names
+  732.          tid = iv; ttm = lll;
+  733.        ELSE IF (ndims == 1) THEN
+  734.    !---- Nothing was found and ndims=1 then we have a vector of data
+  735.          xid = 1; iim = lll;
+  736.        ENDIF
+  737.    !---
+  738.      ENDDO
+  739.    !-
+  740.    ! Keep all this information
+  741.    !-
+  742.      nbfiles = nbfiles+1
+  743.    !-
+  744.      IF (nbfiles > nbfile_max) THEN
+  745.        CALL histerr (3,'flininfo', &
+  746.          'Too many files. Please increase nbfil_max', &
+  747.          'in program flincom.F90.',' ')
+  748.      ENDIF
+  749.    !-
+  750.      ncids(nbfiles) = fid
+  751.      ncnbd(nbfiles) = ndims
+  752.    !-
+  753.      ncdims(nbfiles,1:4) = (/ iim, jjm, llm, ttm /)
+ftn-6210 ftn: VECTOR File = flincom.f90, Line = 753 
+  A loop starting at line 753 was partially vectorized with a single vector iteration.
+
+  754.    !-
+  755.      ncfunli(nbfiles) = id_unlim
+  756.      ncnba(nbfiles)   = nb_atts
+  757.      ncnbva(nbfiles)  = nvars
+  758.      ncfileopen(nbfiles) = .TRUE.
+  759.    !-
+  760.      fid_out = nbfiles
+  761.    !----------------------
+  762.    END SUBROUTINE flininfo
+ftn-5001 ftn: NOTE File = flincom.f90, Line = 762 
+  Local variable "TID" is assigned a value but never used.
+
+ftn-5001 ftn: NOTE File = flincom.f90, Line = 762 
+  Local variable "YID" is assigned a value but never used.
+
+ftn-5001 ftn: NOTE File = flincom.f90, Line = 762 
+  Local variable "ZID" is assigned a value but never used.
+
+ftn-5001 ftn: NOTE File = flincom.f90, Line = 762 
+  Local variable "XID" is assigned a value but never used.
+
+  763.    !-
+  764.    !===
+  765.    !-
+  766.    SUBROUTINE flinput_r1d &
+  767.      (fid_in,varname,iim,nlonid,jjm,nlatid,llm,zdimid,ttm,tdimid,var)
+  768.    !---------------------------------------------------------------------
+  769.      IMPLICIT NONE
+  770.    !-
+  771.      INTEGER :: fid_in
+  772.      CHARACTER(LEN=*) :: varname
+  773.      INTEGER :: iim, nlonid, jjm, nlatid, llm, zdimid, ttm, tdimid
+  774.      REAL :: var(:)
+  775.    !-
+  776.      INTEGER :: fid, ncvarid, ndim, iret
+  777.      LOGICAL :: check = .FALSE.
+  778.    !---------------------------------------------------------------------
+  779.      IF (check) WRITE(*,*) &
+  780.         "flinput_r1d : SIZE(var) = ",SIZE(var)
+  781.    !-
+  782.      CALL flinput_mat &
+  783.        (fid_in,varname,iim,nlonid,jjm,nlatid,llm,zdimid,ttm,tdimid, &
+  784.         fid,ncvarid,ndim)
+  785.    !-
+  786.      iret = NF90_PUT_VAR (fid, ncvarid, var, &
+  787.               start=w_sta(1:ndim), count=w_len(1:ndim))
+  788.    !-------------------------
+  789.    END SUBROUTINE flinput_r1d
+ftn-5001 ftn: NOTE File = flincom.f90, Line = 789 
+  Local variable "IRET" is assigned a value but never used.
+
+  790.    !-
+  791.    !===
+  792.    !-
+  793.    SUBROUTINE flinput_r2d &
+  794.      (fid_in,varname,iim,nlonid,jjm,nlatid,llm,zdimid,ttm,tdimid,var)
+  795.    !---------------------------------------------------------------------
+  796.      IMPLICIT NONE
+  797.    !-
+  798.      INTEGER :: fid_in
+  799.      CHARACTER(LEN=*) :: varname
+  800.      INTEGER :: iim, nlonid, jjm, nlatid, llm, zdimid, ttm, tdimid
+  801.      REAL :: var(:,:)
+  802.    !-
+  803.      INTEGER :: fid, ncvarid, ndim, iret
+  804.      LOGICAL :: check = .FALSE.
+  805.    !---------------------------------------------------------------------
+  806.      IF (check) WRITE(*,*) &
+  807.         "flinput_r2d : SIZE(var) = ",SIZE(var)
+  808.    !-
+  809.      CALL flinput_mat &
+  810.        (fid_in,varname,iim,nlonid,jjm,nlatid,llm,zdimid,ttm,tdimid, &
+  811.         fid,ncvarid,ndim)
+  812.    !-
+  813.      iret = NF90_PUT_VAR (fid, ncvarid, var, &
+  814.               start=w_sta(1:ndim), count=w_len(1:ndim))
+  815.    !-------------------------
+  816.    END SUBROUTINE flinput_r2d
+ftn-5001 ftn: NOTE File = flincom.f90, Line = 816 
+  Local variable "IRET" is assigned a value but never used.
+
+  817.    !-
+  818.    !===
+  819.    !-
+  820.    SUBROUTINE flinput_r3d &
+  821.      (fid_in,varname,iim,nlonid,jjm,nlatid,llm,zdimid,ttm,tdimid,var)
+  822.    !---------------------------------------------------------------------
+  823.      IMPLICIT NONE
+  824.    !-
+  825.      INTEGER :: fid_in
+  826.      CHARACTER(LEN=*) :: varname
+  827.      INTEGER :: iim, nlonid, jjm, nlatid, llm, zdimid, ttm, tdimid
+  828.      REAL :: var(:,:,:)
+  829.    !-
+  830.      INTEGER :: fid, ncvarid, ndim, iret
+  831.      LOGICAL :: check = .FALSE.
+  832.    !---------------------------------------------------------------------
+  833.      IF (check) WRITE(*,*) &
+  834.         "flinput_r3d : SIZE(var) = ",SIZE(var)
+  835.    !-
+  836.      CALL flinput_mat &
+  837.        (fid_in,varname,iim,nlonid,jjm,nlatid,llm,zdimid,ttm,tdimid, &
+  838.         fid,ncvarid,ndim)
+  839.    !-
+  840.      iret = NF90_PUT_VAR (fid, ncvarid, var, &
+  841.               start=w_sta(1:ndim), count=w_len(1:ndim))
+  842.    !-------------------------
+  843.    END SUBROUTINE flinput_r3d
+ftn-5001 ftn: NOTE File = flincom.f90, Line = 843 
+  Local variable "IRET" is assigned a value but never used.
+
+  844.    !-
+  845.    !===
+  846.    !-
+  847.    SUBROUTINE flinput_r4d &
+  848.      (fid_in,varname,iim,nlonid,jjm,nlatid,llm,zdimid,ttm,tdimid,var)
+  849.    !---------------------------------------------------------------------
+  850.      IMPLICIT NONE
+  851.    !-
+  852.      INTEGER :: fid_in
+  853.      CHARACTER(LEN=*) :: varname
+  854.      INTEGER :: iim, nlonid, jjm, nlatid, llm, zdimid, ttm, tdimid
+  855.      REAL :: var(:,:,:,:)
+  856.    !-
+  857.      INTEGER :: fid, ncvarid, ndim, iret
+  858.      LOGICAL :: check = .FALSE.
+  859.    !---------------------------------------------------------------------
+  860.      IF (check) WRITE(*,*) &
+  861.         "flinput_r4d : SIZE(var) = ",SIZE(var)
+  862.    !-
+  863.      CALL flinput_mat &
+  864.        (fid_in,varname,iim,nlonid,jjm,nlatid,llm,zdimid,ttm,tdimid, &
+  865.         fid,ncvarid,ndim)
+  866.    !-
+  867.      iret = NF90_PUT_VAR (fid, ncvarid, var, &
+  868.               start=w_sta(1:ndim), count=w_len(1:ndim))
+  869.    !-------------------------
+  870.    END SUBROUTINE flinput_r4d
+ftn-5001 ftn: NOTE File = flincom.f90, Line = 870 
+  Local variable "IRET" is assigned a value but never used.
+
+  871.    !-
+  872.    !===
+  873.    !-
+  874.    SUBROUTINE flinput_mat &
+  875.      (fid_in,varname,iim,nlonid,jjm,nlatid, &
+  876.                      llm,zdimid,ttm,tdimid,fid,ncvarid,ndim)
+  877.    !---------------------------------------------------------------------
+  878.      IMPLICIT NONE
+  879.    !-
+  880.      INTEGER :: fid_in
+  881.      CHARACTER(LEN=*) :: varname
+  882.      INTEGER :: iim, nlonid, jjm, nlatid, llm, zdimid, ttm, tdimid
+  883.      INTEGER :: fid, ncvarid, ndim
+  884.    !-
+  885.    ! LOCAL
+  886.    !-
+  887.      INTEGER :: iret
+  888.    !---------------------------------------------------------------------
+  889.      fid = ncids(fid_in)
+  890.    !-
+  891.      w_sta(1:4) = (/      1,      1,  1,  1 /)
+ftn-6205 ftn: VECTOR File = flincom.f90, Line = 891 
+  A loop starting at line 891 was vectorized with a single vector iteration.
+
+  892.      w_len(1:2) = (/    iim,    jjm /)
+ftn-6271 ftn: VECTOR File = flincom.f90, Line = 892 
+  A loop starting at line 892 was not vectorized because its trip count is too small.
+
+  893.      w_dim(1:2) = (/ nlonid, nlatid /)
+ftn-6271 ftn: VECTOR File = flincom.f90, Line = 893 
+  A loop starting at line 893 was not vectorized because its trip count is too small.
+
+  894.    !-
+  895.      IF ( (llm > 0).AND.(ttm > 0) ) THEN
+  896.        ndim = 4
+  897.        w_len(3:4) = (/    llm,    ttm /)
+ftn-6271 ftn: VECTOR File = flincom.f90, Line = 897 
+  A loop starting at line 897 was not vectorized because its trip count is too small.
+
+  898.        w_dim(3:4) = (/ zdimid, tdimid /)
+ftn-6271 ftn: VECTOR File = flincom.f90, Line = 898 
+  A loop starting at line 898 was not vectorized because its trip count is too small.
+
+  899.      ELSE IF (llm > 0) THEN
+  900.        ndim = 3
+  901.        w_dim(3) = zdimid
+  902.        w_len(3) = llm
+  903.      ELSE IF (ttm > 0) THEN
+  904.        ndim = 3
+  905.        w_dim(3) = tdimid
+  906.        w_len(3) = ttm
+  907.      ELSE
+  908.        ndim = 2
+  909.      ENDIF
+  910.    !-
+  911.      iret = NF90_REDEF   (fid)
+  912.      iret = NF90_DEF_VAR (fid,varname,NF90_FLOAT,w_dim(1:ndim),ncvarid)
+  913.      iret = NF90_PUT_ATT (fid,ncvarid,'short_name',TRIM(varname))
+  914.      iret = NF90_ENDDEF  (fid)
+  915.    !--------------------------
+  916.    END  SUBROUTINE flinput_mat
+ftn-5001 ftn: NOTE File = flincom.f90, Line = 916 
+  Local variable "IRET" is assigned a value but never used.
+
+  917.    !-
+  918.    !===
+  919.    !-
+  920.    SUBROUTINE flinput_scal &
+  921.      (fid_in, varname, iim, nlonid, jjm, nlatid, &
+  922.                        llm, zdimid, ttm, tdimid, var)
+  923.    !---------------------------------------------------------------------
+  924.      IMPLICIT NONE
+  925.    !-
+  926.      INTEGER :: fid_in
+  927.      CHARACTER(LEN=*) :: varname
+  928.      INTEGER :: iim, nlonid, jjm, nlatid, llm, zdimid, ttm, tdimid
+  929.      REAL :: var
+  930.    !-
+  931.    ! LOCAL
+  932.    !-
+  933.      INTEGER :: fid, iret
+  934.    !---------------------------------------------------------------------
+  935.      fid = ncids(fid_in)
+  936.    !-
+  937.      iret = NF90_REDEF   (fid)
+  938.      iret = NF90_PUT_ATT (fid, NF90_GLOBAL, varname, REAL(var,KIND=4))
+  939.      iret = NF90_ENDDEF  (fid)
+  940.    !---------------------------
+  941.    END  SUBROUTINE flinput_scal
+ftn-5001 ftn: NOTE File = flincom.f90, Line = 941 
+  Local variable "IRET" is assigned a value but never used.
+
+ftn-5004 ftn: NOTE File = flincom.f90, Line = 941 
+  Dummy Argument "ZDIMID" is not referenced or defined.
+
+ftn-5004 ftn: NOTE File = flincom.f90, Line = 941 
+  Dummy Argument "TTM" is not referenced or defined.
+
+ftn-5004 ftn: NOTE File = flincom.f90, Line = 941 
+  Dummy Argument "TDIMID" is not referenced or defined.
+
+ftn-5004 ftn: NOTE File = flincom.f90, Line = 941 
+  Dummy Argument "IIM" is not referenced or defined.
+
+ftn-5004 ftn: NOTE File = flincom.f90, Line = 941 
+  Dummy Argument "LLM" is not referenced or defined.
+
+ftn-5004 ftn: NOTE File = flincom.f90, Line = 941 
+  Dummy Argument "NLATID" is not referenced or defined.
+
+ftn-5004 ftn: NOTE File = flincom.f90, Line = 941 
+  Dummy Argument "NLONID" is not referenced or defined.
+
+ftn-5004 ftn: NOTE File = flincom.f90, Line = 941 
+  Dummy Argument "JJM" is not referenced or defined.
+
+  942.    !-
+  943.    !===
+  944.    !-
+  945.    SUBROUTINE flinget_r1d &
+  946.      (fid_in,varname,iim,jjm,llm,ttm,itau_dep,itau_fin,var)
+  947.    !---------------------------------------------------------------------
+  948.      IMPLICIT NONE
+  949.    !-
+  950.      INTEGER :: fid_in
+  951.      CHARACTER(LEN=*) :: varname
+  952.      INTEGER :: iim, jjm, llm, ttm, itau_dep, itau_fin
+  953.      REAL :: var(:)
+  954.    !-
+  955.      INTEGER :: jl, ji
+  956.      REAL,DIMENSION(:),ALLOCATABLE,SAVE :: buff_tmp
+  957.      LOGICAL :: check = .FALSE.
+  958.    !---------------------------------------------------------------------
+  959.      IF (.NOT.ALLOCATED(buff_tmp)) THEN
+  960.        IF (check) WRITE(*,*) &
+  961.          "flinget_r1d : allocate buff_tmp for buff_sz = ",SIZE(var)
+  962.        ALLOCATE (buff_tmp(SIZE(var)))
+  963.      ELSE IF (SIZE(var) > SIZE(buff_tmp)) THEN
+  964.        IF (check) WRITE(*,*) &
+  965.          "flinget_r1d : re-allocate buff_tmp for buff_sz = ",SIZE(var)
+  966.        DEALLOCATE (buff_tmp)
+  967.        ALLOCATE (buff_tmp(SIZE(var)))
+  968.      ENDIF
+  969.    !-
+  970.      CALL flinget_mat (fid_in,varname,iim,jjm,llm,ttm, &
+  971.                        itau_dep,itau_fin,1,iim,1,jjm,buff_tmp)
+  972.    !-
+  973.      jl=0
+  974.      DO ji=1,SIZE(var,1)
+  975.        jl=jl+1
+  976.        var(ji) = buff_tmp(jl)
+  977.      ENDDO
+  978.    !-------------------------
+  979.    END SUBROUTINE flinget_r1d
+  980.    !-
+  981.    !===
+  982.    !-
+  983.    SUBROUTINE flinget_r2d &
+  984.      (fid_in,varname,iim,jjm,llm,ttm,itau_dep,itau_fin,var)
+  985.    !---------------------------------------------------------------------
+  986.      IMPLICIT NONE
+  987.    !-
+  988.      INTEGER :: fid_in
+  989.      CHARACTER(LEN=*) :: varname
+  990.      INTEGER :: iim, jjm, llm, ttm, itau_dep, itau_fin
+  991.      REAL :: var(:,:)
+  992.    !-
+  993.      INTEGER :: jl, jj, ji
+  994.      REAL,DIMENSION(:),ALLOCATABLE,SAVE :: buff_tmp
+  995.      LOGICAL :: check = .FALSE.
+  996.    !---------------------------------------------------------------------
+  997.      IF (.NOT.ALLOCATED(buff_tmp)) THEN
+  998.        IF (check) WRITE(*,*) &
+  999.          "flinget_r2d : allocate buff_tmp for buff_sz = ",SIZE(var)
+ 1000.        ALLOCATE (buff_tmp(SIZE(var)))
+ 1001.      ELSE IF (SIZE(var) > SIZE(buff_tmp)) THEN
+ 1002.        IF (check) WRITE(*,*) &
+ 1003.          "flinget_r2d : re-allocate buff_tmp for buff_sz = ",SIZE(var)
+ 1004.        DEALLOCATE (buff_tmp)
+ 1005.        ALLOCATE (buff_tmp(SIZE(var)))
+ 1006.      ENDIF
+ 1007.    !-
+ 1008.      CALL flinget_mat (fid_in,varname,iim,jjm,llm,ttm, &
+ 1009.                        itau_dep,itau_fin,1,iim,1,jjm,buff_tmp)
+ 1010.    !-
+ 1011.      jl=0
+ 1012.      DO jj=1,SIZE(var,2)
+ 1013.        DO ji=1,SIZE(var,1)
+ 1014.          jl=jl+1
+ 1015.          var(ji,jj) = buff_tmp(jl)
+ 1016.        ENDDO
+ 1017.      ENDDO
+ 1018.    !-------------------------
+ 1019.    END SUBROUTINE flinget_r2d
+ 1020.    !-
+ 1021.    !===
+ 1022.    !-
+ 1023.    SUBROUTINE flinget_r2d_zoom2d &
+ 1024.      (fid_in,varname,iim,jjm,llm,ttm, &
+ 1025.       itau_dep,itau_fin,iideb,iilen,jjdeb,jjlen,var)
+ 1026.    !---------------------------------------------------------------------
+ 1027.      IMPLICIT NONE
+ 1028.    !-
+ 1029.      INTEGER :: fid_in
+ 1030.      CHARACTER(LEN=*) :: varname
+ 1031.      INTEGER :: iim,jjm,llm,ttm,itau_dep,itau_fin,iideb,jjdeb,iilen,jjlen
+ 1032.      REAL :: var(:,:)
+ 1033.    !-
+ 1034.      INTEGER :: jl, jj, ji
+ 1035.      REAL,DIMENSION(:),ALLOCATABLE,SAVE :: buff_tmp
+ 1036.      LOGICAL :: check = .FALSE.
+ 1037.    !---------------------------------------------------------------------
+ 1038.      IF (.NOT.ALLOCATED(buff_tmp)) THEN
+ 1039.        IF (check) WRITE(*,*) &
+ 1040.          "flinget_r2d_zoom : allocate buff_tmp for buff_sz = ",SIZE(var)
+ 1041.        ALLOCATE (buff_tmp(SIZE(var)))
+ 1042.      ELSE IF (SIZE(var) > SIZE(buff_tmp)) THEN
+ 1043.        IF (check) WRITE(*,*) &
+ 1044.          "flinget_r2d_zoom : re-allocate buff_tmp for buff_sz = ",SIZE(var)
+ 1045.        DEALLOCATE (buff_tmp)
+ 1046.        ALLOCATE (buff_tmp(SIZE(var)))
+ 1047.      ENDIF
+ 1048.    !-
+ 1049.      CALL flinget_mat (fid_in,varname,iim,jjm,llm,ttm, &
+ 1050.                        itau_dep,itau_fin,iideb,iilen,jjdeb,jjlen,buff_tmp)
+ 1051.    !-
+ 1052.      jl=0
+ 1053.      DO jj=1,SIZE(var,2)
+ 1054.        DO ji=1,SIZE(var,1)
+ 1055.          jl=jl+1
+ 1056.          var(ji,jj) = buff_tmp(jl)
+ 1057.        ENDDO
+ 1058.      ENDDO
+ 1059.    !--------------------------------
+ 1060.    END SUBROUTINE flinget_r2d_zoom2d
+ 1061.    !-
+ 1062.    !===
+ 1063.    !-
+ 1064.    SUBROUTINE flinget_r3d &
+ 1065.      (fid_in,varname,iim,jjm,llm,ttm,itau_dep,itau_fin,var)
+ 1066.    !---------------------------------------------------------------------
+ 1067.      IMPLICIT NONE
+ 1068.    !-
+ 1069.      INTEGER :: fid_in
+ 1070.      CHARACTER(LEN=*) :: varname
+ 1071.      INTEGER :: iim, jjm, llm, ttm, itau_dep, itau_fin
+ 1072.      REAL :: var(:,:,:)
+ 1073.    !-
+ 1074.      INTEGER :: jl, jk, jj, ji
+ 1075.      REAL,DIMENSION(:),ALLOCATABLE,SAVE :: buff_tmp
+ 1076.      LOGICAL :: check = .FALSE.
+ 1077.    !---------------------------------------------------------------------
+ 1078.      IF (.NOT.ALLOCATED(buff_tmp)) THEN
+ 1079.        IF (check) WRITE(*,*) &
+ 1080.          "flinget_r3d : allocate buff_tmp for buff_sz = ",SIZE(var)
+ 1081.        ALLOCATE (buff_tmp(SIZE(var)))
+ 1082.      ELSE IF (SIZE(var) > SIZE(buff_tmp)) THEN
+ 1083.        IF (check) WRITE(*,*) &
+ 1084.          "flinget_r3d : re-allocate buff_tmp for buff_sz = ",SIZE(var)
+ 1085.        DEALLOCATE (buff_tmp)
+ 1086.        ALLOCATE (buff_tmp(SIZE(var)))
+ 1087.      ENDIF
+ 1088.    !-
+ 1089.      CALL flinget_mat (fid_in,varname,iim,jjm,llm,ttm, &
+ 1090.                        itau_dep,itau_fin,1,iim,1,jjm,buff_tmp)
+ 1091.    !-
+ 1092.      jl=0
+ 1093.      DO jk=1,SIZE(var,3)
+ 1094.        DO jj=1,SIZE(var,2)
+ 1095.          DO ji=1,SIZE(var,1)
+ 1096.            jl=jl+1
+ 1097.            var(ji,jj,jk) = buff_tmp(jl)
+ 1098.          ENDDO
+ 1099.        ENDDO
+ 1100.      ENDDO
+ 1101.    !-------------------------
+ 1102.    END SUBROUTINE flinget_r3d
+ 1103.    !-
+ 1104.    !===
+ 1105.    !-
+ 1106.    SUBROUTINE flinget_r3d_zoom2d &
+ 1107.      (fid_in,varname,iim,jjm,llm,ttm, &
+ 1108.       itau_dep,itau_fin,iideb,iilen,jjdeb,jjlen,var)
+ 1109.    !---------------------------------------------------------------------
+ 1110.      IMPLICIT NONE
+ 1111.    !-
+ 1112.      INTEGER :: fid_in
+ 1113.      CHARACTER(LEN=*) :: varname
+ 1114.      INTEGER :: iim,jjm,llm,ttm,itau_dep,itau_fin,iideb,jjdeb,iilen,jjlen
+ 1115.      REAL :: var(:,:,:)
+ 1116.    !-
+ 1117.      INTEGER :: jl, jk, jj, ji
+ 1118.      REAL,DIMENSION(:),ALLOCATABLE,SAVE :: buff_tmp
+ 1119.      LOGICAL :: check = .FALSE.
+ 1120.    !---------------------------------------------------------------------
+ 1121.      IF (.NOT.ALLOCATED(buff_tmp)) THEN
+ 1122.        IF (check) WRITE(*,*) &
+ 1123.          "flinget_r3d_zoom : allocate buff_tmp for buff_sz = ",SIZE(var)
+ 1124.        ALLOCATE (buff_tmp(SIZE(var)))
+ 1125.      ELSE IF (SIZE(var) > SIZE(buff_tmp)) THEN
+ 1126.        IF (check) WRITE(*,*) &
+ 1127.          "flinget_r3d_zoom : re-allocate buff_tmp for buff_sz = ",SIZE(var)
+ 1128.        DEALLOCATE (buff_tmp)
+ 1129.        ALLOCATE (buff_tmp(SIZE(var)))
+ 1130.      ENDIF
+ 1131.    !-
+ 1132.      CALL flinget_mat (fid_in,varname,iim,jjm,llm,ttm, &
+ 1133.                        itau_dep,itau_fin,iideb,iilen,jjdeb,jjlen,buff_tmp)
+ 1134.    !-
+ 1135.      jl=0
+ 1136.      DO jk=1,SIZE(var,3)
+ 1137.        DO jj=1,SIZE(var,2)
+ 1138.          DO ji=1,SIZE(var,1)
+ 1139.            jl=jl+1
+ 1140.            var(ji,jj,jk) = buff_tmp(jl)
+ 1141.          ENDDO
+ 1142.        ENDDO
+ 1143.      ENDDO
+ 1144.    !--------------------------------
+ 1145.    END SUBROUTINE flinget_r3d_zoom2d
+ 1146.    !-
+ 1147.    !===
+ 1148.    !-
+ 1149.    SUBROUTINE flinget_r4d &
+ 1150.      (fid_in,varname,iim,jjm,llm,ttm,itau_dep,itau_fin,var)
+ 1151.    !---------------------------------------------------------------------
+ 1152.      IMPLICIT NONE
+ 1153.    !-
+ 1154.      INTEGER :: fid_in
+ 1155.      CHARACTER(LEN=*) :: varname
+ 1156.      INTEGER :: iim, jjm, llm, ttm, itau_dep, itau_fin
+ 1157.      REAL :: var(:,:,:,:)
+ 1158.    !-
+ 1159.      INTEGER :: jl, jk, jj, ji, jm
+ 1160.      REAL,DIMENSION(:),ALLOCATABLE,SAVE :: buff_tmp
+ 1161.      LOGICAL :: check = .FALSE.
+ 1162.    !---------------------------------------------------------------------
+ 1163.      IF (.NOT.ALLOCATED(buff_tmp)) THEN
+ 1164.        IF (check) WRITE(*,*) &
+ 1165.          "flinget_r4d : allocate buff_tmp for buff_sz = ",SIZE(var)
+ 1166.        ALLOCATE (buff_tmp(SIZE(var)))
+ 1167.      ELSE IF (SIZE(var) > SIZE(buff_tmp)) THEN
+ 1168.        IF (check) WRITE(*,*) &
+ 1169.          "flinget_r4d : re-allocate buff_tmp for buff_sz = ",SIZE(var)
+ 1170.        DEALLOCATE (buff_tmp)
+ 1171.        ALLOCATE (buff_tmp(SIZE(var)))
+ 1172.      ENDIF
+ 1173.    !-
+ 1174.      CALL flinget_mat (fid_in,varname,iim,jjm,llm,ttm, &
+ 1175.                        itau_dep,itau_fin,1,iim,1,jjm,buff_tmp)
+ 1176.    !-
+ 1177.      jl=0
+ 1178.      DO jm=1,SIZE(var,4)
+ 1179.        DO jk=1,SIZE(var,3)
+ 1180.          DO jj=1,SIZE(var,2)
+ 1181.            DO ji=1,SIZE(var,1)
+ 1182.              jl=jl+1
+ 1183.              var(ji,jj,jk,jm) = buff_tmp(jl)
+ 1184.            ENDDO
+ 1185.          ENDDO
+ 1186.        ENDDO
+ 1187.      ENDDO
+ 1188.    !-------------------------
+ 1189.    END SUBROUTINE flinget_r4d
+ 1190.    !-
+ 1191.    !===
+ 1192.    !-
+ 1193.    SUBROUTINE flinget_r4d_zoom2d &
+ 1194.      (fid_in,varname,iim,jjm,llm,ttm, &
+ 1195.       itau_dep,itau_fin,iideb,iilen,jjdeb,jjlen,var)
+ 1196.    !---------------------------------------------------------------------
+ 1197.      IMPLICIT NONE
+ 1198.    !-
+ 1199.      INTEGER :: fid_in
+ 1200.      CHARACTER(LEN=*) :: varname
+ 1201.      INTEGER :: iim,jjm,llm,ttm,itau_dep,itau_fin,iideb,jjdeb,iilen,jjlen
+ 1202.      REAL :: var(:,:,:,:)
+ 1203.    !-
+ 1204.      INTEGER :: jl, jk, jj, ji, jm
+ 1205.      REAL,DIMENSION(:),ALLOCATABLE,SAVE :: buff_tmp
+ 1206.      LOGICAL :: check = .FALSE.
+ 1207.    !---------------------------------------------------------------------
+ 1208.      IF (.NOT.ALLOCATED(buff_tmp)) THEN
+ 1209.        IF (check) WRITE(*,*) &
+ 1210.          "flinget_r4d_zoom : allocate buff_tmp for buff_sz = ",SIZE(var)
+ 1211.        ALLOCATE (buff_tmp(SIZE(var)))
+ 1212.      ELSE IF (SIZE(var) > SIZE(buff_tmp)) THEN
+ 1213.        IF (check) WRITE(*,*) &
+ 1214.          "flinget_r4d_zoom : re-allocate buff_tmp for buff_sz = ",SIZE(var)
+ 1215.        DEALLOCATE (buff_tmp)
+ 1216.        ALLOCATE (buff_tmp(SIZE(var)))
+ 1217.      ENDIF
+ 1218.    !-
+ 1219.      CALL flinget_mat (fid_in,varname,iim,jjm,llm,ttm, &
+ 1220.                        itau_dep,itau_fin,iideb,iilen,jjdeb,jjlen,buff_tmp)
+ 1221.    !-
+ 1222.      jl=0
+ 1223.      DO jm=1,SIZE(var,4)
+ 1224.        DO jk=1,SIZE(var,3)
+ 1225.          DO jj=1,SIZE(var,2)
+ 1226.            DO ji=1,SIZE(var,1)
+ 1227.              jl=jl+1
+ 1228.              var(ji,jj,jk,jm) = buff_tmp(jl)
+ 1229.            ENDDO
+ 1230.          ENDDO
+ 1231.        ENDDO
+ 1232.      ENDDO
+ 1233.    !--------------------------------
+ 1234.    END SUBROUTINE flinget_r4d_zoom2d
+ 1235.    !-
+ 1236.    !===
+ 1237.    !-
+ 1238.    SUBROUTINE flinget_mat &
+ 1239.      (fid_in, varname, iim, jjm, llm, ttm, itau_dep, &
+ 1240.       itau_fin, iideb, iilen, jjdeb, jjlen, var)
+ 1241.    !---------------------------------------------------------------------
+ 1242.    !- This subroutine will read the variable named varname from
+ 1243.    !- the file previously opened by flinopen and identified by fid
+ 1244.    !-
+ 1245.    !- It is checked that the dimensions of the variable to be read
+ 1246.    !- correspond to what the user requested when he specified
+ 1247.    !- iim, jjm and llm. The only exception which is allowed is
+ 1248.    !- for compressed data where the horizontal grid is not expected
+ 1249.    !- to be iim x jjm.
+ 1250.    !-
+ 1251.    !- If variable is of size zero a global attribute is read.
+ 1252.    !- This global attribute will be of type real
+ 1253.    !-
+ 1254.    !- INPUT
+ 1255.    !-
+ 1256.    !- fid      : File ID returned by flinopen
+ 1257.    !- varname  : Name of the variable to be read from the file
+ 1258.    !- iim      : | These three variables give the size of the variables
+ 1259.    !- jjm      : | to be read. It will be verified that the variables
+ 1260.    !- llm      : | fits in there.
+ 1261.    !- ttm      : |
+ 1262.    !- itau_dep : Time step at which we will start to read
+ 1263.    !- itau_fin : Time step until which we are going to read
+ 1264.    !-            For the moment this is done on indexes
+ 1265.    !-            but it should be in the physical space.
+ 1266.    !-            If there is no time-axis in the file then use a
+ 1267.    !-            itau_fin < itau_dep, this will tell flinget not to
+ 1268.    !-            expect a time-axis in the file.
+ 1269.    !- iideb    : index i for zoom
+ 1270.    !- iilen    : length of zoom
+ 1271.    !- jjdeb    : index j for zoom
+ 1272.    !- jjlen    : length of zoom
+ 1273.    !-
+ 1274.    !- OUTPUT
+ 1275.    !-
+ 1276.    !- var      : array that will contain the data
+ 1277.    !---------------------------------------------------------------------
+ 1278.      IMPLICIT NONE
+ 1279.    !-
+ 1280.    ! ARGUMENTS
+ 1281.    !-
+ 1282.      INTEGER :: fid_in
+ 1283.      CHARACTER(LEN=*) :: varname
+ 1284.      INTEGER :: iim, jjm, llm, ttm
+ 1285.      INTEGER :: itau_dep, itau_fin, iideb, iilen, jjdeb, jjlen
+ 1286.      REAL :: var(:)
+ 1287.    !-
+ 1288.    ! LOCAL
+ 1289.    !-
+ 1290.      INTEGER :: iret, fid
+ 1291.      INTEGER :: vid, cvid, clen
+ 1292.      CHARACTER(LEN=70) :: str1
+ 1293.      CHARACTER(LEN=250) :: att_n, tmp_n
+ 1294.      CHARACTER(LEN=5) :: axs_l
+ 1295.      INTEGER :: tmp_i
+ 1296.      REAL,SAVE :: mis_v=0.
+ 1297.      REAL :: tmp_r
+ 1298.      INTEGER :: ndims, x_typ, nb_atts
+ 1299.      INTEGER,DIMENSION(NF90_MAX_VAR_DIMS) :: dimids
+ 1300.      INTEGER :: i, nvars, i2d, cnd
+ 1301.      REAL,DIMENSION(:),ALLOCATABLE,SAVE :: var_tmp
+ 1302.      LOGICAL :: uncompress = .FALSE.
+ 1303.      LOGICAL :: check = .FALSE.
+ 1304.    !---------------------------------------------------------------------
+ 1305.      fid = ncids(fid_in)
+ 1306.    !-
+ 1307.      IF (check) THEN
+ 1308.        WRITE(*,*) &
+ 1309.        'flinget_mat : fid_in, fid, varname :', fid_in, fid, TRIM(varname)
+ 1310.        WRITE(*,*) &
+ 1311.        'flinget_mat : iim, jjm, llm, ttm, itau_dep, itau_fin :', &
+ 1312.        iim, jjm, llm, ttm, itau_dep, itau_fin
+ 1313.        WRITE(*,*) &
+ 1314.        'flinget_mat : iideb, iilen, jjdeb, jjlen :', &
+ 1315.        iideb, iilen, jjdeb, jjlen
+ 1316.      ENDIF
+ 1317.    !-
+ 1318.      uncompress = .FALSE.
+ 1319.    !-
+ 1320.    ! 1.0 We get first all the details on this variable from the file
+ 1321.    !-
+ 1322.      nvars = ncnbva(fid_in)
+ 1323.    !-
+ 1324.      vid = -1
+ 1325.      iret = NF90_INQ_VARID (fid, varname, vid)
+ 1326.    !-
+ 1327.      IF (vid < 0 .OR. iret /= NF90_NOERR) THEN
+ 1328.        CALL histerr (3,'flinget', &
+ 1329.          'Variable '//TRIM(varname)//' not found in file',' ',' ')
+ 1330.      ENDIF
+ 1331.    !-
+ 1332.      iret = NF90_INQUIRE_VARIABLE (fid, vid, &
+ 1333.               ndims=ndims, dimids=dimids, nAtts=nb_atts)
+ 1334.      IF (check) THEN
+ 1335.        WRITE(*,*) &
+ 1336.        'flinget_mat : fid, vid :', fid, vid
+ 1337.        WRITE(*,*) &
+ 1338.        'flinget_mat : ndims, dimids(1:ndims), nb_atts :', &
+ 1339.        ndims, dimids(1:ndims), nb_atts
+ 1340.      ENDIF
+ 1341.    !-
+ 1342.      w_dim(:) = 0
+ftn-6205 ftn: VECTOR File = flincom.f90, Line = 1342 
+  A loop starting at line 1342 was vectorized with a single vector iteration.
+
+ 1343.      DO i=1,ndims
+ 1344.        iret  = NF90_INQUIRE_DIMENSION (fid, dimids(i), len=w_dim(i))
+ 1345.      ENDDO
+ 1346.      IF (check) WRITE(*,*) &
+ 1347.        'flinget_mat : w_dim :', w_dim(1:ndims)
+ 1348.    !-
+ 1349.      mis_v = 0.0; axs_l = ' ';
+ 1350.    !-
+ 1351.      IF (nb_atts > 0) THEN
+ 1352.        IF (check) THEN
+ 1353.          WRITE(*,*) 'flinget_mat : attributes for variable :'
+ 1354.        ENDIF
+ 1355.      ENDIF
+ 1356.      DO i=1,nb_atts
+ 1357.        iret = NF90_INQ_ATTNAME (fid, vid, i, att_n)
+ 1358.        iret = NF90_INQUIRE_ATTRIBUTE (fid, vid, att_n, xtype=x_typ)
+ 1359.        CALL strlowercase (att_n)
+ 1360.        IF      (    (x_typ == NF90_INT).OR.(x_typ == NF90_SHORT) &
+ 1361.                 .OR.(x_typ == NF90_BYTE) ) THEN
+ 1362.          iret = NF90_GET_ATT (fid, vid, att_n, tmp_i)
+ 1363.          IF (check) THEN
+ 1364.            WRITE(*,*) '   ',TRIM(att_n),' : ',tmp_i
+ 1365.          ENDIF
+ 1366.        ELSE IF ( (x_typ == NF90_FLOAT).OR.(x_typ == NF90_DOUBLE) ) THEN
+ 1367.          iret = NF90_GET_ATT (fid, vid, att_n, tmp_r)
+ 1368.          IF (check) THEN
+ 1369.            WRITE(*,*) '   ',TRIM(att_n),' : ',tmp_r
+ 1370.          ENDIF
+ 1371.          IF (index(att_n,'missing_value') > 0) THEN
+ 1372.            mis_v = tmp_r
+ 1373.          ENDIF
+ 1374.        ELSE
+ 1375.          tmp_n = ''
+ 1376.          iret = NF90_GET_ATT (fid, vid, att_n, tmp_n)
+ 1377.          IF (check) THEN
+ 1378.            WRITE(*,*) '   ',TRIM(att_n),' : ',TRIM(tmp_n)
+ 1379.          ENDIF
+ 1380.          IF (index(att_n,'axis') > 0) THEN
+ 1381.            axs_l = tmp_n
+ 1382.          ENDIF
+ 1383.        ENDIF
+ 1384.      ENDDO
+ 1385.    !?
+ 1386.    !!!!!!!!!! We will need a verification on the type of the variable
+ 1387.    !?
+ 1388.    !-
+ 1389.    ! 2.0 The dimensions are analysed to determine what is to be read
+ 1390.    !-
+ 1391.    ! 2.1 the longitudes
+ 1392.    !-
+ 1393.      IF ( w_dim(1) /= iim .OR. w_dim(2) /= jjm) THEN
+ 1394.    !---
+ 1395.    !-- There is a possibility that we have to deal with a compressed axis !
+ 1396.    !---
+ 1397.        iret = NF90_INQUIRE_DIMENSION (fid, dimids(1), &
+ 1398.                 name=tmp_n, len=clen)
+ 1399.        iret = NF90_INQ_VARID (fid, tmp_n, cvid)
+ 1400.    !---
+ 1401.        IF (check) WRITE(*,*) &
+ 1402.          'Dimname, iret , NF90_NOERR : ',TRIM(tmp_n),iret,NF90_NOERR
+ 1403.    !---
+ 1404.    !-- If we have an axis which has the same name
+ 1405.    !-- as the dimension we can see if it is compressed
+ 1406.    !---
+ 1407.    !-- TODO TODO for zoom2d
+ 1408.    !---
+ 1409.        IF (iret == NF90_NOERR) THEN
+ 1410.          iret = NF90_GET_ATT (fid, cvid, 'compress', str1)
+ 1411.    !-----
+ 1412.          IF (iret == NF90_NOERR) THEN
+ 1413.            iret = NF90_INQUIRE_VARIABLE (fid,cvid,xtype=x_typ,ndims=cnd)
+ 1414.    !-------
+ 1415.            IF ( cnd /= 1 .AND. x_typ /= NF90_INT) THEN
+ 1416.              CALL histerr (3,'flinget', &
+ 1417.                'Variable '//TRIM(tmp_n)//' can not be a compressed axis', &
+ 1418.                'Either it has too many dimensions'// &
+ 1419.                ' or it is not of type integer', ' ')
+ 1420.            ELSE
+ 1421.    !---------
+ 1422.    !-------- Let us see if we already have that index table
+ 1423.    !---------
+ 1424.              IF (    (cind_len /= clen).OR.(cind_vid /= cvid) &
+ 1425.                  .OR.(cind_fid /= fid) ) THEN
+ 1426.                IF (ALLOCATED(cindex))   DEALLOCATE(cindex)
+ 1427.                ALLOCATE(cindex(clen))
+ 1428.                cind_len = clen
+ 1429.                cind_vid = cvid
+ 1430.                cind_fid = fid
+ 1431.                iret = NF90_GET_VAR (fid, cvid, cindex)
+ 1432.              ENDIF
+ 1433.    !---------
+ 1434.    !-------- In any case we need to set the slab of data to be read
+ 1435.    !---------
+ 1436.              uncompress = .TRUE.
+ 1437.              w_sta(1) = 1
+ 1438.              w_len(1) = clen
+ 1439.              i2d = 1
+ 1440.            ENDIF
+ 1441.          ELSE
+ 1442.            str1 = 'The horizontal dimensions of '//varname
+ 1443.            CALL histerr (3,'flinget',str1, &
+ 1444.              'is not compressed and does not'// &
+ 1445.              ' correspond to the requested size',' ')
+ 1446.          ENDIF
+ 1447.        ELSE
+ 1448.          IF (w_dim(1) /= iim) THEN
+ 1449.            str1 = 'The longitude dimension of '//varname
+ 1450.            CALL histerr (3,'flinget',str1, &
+ 1451.              'in the file is not equal to the dimension', &
+ 1452.              'that should be read')
+ 1453.          ENDIF
+ 1454.          IF (w_dim(2) /= jjm) THEN
+ 1455.            str1 = 'The latitude dimension of '//varname
+ 1456.            CALL histerr (3,'flinget',str1, &
+ 1457.              'in the file is not equal to the dimension', &
+ 1458.              'that should be read')
+ 1459.          ENDIF
+ 1460.        ENDIF
+ 1461.      ELSE
+ 1462.        w_sta(1:2) = (/ iideb, jjdeb /)
+ftn-6271 ftn: VECTOR File = flincom.f90, Line = 1462 
+  A loop starting at line 1462 was not vectorized because its trip count is too small.
+
+ 1463.        w_len(1:2) = (/ iilen, jjlen /)
+ftn-6271 ftn: VECTOR File = flincom.f90, Line = 1463 
+  A loop starting at line 1463 was not vectorized because its trip count is too small.
+
+ 1464.        i2d = 2
+ 1465.      ENDIF
+ 1466.    !-
+ 1467.    ! 2.3 Now the difficult part, the 3rd dimension which can be
+ 1468.    ! time or levels.
+ 1469.    !-
+ 1470.    ! Priority is given to the time axis if only three axes are present.
+ 1471.    !-
+ 1472.      IF (ndims > i2d) THEN
+ 1473.    !---
+ 1474.    !-- 2.3.1 We have a vertical axis
+ 1475.    !---
+ 1476.        IF (llm == 1 .AND. ndims == i2d+2 .OR. llm == w_dim(i2d+1)) THEN
+ 1477.    !-----
+ 1478.          IF (w_dim(i2d+1) /= llm) THEN
+ 1479.            CALL histerr (3,'flinget', &
+ 1480.              'The vertical dimension of '//varname, &
+ 1481.              'in the file is not equal to the dimension', &
+ 1482.              'that should be read')
+ 1483.          ELSE
+ 1484.            w_sta(i2d+1) = 1
+ 1485.            IF (llm > 0) THEN
+ 1486.              w_len(i2d+1) = llm
+ 1487.            ELSE
+ 1488.              w_len(i2d+1) = w_sta(i2d+1)
+ 1489.            ENDIF
+ 1490.          ENDIF
+ 1491.    !-----
+ 1492.          IF ((itau_fin-itau_dep) >= 0) THEN
+ 1493.            IF      (ndims /= i2d+2) THEN
+ 1494.              CALL histerr (3,'flinget', &
+ 1495.                'You attempt to read a time slab', &
+ 1496.                'but there is no time axis on this variable', varname)
+ 1497.            ELSE IF ((itau_fin - itau_dep) <= w_dim(i2d+2)) THEN
+ 1498.              w_sta(i2d+2) = itau_dep
+ 1499.              w_len(i2d+2) = itau_fin-itau_dep+1
+ 1500.            ELSE
+ 1501.              CALL histerr (3,'flinget', &
+ 1502.                'The time step you try to read is not', &
+ 1503.                'in the file (1)', varname)
+ 1504.            ENDIF
+ 1505.          ELSE IF (ndims == i2d+2 .AND. w_dim(i2d+2) > 1) THEN
+ 1506.            CALL histerr (3,'flinget', &
+ 1507.              'There is a time axis in the file but no', &
+ 1508.              'time step give in the call', varname)
+ 1509.          ELSE
+ 1510.            w_sta(i2d+2) = 1
+ 1511.            w_len(i2d+2) = 1
+ 1512.          ENDIF
+ 1513.        ELSE
+ 1514.    !-----
+ 1515.    !---- 2.3.2 We do not have any vertical axis
+ 1516.    !-----
+ 1517.          IF (ndims == i2d+2) THEN
+ 1518.            CALL histerr (3,'flinget', &
+ 1519.              'The file contains 4 dimensions', &
+ 1520.              'but only 3 are requestes for variable ', varname)
+ 1521.          ENDIF
+ 1522.          IF ((itau_fin-itau_dep) >= 0) THEN
+ 1523.            IF (ndims == i2d+1) THEN
+ 1524.              IF ((itau_fin-itau_dep) < w_dim(i2d+1) ) THEN
+ 1525.                w_sta(i2d+1) = itau_dep
+ 1526.                w_len(i2d+1) = itau_fin-itau_dep+1
+ 1527.              ELSE
+ 1528.                CALL histerr (3,'flinget', &
+ 1529.                  'The time step you try to read is not', &
+ 1530.                  'in the file (2)', varname)
+ 1531.              ENDIF
+ 1532.            ELSE
+ 1533.              CALL histerr (3,'flinget', &
+ 1534.                'From your input you sould have 3 dimensions', &
+ 1535.                'in the file but there are 4', varname)
+ 1536.            ENDIF
+ 1537.          ELSE
+ 1538.            IF (ndims == i2d+1 .AND. w_dim(i2d+1) > 1) THEN
+ 1539.              CALL histerr (3,'flinget', &
+ 1540.                'There is a time axis in the file but no', &
+ 1541.                'time step given in the call', varname)
+ 1542.            ELSE
+ 1543.              w_sta(i2d+1) = 1
+ 1544.              w_len(i2d+1) = 1
+ 1545.            ENDIF
+ 1546.          ENDIF
+ 1547.        ENDIF
+ 1548.      ELSE
+ 1549.    !---
+ 1550.    !-- 2.3.3 We do not have any vertical axis
+ 1551.    !---
+ 1552.        w_sta(i2d+1:i2d+2) = (/ 0, 0 /)
+ftn-6262 ftn: VECTOR File = flincom.f90, Line = 1552 
+  A loop starting at line 1552 was not vectorized because it contains a call to a subroutine or function on line 1552.
+
+ 1553.        w_len(i2d+1:i2d+2) = (/ 0, 0 /)
+ftn-6262 ftn: VECTOR File = flincom.f90, Line = 1553 
+  A loop starting at line 1553 was not vectorized because it contains a call to a subroutine or function on line 1553.
+
+ 1554.      ENDIF
+ 1555.    !-
+ 1556.    ! 3.0 Reading the data
+ 1557.    !-
+ 1558.      IF (check) WRITE(*,*) &
+ 1559.        'flinget_mat 3.0 : ', uncompress, w_sta, w_len
+ 1560.    !---
+ 1561.      IF (uncompress) THEN
+ 1562.    !---
+ 1563.        IF (ALLOCATED(var_tmp)) THEN
+ 1564.          IF (SIZE(var_tmp) < clen) THEN
+ 1565.            DEALLOCATE(var_tmp)
+ 1566.            ALLOCATE(var_tmp(clen))
+ 1567.          ENDIF
+ 1568.        ELSE
+ 1569.          ALLOCATE(var_tmp(clen))
+ 1570.        ENDIF
+ 1571.    !---
+ 1572.        iret = NF90_GET_VAR (fid, vid, var_tmp, &
+ 1573.                 start=w_sta(:), count=w_len(:))
+ 1574.    !---
+ 1575.        var(:) = mis_v
+ftn-6263 ftn: VECTOR File = flincom.f90, Line = 1575 
+  A loop starting at line 1575 was not vectorized because it contains a reference to a non-vector intrinsic on line 1575.
+
+ 1576.        var(cindex(:)) = var_tmp(:)
+ftn-6262 ftn: VECTOR File = flincom.f90, Line = 1576 
+  A loop starting at line 1576 was not vectorized because it contains a call to a subroutine or function on line 1576.
+
+ 1577.    !---
+ 1578.      ELSE
+ 1579.        iret = NF90_GET_VAR (fid, vid, var, &
+ 1580.                 start=w_sta(:), count=w_len(:))
+ 1581.      ENDIF
+ 1582.    !-
+ 1583.      IF (check) WRITE(*,*) 'flinget_mat 3.1 : ',NF90_STRERROR (iret)
+ 1584.    !--------------------------
+ 1585.    END  SUBROUTINE flinget_mat
+ftn-5001 ftn: NOTE File = flincom.f90, Line = 1585 
+  Local variable "NVARS" is assigned a value but never used.
+
+ftn-5001 ftn: NOTE File = flincom.f90, Line = 1585 
+  Local variable "AXS_L" is assigned a value but never used.
+
+ 1586.    !-
+ 1587.    !===
+ 1588.    !-
+ 1589.    SUBROUTINE flinget_scal &
+ 1590.      (fid_in, varname, iim, jjm, llm, ttm, itau_dep, itau_fin, var)
+ 1591.    !---------------------------------------------------------------------
+ 1592.    !- This subroutine will read the variable named varname from
+ 1593.    !- the file previously opened by flinopen and identified by fid
+ 1594.    !-
+ 1595.    !- If variable is of size zero a global attribute is read. This
+ 1596.    !- global attribute will be of type real
+ 1597.    !-
+ 1598.    !- INPUT
+ 1599.    !-
+ 1600.    !- fid      : File ID returned by flinopen
+ 1601.    !- varname  : Name of the variable to be read from the file
+ 1602.    !- iim      : | These three variables give the size of the variables
+ 1603.    !- jjm      : | to be read. It will be verified that the variables
+ 1604.    !- llm      : | fits in there.
+ 1605.    !- ttm      : |
+ 1606.    !- itau_dep : Time step at which we will start to read
+ 1607.    !- itau_fin : Time step until which we are going to read
+ 1608.    !-           For the moment this is done on indeces but it should be
+ 1609.    !-           in the physical space
+ 1610.    !-           If there is no time-axis in the file then use a
+ 1611.    !-           itau_fin < itau_dep, this will tell flinget not to
+ 1612.    !-           expect a time-axis in the file.
+ 1613.    !-
+ 1614.    !- OUTPUT
+ 1615.    !-
+ 1616.    !- var      : scalar that will contain the data
+ 1617.    !---------------------------------------------------------------------
+ 1618.      IMPLICIT NONE
+ 1619.    !-
+ 1620.    ! ARGUMENTS
+ 1621.    !-
+ 1622.      INTEGER :: fid_in
+ 1623.      CHARACTER(LEN=*) :: varname
+ 1624.      INTEGER :: iim, jjm, llm, ttm, itau_dep, itau_fin
+ 1625.      REAL :: var
+ 1626.    !-
+ 1627.    ! LOCAL
+ 1628.    !-
+ 1629.      INTEGER :: iret, fid
+ 1630.    !-
+ 1631.      LOGICAL :: check = .FALSE.
+ 1632.    !---------------------------------------------------------------------
+ 1633.      IF (check) THEN
+ 1634.        WRITE (*,*) 'flinget_scal in file with id ',fid_in
+ 1635.      ENDIF
+ 1636.    !-
+ 1637.      fid = ncids(fid_in)
+ 1638.    !-
+ 1639.    ! 1.0 Reading a global attribute
+ 1640.    !-
+ 1641.      iret = NF90_GET_ATT (fid, NF90_GLOBAL, varname, var)
+ 1642.    !---------------------------
+ 1643.    END  SUBROUTINE flinget_scal
+ftn-5001 ftn: NOTE File = flincom.f90, Line = 1643 
+  Local variable "IRET" is assigned a value but never used.
+
+ftn-5004 ftn: NOTE File = flincom.f90, Line = 1643 
+  Dummy Argument "ITAU_DEP" is not referenced or defined.
+
+ftn-5004 ftn: NOTE File = flincom.f90, Line = 1643 
+  Dummy Argument "LLM" is not referenced or defined.
+
+ftn-5004 ftn: NOTE File = flincom.f90, Line = 1643 
+  Dummy Argument "ITAU_FIN" is not referenced or defined.
+
+ftn-5004 ftn: NOTE File = flincom.f90, Line = 1643 
+  Dummy Argument "JJM" is not referenced or defined.
+
+ftn-5004 ftn: NOTE File = flincom.f90, Line = 1643 
+  Dummy Argument "IIM" is not referenced or defined.
+
+ftn-5004 ftn: NOTE File = flincom.f90, Line = 1643 
+  Dummy Argument "TTM" is not referenced or defined.
+
+ 1644.    !-
+ 1645.    !===
+ 1646.    !-
+ 1647.    SUBROUTINE flinfindcood (fid_in, axtype, vid, ndim)
+ 1648.    !---------------------------------------------------------------------
+ 1649.    !- This subroutine explores the file in order to find
+ 1650.    !- the coordinate according to a number of rules
+ 1651.    !---------------------------------------------------------------------
+ 1652.      IMPLICIT NONE
+ 1653.    !-
+ 1654.    ! ARGUMENTS
+ 1655.    !-
+ 1656.      INTEGER :: fid_in, vid, ndim
+ 1657.      CHARACTER(LEN=3) :: axtype
+ 1658.    !-
+ 1659.    ! LOCAL
+ 1660.    !-
+ 1661.      INTEGER :: iv, iret, dimnb
+ 1662.      CHARACTER(LEN=40) :: dimname, dimuni1, dimuni2, dimuni3
+ 1663.      CHARACTER(LEN=80) :: str1
+ 1664.      LOGICAL :: found_rule = .FALSE.
+ 1665.    !---------------------------------------------------------------------
+ 1666.      vid = -1
+ 1667.    !-
+ 1668.    ! Make sure all strings are invalid
+ 1669.    !-
+ 1670.      dimname = '?-?'
+ 1671.      dimuni1 = '?-?'
+ 1672.      dimuni2 = '?-?'
+ 1673.      dimuni3 = '?-?'
+ 1674.    !-
+ 1675.    ! First rule : we look for the correct units
+ 1676.    ! lon : east
+ 1677.    ! lat : north
+ 1678.    ! We make an exact check as it would be too easy to mistake
+ 1679.    ! some units by just comparing the substrings.
+ 1680.    !-
+ 1681.      SELECTCASE(axtype)
+ 1682.      CASE ('lon')
+ 1683.        dimuni1 = 'degree_e'
+ 1684.        dimuni2 = 'degrees_e'
+ 1685.        found_rule = .TRUE.
+ 1686.      CASE('lat')
+ 1687.        dimuni1 = 'degree_n'
+ 1688.        dimuni2 = 'degrees_n'
+ 1689.        found_rule = .TRUE.
+ 1690.      CASE('lev')
+ 1691.        dimuni1 = 'm'
+ 1692.        dimuni2 = 'km'
+ 1693.        dimuni3 = 'hpa'
+ 1694.        found_rule = .TRUE.
+ 1695.      CASE DEFAULT
+ 1696.        found_rule = .FALSE.
+ 1697.      END SELECT
+ 1698.    !-
+ 1699.      IF (found_rule) THEN
+ 1700.        iv = 0
+ 1701.        DO WHILE ( (vid < 0).AND.(iv < ncnbva(fid_in)) )
+ 1702.          iv = iv+1
+ 1703.          str1 = ''
+ 1704.          iret = NF90_GET_ATT (ncids(fid_in), iv, 'units', str1)
+ 1705.          IF (iret == NF90_NOERR) THEN
+ 1706.            CALL strlowercase (str1)
+ 1707.            IF (    (INDEX(str1, TRIM(dimuni1)) == 1) &
+ 1708.                .OR.(INDEX(str1, TRIM(dimuni2)) == 1) &
+ 1709.                .OR.(INDEX(str1, TRIM(dimuni3)) == 1) ) THEN
+ 1710.              vid = iv
+ 1711.              iret = NF90_INQUIRE_VARIABLE (ncids(fid_in), iv, ndims=ndim)
+ 1712.            ENDIF
+ 1713.          ENDIF
+ 1714.        ENDDO
+ 1715.      ENDIF
+ 1716.    !-
+ 1717.    ! Second rule : we find specific names :
+ 1718.    ! lon : nav_lon
+ 1719.    ! lat : nav_lat
+ 1720.    ! Here we can check if we find the substring as the
+ 1721.    ! names are more specific.
+ 1722.    !-
+ 1723.      SELECTCASE(axtype)
+ 1724.      CASE ('lon')
+ 1725.        dimname = 'nav_lon lon longitude'
+ 1726.        found_rule = .TRUE.
+ 1727.      CASE('lat')
+ 1728.        dimname = 'nav_lat lat latitude'
+ 1729.        found_rule = .TRUE.
+ 1730.      CASE('lev')
+ 1731.        dimname = 'plev level depth deptht'
+ 1732.        found_rule = .TRUE.
+ 1733.      CASE DEFAULT
+ 1734.        found_rule = .FALSE.
+ 1735.      END SELECT
+ 1736.    !-
+ 1737.      IF (found_rule) THEN
+ 1738.        iv = 0
+ 1739.        DO WHILE ( (vid < 0).AND.(iv < ncnbva(fid_in)) )
+ 1740.          iv = iv+1
+ 1741.          str1=''
+ 1742.          iret = NF90_INQUIRE_VARIABLE (ncids(fid_in), iv, &
+ 1743.                                        name=str1, ndims=ndim)
+ 1744.          IF (INDEX(dimname,TRIM(str1)) >= 1) THEN
+ 1745.            vid = iv
+ 1746.          ENDIF
+ 1747.        ENDDO
+ 1748.      ENDIF
+ 1749.    !-
+ 1750.    ! Third rule : we find a variable with the same name as the dimension
+ 1751.    ! lon = 1
+ 1752.    ! lat = 2
+ 1753.    ! lev = 3
+ 1754.    !-
+ 1755.      IF (vid < 0) THEN
+ 1756.        SELECTCASE(axtype)
+ 1757.        CASE ('lon')
+ 1758.          dimnb = 1
+ 1759.          found_rule = .TRUE.
+ 1760.        CASE('lat')
+ 1761.          dimnb = 2
+ 1762.          found_rule = .TRUE.
+ 1763.        CASE('lev')
+ 1764.          dimnb = 3
+ 1765.          found_rule = .TRUE.
+ 1766.        CASE DEFAULT
+ 1767.          found_rule = .FALSE.
+ 1768.        END SELECT
+ 1769.    !---
+ 1770.        IF (found_rule) THEN
+ 1771.          iret = NF90_INQUIRE_DIMENSION (ncids(fid_in), dimnb, name=dimname)
+ 1772.          iv = 0
+ 1773.          DO WHILE ( (vid < 0).AND.(iv < ncnbva(fid_in)) )
+ 1774.            iv = iv+1
+ 1775.            str1=''
+ 1776.            iret = NF90_INQUIRE_VARIABLE (ncids(fid_in), iv, &
+ 1777.                                          name=str1, ndims=ndim)
+ 1778.            IF (INDEX(dimname,TRIM(str1)) == 1) THEN
+ 1779.              vid = iv
+ 1780.            ENDIF
+ 1781.          ENDDO
+ 1782.        ENDIF
+ 1783.      ENDIF
+ 1784.    !-
+ 1785.    ! Stop the program if no coordinate was found
+ 1786.    !-
+ 1787.      IF (vid < 0) THEN
+ 1788.        CALL histerr (3,'flinfindcood', &
+ 1789.               'No coordinate axis was found in the file', &
+ 1790.               'The data in this file can not be used', axtype)
+ 1791.      ENDIF
+ 1792.    !--------------------------
+ 1793.    END SUBROUTINE flinfindcood
+ 1794.    !-
+ 1795.    !===
+ 1796.    !-
+ 1797.    SUBROUTINE flinclo (fid_in)
+ 1798.    !---------------------------------------------------------------------
+ 1799.      IMPLICIT NONE
+ 1800.    !-
+ 1801.      INTEGER :: fid_in
+ 1802.    !-
+ 1803.      INTEGER :: iret
+ 1804.    !---------------------------------------------------------------------
+ 1805.      iret = NF90_CLOSE (ncids(fid_in))
+ 1806.      ncfileopen(fid_in) = .FALSE.
+ 1807.    !---------------------
+ 1808.    END SUBROUTINE flinclo
+ftn-5001 ftn: NOTE File = flincom.f90, Line = 1808 
+  Local variable "IRET" is assigned a value but never used.
+
+ 1809.    !-
+ 1810.    !===
+ 1811.    !-
+ 1812.    SUBROUTINE flinquery_var(fid_in, varname, exists)
+ 1813.    !---------------------------------------------------------------------
+ 1814.    !- Queries the existance of a variable in the file.
+ 1815.    !---------------------------------------------------------------------
+ 1816.      IMPLICIT NONE
+ 1817.    !-
+ 1818.      INTEGER :: fid_in
+ 1819.      CHARACTER(LEN=*) varname
+ 1820.      LOGICAL :: exists
+ 1821.    !-
+ 1822.      INTEGER :: iret, fid, vid
+ 1823.    !---------------------------------------------------------------------
+ 1824.      fid = ncids(fid_in)
+ 1825.      vid = -1
+ 1826.      iret = NF90_INQ_VARID (fid, varname, vid)
+ 1827.    !-
+ 1828.      exists = ( (vid >= 0).AND.(iret == NF90_NOERR) )
+ 1829.    !---------------------------
+ 1830.    END SUBROUTINE flinquery_var
+ 1831.    !-
+ 1832.    !===
+ 1833.    !-
+ 1834.    SUBROUTINE flininspect (fid_in)
+ 1835.    !---------------------------------------------------------------------
+ 1836.      IMPLICIT NONE
+ 1837.    !-
+ 1838.    ! fid : File id to inspect
+ 1839.    !-
+ 1840.      INTEGER :: fid_in
+ 1841.    !-
+ 1842.    !- LOCAL
+ 1843.    !-
+ 1844.      INTEGER :: iim, jjm, llm, ttm, fid_out
+ 1845.      INTEGER :: iret, fid, ndims, nvars, nb_atts, id_unlim
+ 1846.      INTEGER :: iv, in, lll
+ 1847.      INTEGER :: xid, yid, zid, tid
+ 1848.      INTEGER,DIMENSION(NF90_MAX_VAR_DIMS) :: idimid
+ 1849.      CHARACTER(LEN=80) :: name
+ 1850.      CHARACTER(LEN=30) :: axname
+ 1851.    !---------------------------------------------------------------------
+ 1852.      fid = ncids(fid_in)
+ 1853.    !-
+ 1854.      iret = NF90_INQUIRE (fid, nDimensions=ndims, nVariables=nvars, &
+ 1855.                           nAttributes=nb_atts, unlimitedDimId=id_unlim)
+ 1856.    !-
+ 1857.      WRITE (*,*) 'IOIPSL ID                   : ',fid_in
+ 1858.      WRITE (*,*) 'NetCDF ID                   : ',fid
+ 1859.      WRITE (*,*) 'Number of dimensions        : ',ndims
+ 1860.      WRITE (*,*) 'Number of variables         : ',nvars
+ 1861.      WRITE (*,*) 'Number of global attributes : ',nb_atts
+ 1862.      WRITE (*,*) 'ID unlimited                : ',id_unlim
+ 1863.    !-
+ 1864.      xid = -1; iim = 0;
+ 1865.      yid = -1; jjm = 0;
+ 1866.      zid = -1; llm = 0;
+ 1867.      tid = -1; ttm = 0;
+ 1868.    !-
+ 1869.      DO iv=1,ndims
+ 1870.    !---
+ 1871.        iret = NF90_INQUIRE_DIMENSION (fid, iv, name=axname, len=lll)
+ 1872.        CALL strlowercase (axname)
+ 1873.        axname = ADJUSTL(axname)
+ 1874.    !---
+ 1875.        WRITE (*,*) 'Dimension number : ',iv
+ 1876.        WRITE (*,*) 'Dimension name   : ',TRIM(axname)
+ 1877.    !---
+ 1878.        IF      (    (INDEX(axname,'x') == 1) &
+ 1879.                 .OR.(INDEX(axname,'lon') == 1)) THEN
+ 1880.          xid = iv; iim = lll;
+ 1881.          WRITE (*,*) 'Dimension X size   : ',iim
+ 1882.        ELSE IF (    (INDEX(axname,'y') == 1) &
+ 1883.                 .OR.(INDEX(axname,'lat') == 1)) THEN
+ 1884.          yid = iv; jjm = lll;
+ 1885.          WRITE (*,*) 'Dimension Y size   : ',jjm
+ 1886.        ELSE IF (    (INDEX(axname,'lev') == 1) &
+ 1887.                 .OR.(INDEX(axname,'plev') == 1) &
+ 1888.                 .OR.(INDEX(axname,'z') == 1) &
+ 1889.                 .OR.(INDEX(axname,'depth') == 1)) THEN
+ 1890.          zid = iv; llm = lll;
+ 1891.          WRITE (*,*) 'Dimension Z size   : ',llm
+ 1892.        ELSE IF (    (INDEX(axname,'tstep') == 1) &
+ 1893.                 .OR.(INDEX(axname,'time_counter') == 1)) THEN
+ 1894.    !---- For the time we certainly need to allow for other names
+ 1895.          tid = iv; ttm = lll;
+ 1896.        ELSE IF (ndims == 1) THEN
+ 1897.    !---- Nothing was found and ndims=1 then we have a vector of data
+ 1898.          xid = 1; iim = lll;
+ 1899.        ENDIF
+ 1900.    !---
+ 1901.      ENDDO
+ 1902.    !-
+ 1903.    ! Keep all this information
+ 1904.    !-
+ 1905.      nbfiles = nbfiles+1
+ 1906.    !-
+ 1907.      IF (nbfiles > nbfile_max) THEN
+ 1908.        CALL histerr(3,'flininspect', &
+ 1909.          'Too many files. Please increase nbfil_max', &
+ 1910.          'in program flincom.F90.',' ')
+ 1911.      ENDIF
+ 1912.    !-
+ 1913.      ncids(nbfiles) = fid
+ 1914.      ncnbd(nbfiles) = ndims
+ 1915.    !-
+ 1916.      ncdims(nbfiles,1:4) = (/ iim, jjm, llm, ttm /)
+ftn-6210 ftn: VECTOR File = flincom.f90, Line = 1916 
+  A loop starting at line 1916 was partially vectorized with a single vector iteration.
+
+ 1917.    !-
+ 1918.      ncfunli(nbfiles) = id_unlim
+ 1919.      ncnba(nbfiles)   = nb_atts
+ 1920.      ncnbva(nbfiles)  = nvars
+ 1921.      ncfileopen(nbfiles) = .TRUE.
+ 1922.    !-
+ 1923.      fid_out = nbfiles
+ 1924.    !-
+ 1925.      DO in=1,nvars
+ 1926.        iret = NF90_INQUIRE_VARIABLE (fid, in, &
+ 1927.                 name=name, ndims=ndims, dimids=idimid, nAtts=nb_atts)
+ 1928.        WRITE (*,*) 'Variable number  ------------ > ', in
+ 1929.        WRITE (*,*) 'Variable name        : ', TRIM(name)
+ 1930.        WRITE (*,*) 'Number of dimensions : ', ndims
+ 1931.        WRITE (*,*) 'Dimensions ID''s     : ', idimid(1:ndims)
+ 1932.        WRITE (*,*) 'Number of attributes : ', nb_atts
+ 1933.      ENDDO
+ 1934.    !-------------------------
+ 1935.    END SUBROUTINE flininspect
+ftn-5001 ftn: NOTE File = flincom.f90, Line = 1935 
+  Local variable "IRET" is assigned a value but never used.
+
+ftn-5001 ftn: NOTE File = flincom.f90, Line = 1935 
+  Local variable "ZID" is assigned a value but never used.
+
+ftn-5001 ftn: NOTE File = flincom.f90, Line = 1935 
+  Local variable "FID_OUT" is assigned a value but never used.
+
+ftn-5001 ftn: NOTE File = flincom.f90, Line = 1935 
+  Local variable "YID" is assigned a value but never used.
+
+ftn-5001 ftn: NOTE File = flincom.f90, Line = 1935 
+  Local variable "TID" is assigned a value but never used.
+
+ftn-5001 ftn: NOTE File = flincom.f90, Line = 1935 
+  Local variable "XID" is assigned a value but never used.
+
+ 1936.    !-
+ 1937.    !===
+ 1938.    !-
+ 1939.    END MODULE flincom
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                         E x t e r n a l   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Name  Messages
+----  --------
+ABS(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINOPEN_WORK in FLINCOM (Line 479, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 481, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 498, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 499, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 516, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 517, file flincom.f90)
+
+Name  Messages
+----  --------
+ADJUSTL(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLININFO in FLINCOM (Line 713, file flincom.f90)
+                   FLININSPECT in FLINCOM (Line 1873, file flincom.f90)
+
+Name  Messages
+----  --------
+ALLOCATED(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINGET_R1D in FLINCOM (Line 959, file flincom.f90)
+                   FLINGET_R2D in FLINCOM (Line 997, file flincom.f90)
+                   FLINGET_R2D_ZOOM2D in FLINCOM (Line 1038, file flincom.f90)
+                   FLINGET_R3D in FLINCOM (Line 1078, file flincom.f90)
+                   FLINGET_R3D_ZOOM2D in FLINCOM (Line 1121, file flincom.f90)
+                   FLINGET_R4D in FLINCOM (Line 1163, file flincom.f90)
+                   FLINGET_R4D_ZOOM2D in FLINCOM (Line 1208, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1426, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1563, file flincom.f90)
+
+Name  Messages
+----  --------
+CALENDAR
+      Defined as:  No definitions.
+
+      Used By:     FLINCOM
+
+Name  Messages
+----  --------
+ERRIOIPSL
+      Defined as:  No definitions.
+
+      Used By:     FLINCOM
+
+Name  Messages
+----  --------
+FLINCLO in FLINCOM
+      Defined as:  Subroutine (line 17, file flincom.f90)
+
+      Interface:   None
+
+      Calls:       NF90_CLOSE in NETCDF (Line 1805, file flincom.f90)
+
+Name  Messages
+----  --------
+FLINCOM
+      Defined as:  Module (line 1, file flincom.f90)
+
+        Uses:      CALENDAR
+                   ERRIOIPSL
+                   STRINGOP
+
+Name  Messages
+----  --------
+FLINCRE in FLINCOM
+      Defined as:  Subroutine (line 17, file flincom.f90)
+
+      Interface:   None
+
+      Calls:       HISTERR in ERRIOIPSL (Line 276, file flincom.f90)
+                   JU2YMDS in CALENDAR (Line 246, file flincom.f90)
+                   NF90_CREATE in NETCDF (Line 186, file flincom.f90)
+                   NF90_DEF_DIM in NETCDF (Line 188, file flincom.f90)
+                   NF90_DEF_DIM in NETCDF (Line 189, file flincom.f90)
+                   NF90_DEF_DIM in NETCDF (Line 190, file flincom.f90)
+                   NF90_DEF_DIM in NETCDF (Line 191, file flincom.f90)
+                   NF90_DEF_VAR_ONEDIM in NETCDF (Line 197, file flincom.f90)
+                   NF90_DEF_VAR_ONEDIM in NETCDF (Line 206, file flincom.f90)
+                   NF90_DEF_VAR_MANYDIMS in NETCDF (Line 215, file flincom.f90)
+                   NF90_DEF_VAR_MANYDIMS in NETCDF (Line 230, file flincom.f90)
+                   NF90_ENDDEF in NETCDF (Line 253, file flincom.f90)
+                   NF90_PUT_ATT_TEXT in NETCDF (Line 198, file flincom.f90)
+                   NF90_PUT_ATT_TEXT in NETCDF (Line 199, file flincom.f90)
+                   NF90_PUT_ATT_TEXT in NETCDF (Line 200, file flincom.f90)
+                   NF90_PUT_ATT_TEXT in NETCDF (Line 207, file flincom.f90)
+                   NF90_PUT_ATT_TEXT in NETCDF (Line 208, file flincom.f90)
+                   NF90_PUT_ATT_TEXT in NETCDF (Line 209, file flincom.f90)
+                   NF90_PUT_ATT_TEXT in NETCDF (Line 217, file flincom.f90)
+                   NF90_PUT_ATT_TEXT in NETCDF (Line 218, file flincom.f90)
+                   NF90_PUT_ATT_TEXT in NETCDF (Line 219, file flincom.f90)
+                   NF90_PUT_ATT_ONE_FOURBYTEREAL in NETCDF (Line 221, file flincom.f90)
+                   NF90_PUT_ATT_ONE_FOURBYTEREAL in NETCDF (Line 223, file flincom.f90)
+                   NF90_PUT_ATT_TEXT in NETCDF (Line 232, file flincom.f90)
+                   NF90_PUT_ATT_TEXT in NETCDF (Line 233, file flincom.f90)
+                   NF90_PUT_ATT_TEXT in NETCDF (Line 234, file flincom.f90)
+                   NF90_PUT_ATT_ONE_FOURBYTEREAL in NETCDF (Line 236, file flincom.f90)
+                   NF90_PUT_ATT_ONE_FOURBYTEREAL in NETCDF (Line 238, file flincom.f90)
+                   NF90_PUT_ATT_ONE_FOURBYTEREAL in NETCDF (Line 243, file flincom.f90)
+                   NF90_PUT_ATT_ONE_FOURBYTEREAL in NETCDF (Line 248, file flincom.f90)
+                   NF90_PUT_ATT_ONE_FOURBYTEREAL in NETCDF (Line 249, file flincom.f90)
+                   NF90_PUT_ATT_ONE_FOURBYTEREAL in NETCDF (Line 250, file flincom.f90)
+                   NF90_PUT_ATT_ONE_FOURBYTEREAL in NETCDF (Line 251, file flincom.f90)
+                   NF90_PUT_VAR_1D_EIGHTBYTEREAL in NETCDF (Line 257, file flincom.f90)
+                   NF90_PUT_VAR_1D_EIGHTBYTEREAL in NETCDF (Line 261, file flincom.f90)
+                   NF90_PUT_VAR_2D_EIGHTBYTEREAL in NETCDF (Line 265, file flincom.f90)
+                   NF90_PUT_VAR_2D_EIGHTBYTEREAL in NETCDF (Line 269, file flincom.f90)
+                   LEN_TRIM(Intrinsic) (Line 179, file flincom.f90)
+                   MINVAL(Intrinsic) (Line 222, file flincom.f90)
+                   MINVAL(Intrinsic) (Line 237, file flincom.f90)
+                   REAL(Intrinsic) (Line 222, file flincom.f90)
+                   REAL(Intrinsic) (Line 224, file flincom.f90)
+                   REAL(Intrinsic) (Line 237, file flincom.f90)
+                   REAL(Intrinsic) (Line 239, file flincom.f90)
+                   REAL(Intrinsic) (Line 244, file flincom.f90)
+                   REAL(Intrinsic) (Line 248, file flincom.f90)
+                   REAL(Intrinsic) (Line 249, file flincom.f90)
+                   REAL(Intrinsic) (Line 250, file flincom.f90)
+                   REAL(Intrinsic) (Line 251, file flincom.f90)
+                   REAL(Intrinsic) (Line 261, file flincom.f90)
+                   MAXVAL(Intrinsic) (Line 224, file flincom.f90)
+                   MAXVAL(Intrinsic) (Line 239, file flincom.f90)
+
+Name  Messages
+----  --------
+FLINFINDCOOD in FLINCOM
+      Defined as:  Subroutine (line 1647, file flincom.f90)
+
+      Interface:   None
+
+      Called By:   FLINOPEN_WORK in FLINCOM (Line 468, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 489, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 507, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 531, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 545, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 560, file flincom.f90)
+
+      Calls:       HISTERR in ERRIOIPSL (Line 1788, file flincom.f90)
+                   NF90_GET_ATT_TEXT in NETCDF (Line 1704, file flincom.f90)
+                   NF90_INQUIRE_DIMENSION in NETCDF (Line 1771, file flincom.f90)
+                   NF90_INQUIRE_VARIABLE in NETCDF (Line 1711, file flincom.f90)
+                   NF90_INQUIRE_VARIABLE in NETCDF (Line 1742, file flincom.f90)
+                   NF90_INQUIRE_VARIABLE in NETCDF (Line 1776, file flincom.f90)
+                   STRLOWERCASE in STRINGOP (Line 1706, file flincom.f90)
+                   TRIM(Intrinsic) (Line 1707, file flincom.f90)
+                   TRIM(Intrinsic) (Line 1708, file flincom.f90)
+                   TRIM(Intrinsic) (Line 1709, file flincom.f90)
+                   TRIM(Intrinsic) (Line 1744, file flincom.f90)
+                   TRIM(Intrinsic) (Line 1778, file flincom.f90)
+                   INDEX(Intrinsic) (Line 1707, file flincom.f90)
+                   INDEX(Intrinsic) (Line 1708, file flincom.f90)
+                   INDEX(Intrinsic) (Line 1709, file flincom.f90)
+                   INDEX(Intrinsic) (Line 1744, file flincom.f90)
+                   INDEX(Intrinsic) (Line 1778, file flincom.f90)
+
+Name  Messages
+----  --------
+FLINGET_MAT in FLINCOM
+      Defined as:  Subroutine (line 1238, file flincom.f90)
+
+      Interface:   None
+
+      Called By:   FLINGET_R1D in FLINCOM (Line 970, file flincom.f90)
+                   FLINGET_R2D in FLINCOM (Line 1008, file flincom.f90)
+                   FLINGET_R2D_ZOOM2D in FLINCOM (Line 1049, file flincom.f90)
+                   FLINGET_R3D in FLINCOM (Line 1089, file flincom.f90)
+                   FLINGET_R3D_ZOOM2D in FLINCOM (Line 1132, file flincom.f90)
+                   FLINGET_R4D in FLINCOM (Line 1174, file flincom.f90)
+                   FLINGET_R4D_ZOOM2D in FLINCOM (Line 1219, file flincom.f90)
+
+      Calls:       HISTERR in ERRIOIPSL (Line 1328, file flincom.f90)
+                   HISTERR in ERRIOIPSL (Line 1416, file flincom.f90)
+                   HISTERR in ERRIOIPSL (Line 1443, file flincom.f90)
+                   HISTERR in ERRIOIPSL (Line 1450, file flincom.f90)
+                   HISTERR in ERRIOIPSL (Line 1456, file flincom.f90)
+                   HISTERR in ERRIOIPSL (Line 1479, file flincom.f90)
+                   HISTERR in ERRIOIPSL (Line 1494, file flincom.f90)
+                   HISTERR in ERRIOIPSL (Line 1501, file flincom.f90)
+                   HISTERR in ERRIOIPSL (Line 1506, file flincom.f90)
+                   HISTERR in ERRIOIPSL (Line 1518, file flincom.f90)
+                   HISTERR in ERRIOIPSL (Line 1528, file flincom.f90)
+                   HISTERR in ERRIOIPSL (Line 1533, file flincom.f90)
+                   HISTERR in ERRIOIPSL (Line 1539, file flincom.f90)
+                   NF90_GET_ATT_ONE_FOURBYTEINT in NETCDF (Line 1362, file flincom.f90)
+                   NF90_GET_ATT_ONE_EIGHTBYTEREAL in NETCDF (Line 1367, file flincom.f90)
+                   NF90_GET_ATT_TEXT in NETCDF (Line 1376, file flincom.f90)
+                   NF90_GET_ATT_TEXT in NETCDF (Line 1410, file flincom.f90)
+                   NF90_GET_VAR_1D_FOURBYTEINT in NETCDF (Line 1431, file flincom.f90)
+                   NF90_GET_VAR_1D_EIGHTBYTEREAL in NETCDF (Line 1572, file flincom.f90)
+                   NF90_GET_VAR_1D_EIGHTBYTEREAL in NETCDF (Line 1579, file flincom.f90)
+                   NF90_INQUIRE_ATTRIBUTE in NETCDF (Line 1358, file flincom.f90)
+                   NF90_INQUIRE_DIMENSION in NETCDF (Line 1344, file flincom.f90)
+                   NF90_INQUIRE_DIMENSION in NETCDF (Line 1397, file flincom.f90)
+                   NF90_INQUIRE_VARIABLE in NETCDF (Line 1332, file flincom.f90)
+                   NF90_INQUIRE_VARIABLE in NETCDF (Line 1413, file flincom.f90)
+                   NF90_INQ_ATTNAME in NETCDF (Line 1357, file flincom.f90)
+                   NF90_INQ_VARID in NETCDF (Line 1325, file flincom.f90)
+                   NF90_INQ_VARID in NETCDF (Line 1399, file flincom.f90)
+                   NF90_STRERROR in NETCDF (Line 1583, file flincom.f90)
+                   STRLOWERCASE in STRINGOP (Line 1359, file flincom.f90)
+                   TRIM(Intrinsic) (Line 1309, file flincom.f90)
+                   TRIM(Intrinsic) (Line 1329, file flincom.f90)
+                   TRIM(Intrinsic) (Line 1364, file flincom.f90)
+                   TRIM(Intrinsic) (Line 1369, file flincom.f90)
+                   TRIM(Intrinsic) (Line 1378, file flincom.f90)
+                   TRIM(Intrinsic) (Line 1378, file flincom.f90)
+                   TRIM(Intrinsic) (Line 1402, file flincom.f90)
+                   TRIM(Intrinsic) (Line 1417, file flincom.f90)
+                   INDEX(Intrinsic) (Line 1371, file flincom.f90)
+                   INDEX(Intrinsic) (Line 1380, file flincom.f90)
+                   ALLOCATED(Intrinsic) (Line 1426, file flincom.f90)
+                   ALLOCATED(Intrinsic) (Line 1563, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1564, file flincom.f90)
+
+Name  Messages
+----  --------
+FLINGET_R1D in FLINCOM
+      Defined as:  Subroutine (line 945, file flincom.f90)
+
+      Interface:   None
+
+      Calls:       FLINGET_MAT in FLINCOM (Line 970, file flincom.f90)
+                   ALLOCATED(Intrinsic) (Line 959, file flincom.f90)
+                   SIZE(Intrinsic) (Line 961, file flincom.f90)
+                   SIZE(Intrinsic) (Line 962, file flincom.f90)
+                   SIZE(Intrinsic) (Line 963, file flincom.f90)
+                   SIZE(Intrinsic) (Line 963, file flincom.f90)
+                   SIZE(Intrinsic) (Line 965, file flincom.f90)
+                   SIZE(Intrinsic) (Line 967, file flincom.f90)
+                   SIZE(Intrinsic) (Line 974, file flincom.f90)
+
+Name  Messages
+----  --------
+FLINGET_R2D in FLINCOM
+      Defined as:  Subroutine (line 983, file flincom.f90)
+
+      Interface:   None
+
+      Calls:       FLINGET_MAT in FLINCOM (Line 1008, file flincom.f90)
+                   ALLOCATED(Intrinsic) (Line 997, file flincom.f90)
+                   SIZE(Intrinsic) (Line 999, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1000, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1001, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1001, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1003, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1005, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1012, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1013, file flincom.f90)
+
+Name  Messages
+----  --------
+FLINGET_R2D_ZOOM2D in FLINCOM
+      Defined as:  Subroutine (line 1023, file flincom.f90)
+
+      Interface:   None
+
+      Calls:       FLINGET_MAT in FLINCOM (Line 1049, file flincom.f90)
+                   ALLOCATED(Intrinsic) (Line 1038, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1040, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1041, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1042, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1042, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1044, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1046, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1053, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1054, file flincom.f90)
+
+Name  Messages
+----  --------
+FLINGET_R3D in FLINCOM
+      Defined as:  Subroutine (line 1064, file flincom.f90)
+
+      Interface:   None
+
+      Calls:       FLINGET_MAT in FLINCOM (Line 1089, file flincom.f90)
+                   ALLOCATED(Intrinsic) (Line 1078, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1080, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1081, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1082, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1082, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1084, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1086, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1093, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1094, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1095, file flincom.f90)
+
+Name  Messages
+----  --------
+FLINGET_R3D_ZOOM2D in FLINCOM
+      Defined as:  Subroutine (line 1106, file flincom.f90)
+
+      Interface:   None
+
+      Calls:       FLINGET_MAT in FLINCOM (Line 1132, file flincom.f90)
+                   ALLOCATED(Intrinsic) (Line 1121, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1123, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1124, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1125, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1125, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1127, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1129, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1136, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1137, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1138, file flincom.f90)
+
+Name  Messages
+----  --------
+FLINGET_R4D in FLINCOM
+      Defined as:  Subroutine (line 1149, file flincom.f90)
+
+      Interface:   None
+
+      Calls:       FLINGET_MAT in FLINCOM (Line 1174, file flincom.f90)
+                   ALLOCATED(Intrinsic) (Line 1163, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1165, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1166, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1167, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1167, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1169, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1171, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1178, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1179, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1180, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1181, file flincom.f90)
+
+Name  Messages
+----  --------
+FLINGET_R4D_ZOOM2D in FLINCOM
+      Defined as:  Subroutine (line 1193, file flincom.f90)
+
+      Interface:   None
+
+      Calls:       FLINGET_MAT in FLINCOM (Line 1219, file flincom.f90)
+                   ALLOCATED(Intrinsic) (Line 1208, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1210, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1211, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1212, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1212, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1214, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1216, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1223, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1224, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1225, file flincom.f90)
+                   SIZE(Intrinsic) (Line 1226, file flincom.f90)
+
+Name  Messages
+----  --------
+FLINGET_SCAL in FLINCOM
+      Defined as:  Subroutine (line 1589, file flincom.f90)
+
+      Interface:   None
+
+      Calls:       NF90_GET_ATT_ONE_EIGHTBYTEREAL in NETCDF (Line 1641, file flincom.f90)
+
+Name  Messages
+----  --------
+FLININFO in FLINCOM
+      Defined as:  Subroutine (line 18, file flincom.f90)
+
+      Interface:   None
+
+      Called By:   FLINOPEN_WORK in FLINCOM (Line 411, file flincom.f90)
+
+      Calls:       HISTERR in ERRIOIPSL (Line 698, file flincom.f90)
+                   HISTERR in ERRIOIPSL (Line 745, file flincom.f90)
+                   NF90_INQUIRE in NETCDF (Line 701, file flincom.f90)
+                   NF90_INQUIRE_DIMENSION in NETCDF (Line 711, file flincom.f90)
+                   NF90_OPEN in NETCDF (Line 696, file flincom.f90)
+                   STRLOWERCASE in STRINGOP (Line 712, file flincom.f90)
+                   LEN_TRIM(Intrinsic) (Line 689, file flincom.f90)
+                   TRIM(Intrinsic) (Line 698, file flincom.f90)
+                   ADJUSTL(Intrinsic) (Line 713, file flincom.f90)
+                   INDEX(Intrinsic) (Line 718, file flincom.f90)
+                   INDEX(Intrinsic) (Line 719, file flincom.f90)
+                   INDEX(Intrinsic) (Line 721, file flincom.f90)
+                   INDEX(Intrinsic) (Line 722, file flincom.f90)
+                   INDEX(Intrinsic) (Line 724, file flincom.f90)
+                   INDEX(Intrinsic) (Line 725, file flincom.f90)
+                   INDEX(Intrinsic) (Line 726, file flincom.f90)
+                   INDEX(Intrinsic) (Line 727, file flincom.f90)
+                   INDEX(Intrinsic) (Line 729, file flincom.f90)
+                   INDEX(Intrinsic) (Line 730, file flincom.f90)
+
+Name  Messages
+----  --------
+FLININSPECT in FLINCOM
+      Defined as:  Subroutine (line 18, file flincom.f90)
+
+      Interface:   None
+
+      Calls:       HISTERR in ERRIOIPSL (Line 1908, file flincom.f90)
+                   NF90_INQUIRE in NETCDF (Line 1854, file flincom.f90)
+                   NF90_INQUIRE_DIMENSION in NETCDF (Line 1871, file flincom.f90)
+                   NF90_INQUIRE_VARIABLE in NETCDF (Line 1926, file flincom.f90)
+                   STRLOWERCASE in STRINGOP (Line 1872, file flincom.f90)
+                   ADJUSTL(Intrinsic) (Line 1873, file flincom.f90)
+                   TRIM(Intrinsic) (Line 1876, file flincom.f90)
+                   TRIM(Intrinsic) (Line 1929, file flincom.f90)
+                   INDEX(Intrinsic) (Line 1878, file flincom.f90)
+                   INDEX(Intrinsic) (Line 1879, file flincom.f90)
+                   INDEX(Intrinsic) (Line 1882, file flincom.f90)
+                   INDEX(Intrinsic) (Line 1883, file flincom.f90)
+                   INDEX(Intrinsic) (Line 1886, file flincom.f90)
+                   INDEX(Intrinsic) (Line 1887, file flincom.f90)
+                   INDEX(Intrinsic) (Line 1888, file flincom.f90)
+                   INDEX(Intrinsic) (Line 1889, file flincom.f90)
+                   INDEX(Intrinsic) (Line 1892, file flincom.f90)
+                   INDEX(Intrinsic) (Line 1893, file flincom.f90)
+
+Name  Messages
+----  --------
+FLINOPEN_NOZOOM in FLINCOM
+      Defined as:  Subroutine (line 328, file flincom.f90)
+
+      Interface:   None
+
+      Calls:       FLINOPEN_WORK in FLINCOM (Line 344, file flincom.f90)
+
+Name  Messages
+----  --------
+FLINOPEN_WORK in FLINCOM
+      Defined as:  Subroutine (line 352, file flincom.f90)
+
+      Interface:   None
+
+      Called By:   FLINOPEN_ZOOM2D in FLINCOM (Line 320, file flincom.f90)
+                   FLINOPEN_NOZOOM in FLINCOM (Line 344, file flincom.f90)
+
+      Calls:       FLININFO in FLINCOM (Line 411, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 468, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 489, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 507, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 531, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 545, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 560, file flincom.f90)
+                   HISTERR in ERRIOIPSL (Line 436, file flincom.f90)
+                   HISTERR in ERRIOIPSL (Line 440, file flincom.f90)
+                   HISTERR in ERRIOIPSL (Line 444, file flincom.f90)
+                   HISTERR in ERRIOIPSL (Line 483, file flincom.f90)
+                   HISTERR in ERRIOIPSL (Line 500, file flincom.f90)
+                   HISTERR in ERRIOIPSL (Line 518, file flincom.f90)
+                   HISTERR in ERRIOIPSL (Line 565, file flincom.f90)
+                   HISTERR in ERRIOIPSL (Line 600, file flincom.f90)
+                   IOCONF_CALENDAR in CALENDAR (Line 616, file flincom.f90)
+                   NF90_GET_ATT_TEXT in NETCDF (Line 587, file flincom.f90)
+                   NF90_GET_ATT_TEXT in NETCDF (Line 614, file flincom.f90)
+                   NF90_GET_ATT_TEXT in NETCDF (Line 620, file flincom.f90)
+                   NF90_GET_ATT_ONE_EIGHTBYTEREAL in NETCDF (Line 632, file flincom.f90)
+                   NF90_GET_ATT_ONE_EIGHTBYTEREAL in NETCDF (Line 645, file flincom.f90)
+                   NF90_GET_ATT_ONE_EIGHTBYTEREAL in NETCDF (Line 646, file flincom.f90)
+                   NF90_GET_ATT_ONE_EIGHTBYTEREAL in NETCDF (Line 647, file flincom.f90)
+                   NF90_GET_ATT_ONE_EIGHTBYTEREAL in NETCDF (Line 648, file flincom.f90)
+                   NF90_GET_ATT_ONE_EIGHTBYTEREAL in NETCDF (Line 649, file flincom.f90)
+                   NF90_GET_VAR_EIGHTBYTEREAL in NETCDF (Line 469, file flincom.f90)
+                   NF90_GET_VAR_EIGHTBYTEREAL in NETCDF (Line 470, file flincom.f90)
+                   NF90_GET_VAR_EIGHTBYTEREAL in NETCDF (Line 490, file flincom.f90)
+                   NF90_GET_VAR_EIGHTBYTEREAL in NETCDF (Line 491, file flincom.f90)
+                   NF90_GET_VAR_EIGHTBYTEREAL in NETCDF (Line 508, file flincom.f90)
+                   NF90_GET_VAR_EIGHTBYTEREAL in NETCDF (Line 509, file flincom.f90)
+                   NF90_GET_VAR_2D_EIGHTBYTEREAL in NETCDF (Line 533, file flincom.f90)
+                   NF90_GET_VAR_1D_EIGHTBYTEREAL in NETCDF (Line 537, file flincom.f90)
+                   NF90_GET_VAR_2D_EIGHTBYTEREAL in NETCDF (Line 547, file flincom.f90)
+                   NF90_GET_VAR_1D_EIGHTBYTEREAL in NETCDF (Line 551, file flincom.f90)
+                   NF90_GET_VAR_1D_EIGHTBYTEREAL in NETCDF (Line 562, file flincom.f90)
+                   NF90_GET_VAR_1D_EIGHTBYTEREAL in NETCDF (Line 604, file flincom.f90)
+                   NF90_INQUIRE_VARIABLE in NETCDF (Line 585, file flincom.f90)
+                   YMDS2JU in CALENDAR (Line 627, file flincom.f90)
+                   YMDS2JU in CALENDAR (Line 639, file flincom.f90)
+                   YMDS2JU in CALENDAR (Line 655, file flincom.f90)
+                   MODULO(Intrinsic) (Line 474, file flincom.f90)
+                   MODULO(Intrinsic) (Line 474, file flincom.f90)
+                   MODULO(Intrinsic) (Line 478, file flincom.f90)
+                   MODULO(Intrinsic) (Line 478, file flincom.f90)
+                   MODULO(Intrinsic) (Line 479, file flincom.f90)
+                   MODULO(Intrinsic) (Line 480, file flincom.f90)
+                   MODULO(Intrinsic) (Line 481, file flincom.f90)
+                   MODULO(Intrinsic) (Line 482, file flincom.f90)
+                   ABS(Intrinsic) (Line 479, file flincom.f90)
+                   ABS(Intrinsic) (Line 481, file flincom.f90)
+                   ABS(Intrinsic) (Line 498, file flincom.f90)
+                   ABS(Intrinsic) (Line 499, file flincom.f90)
+                   ABS(Intrinsic) (Line 516, file flincom.f90)
+                   ABS(Intrinsic) (Line 517, file flincom.f90)
+                   INDEX(Intrinsic) (Line 588, file flincom.f90)
+                   INDEX(Intrinsic) (Line 589, file flincom.f90)
+                   INDEX(Intrinsic) (Line 590, file flincom.f90)
+                   INDEX(Intrinsic) (Line 622, file flincom.f90)
+                   INDEX(Intrinsic) (Line 634, file flincom.f90)
+                   NINT(Intrinsic) (Line 605, file flincom.f90)
+                   LEN_TRIM(Intrinsic) (Line 622, file flincom.f90)
+                   LEN_TRIM(Intrinsic) (Line 634, file flincom.f90)
+                   INT(Intrinsic) (Line 651, file flincom.f90)
+                   INT(Intrinsic) (Line 652, file flincom.f90)
+                   INT(Intrinsic) (Line 653, file flincom.f90)
+
+Name  Messages
+----  --------
+FLINOPEN_ZOOM2D in FLINCOM
+      Defined as:  Subroutine (line 297, file flincom.f90)
+
+      Interface:   None
+
+      Calls:       FLINOPEN_WORK in FLINCOM (Line 320, file flincom.f90)
+
+Name  Messages
+----  --------
+FLINPUT_MAT in FLINCOM
+      Defined as:  Subroutine (line 874, file flincom.f90)
+
+      Interface:   None
+
+      Called By:   FLINPUT_R1D in FLINCOM (Line 782, file flincom.f90)
+                   FLINPUT_R2D in FLINCOM (Line 809, file flincom.f90)
+                   FLINPUT_R3D in FLINCOM (Line 836, file flincom.f90)
+                   FLINPUT_R4D in FLINCOM (Line 863, file flincom.f90)
+
+      Calls:       NF90_DEF_VAR_MANYDIMS in NETCDF (Line 912, file flincom.f90)
+                   NF90_ENDDEF in NETCDF (Line 914, file flincom.f90)
+                   NF90_PUT_ATT_TEXT in NETCDF (Line 913, file flincom.f90)
+                   NF90_REDEF in NETCDF (Line 911, file flincom.f90)
+                   TRIM(Intrinsic) (Line 913, file flincom.f90)
+
+Name  Messages
+----  --------
+FLINPUT_R1D in FLINCOM
+      Defined as:  Subroutine (line 766, file flincom.f90)
+
+      Interface:   None
+
+      Calls:       FLINPUT_MAT in FLINCOM (Line 782, file flincom.f90)
+                   NF90_PUT_VAR_1D_EIGHTBYTEREAL in NETCDF (Line 786, file flincom.f90)
+                   SIZE(Intrinsic) (Line 780, file flincom.f90)
+
+Name  Messages
+----  --------
+FLINPUT_R2D in FLINCOM
+      Defined as:  Subroutine (line 793, file flincom.f90)
+
+      Interface:   None
+
+      Calls:       FLINPUT_MAT in FLINCOM (Line 809, file flincom.f90)
+                   NF90_PUT_VAR_2D_EIGHTBYTEREAL in NETCDF (Line 813, file flincom.f90)
+                   SIZE(Intrinsic) (Line 807, file flincom.f90)
+
+Name  Messages
+----  --------
+FLINPUT_R3D in FLINCOM
+      Defined as:  Subroutine (line 820, file flincom.f90)
+
+      Interface:   None
+
+      Calls:       FLINPUT_MAT in FLINCOM (Line 836, file flincom.f90)
+                   NF90_PUT_VAR_3D_EIGHTBYTEREAL in NETCDF (Line 840, file flincom.f90)
+                   SIZE(Intrinsic) (Line 834, file flincom.f90)
+
+Name  Messages
+----  --------
+FLINPUT_R4D in FLINCOM
+      Defined as:  Subroutine (line 847, file flincom.f90)
+
+      Interface:   None
+
+      Calls:       FLINPUT_MAT in FLINCOM (Line 863, file flincom.f90)
+                   NF90_PUT_VAR_4D_EIGHTBYTEREAL in NETCDF (Line 867, file flincom.f90)
+                   SIZE(Intrinsic) (Line 861, file flincom.f90)
+
+Name  Messages
+----  --------
+FLINPUT_SCAL in FLINCOM
+      Defined as:  Subroutine (line 920, file flincom.f90)
+
+      Interface:   None
+
+      Calls:       NF90_ENDDEF in NETCDF (Line 939, file flincom.f90)
+                   NF90_PUT_ATT_ONE_FOURBYTEREAL in NETCDF (Line 938, file flincom.f90)
+                   NF90_REDEF in NETCDF (Line 937, file flincom.f90)
+                   REAL(Intrinsic) (Line 938, file flincom.f90)
+
+Name  Messages
+----  --------
+FLINQUERY_VAR in FLINCOM
+      Defined as:  Subroutine (line 18, file flincom.f90)
+
+      Interface:   None
+
+      Calls:       NF90_INQ_VARID in NETCDF (Line 1826, file flincom.f90)
+
+Name  Messages
+----  --------
+HISTERR in ERRIOIPSL
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINCRE in FLINCOM (Line 276, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 436, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 440, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 444, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 483, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 500, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 518, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 565, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 600, file flincom.f90)
+                   FLININFO in FLINCOM (Line 698, file flincom.f90)
+                   FLININFO in FLINCOM (Line 745, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1328, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1416, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1443, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1450, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1456, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1479, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1494, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1501, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1506, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1518, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1528, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1533, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1539, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 1788, file flincom.f90)
+                   FLININSPECT in FLINCOM (Line 1908, file flincom.f90)
+
+Name  Messages
+----  --------
+INDEX(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINOPEN_WORK in FLINCOM (Line 588, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 589, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 590, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 622, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 634, file flincom.f90)
+                   FLININFO in FLINCOM (Line 718, file flincom.f90)
+                   FLININFO in FLINCOM (Line 719, file flincom.f90)
+                   FLININFO in FLINCOM (Line 721, file flincom.f90)
+                   FLININFO in FLINCOM (Line 722, file flincom.f90)
+                   FLININFO in FLINCOM (Line 724, file flincom.f90)
+                   FLININFO in FLINCOM (Line 725, file flincom.f90)
+                   FLININFO in FLINCOM (Line 726, file flincom.f90)
+                   FLININFO in FLINCOM (Line 727, file flincom.f90)
+                   FLININFO in FLINCOM (Line 729, file flincom.f90)
+                   FLININFO in FLINCOM (Line 730, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1371, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1380, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 1707, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 1708, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 1709, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 1744, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 1778, file flincom.f90)
+                   FLININSPECT in FLINCOM (Line 1878, file flincom.f90)
+                   FLININSPECT in FLINCOM (Line 1879, file flincom.f90)
+                   FLININSPECT in FLINCOM (Line 1882, file flincom.f90)
+                   FLININSPECT in FLINCOM (Line 1883, file flincom.f90)
+                   FLININSPECT in FLINCOM (Line 1886, file flincom.f90)
+                   FLININSPECT in FLINCOM (Line 1887, file flincom.f90)
+                   FLININSPECT in FLINCOM (Line 1888, file flincom.f90)
+                   FLININSPECT in FLINCOM (Line 1889, file flincom.f90)
+                   FLININSPECT in FLINCOM (Line 1892, file flincom.f90)
+                   FLININSPECT in FLINCOM (Line 1893, file flincom.f90)
+
+Name  Messages
+----  --------
+INT(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINOPEN_WORK in FLINCOM (Line 651, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 652, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 653, file flincom.f90)
+
+Name  Messages
+----  --------
+IOCONF_CALENDAR in CALENDAR
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINOPEN_WORK in FLINCOM (Line 616, file flincom.f90)
+
+Name  Messages
+----  --------
+JU2YMDS in CALENDAR
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINCRE in FLINCOM (Line 246, file flincom.f90)
+
+Name  Messages
+----  --------
+LEN_TRIM(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINCRE in FLINCOM (Line 179, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 622, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 634, file flincom.f90)
+                   FLININFO in FLINCOM (Line 689, file flincom.f90)
+
+Name  Messages
+----  --------
+MAXVAL(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINCRE in FLINCOM (Line 224, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 239, file flincom.f90)
+
+Name  Messages
+----  --------
+MINVAL(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINCRE in FLINCOM (Line 222, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 237, file flincom.f90)
+
+Name  Messages
+----  --------
+MODULO(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINOPEN_WORK in FLINCOM (Line 474, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 474, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 478, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 478, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 479, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 480, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 481, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 482, file flincom.f90)
+
+Name  Messages
+----  --------
+NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+Name  Messages
+----  --------
+NF90_ABORT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_CLOSE in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINCLO in FLINCOM (Line 1805, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_COPY_ATT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_CREATE in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINCRE in FLINCOM (Line 186, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_CREATE_MP in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_CREATE_PAR in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_DEF_COMPOUND in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_DEF_DIM in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINCRE in FLINCOM (Line 188, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 189, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 190, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 191, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_DEF_ENUM in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_DEF_GRP in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_DEF_OPAQUE in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_DEF_VAR_CHUNKING in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_DEF_VAR_DEFLATE in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_DEF_VAR_ENDIAN in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_DEF_VAR_FILL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_DEF_VAR_FLETCHER32 in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_DEF_VAR_MANYDIMS in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINCRE in FLINCOM (Line 215, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 230, file flincom.f90)
+                   FLINPUT_MAT in FLINCOM (Line 912, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_DEF_VAR_ONEDIM in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINCRE in FLINCOM (Line 197, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 206, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_DEF_VAR_SCALAR in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_DEF_VLEN in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_DELETE in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_DEL_ATT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_ENDDEF in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINCRE in FLINCOM (Line 253, file flincom.f90)
+                   FLINPUT_MAT in FLINCOM (Line 914, file flincom.f90)
+                   FLINPUT_SCAL in FLINCOM (Line 939, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_GET_ATT_ANY in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_ATT_EIGHTBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_ATT_EIGHTBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_ATT_FOURBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_ATT_FOURBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_ATT_ONEBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_ATT_ONE_EIGHTBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_ATT_ONE_EIGHTBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINOPEN_WORK in FLINCOM (Line 632, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 645, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 646, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 647, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 648, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 649, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1367, file flincom.f90)
+                   FLINGET_SCAL in FLINCOM (Line 1641, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_GET_ATT_ONE_FOURBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINGET_MAT in FLINCOM (Line 1362, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_GET_ATT_ONE_FOURBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_ATT_ONE_ONEBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_ATT_ONE_TWOBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_ATT_TEXT in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINOPEN_WORK in FLINCOM (Line 587, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 614, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 620, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1376, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1410, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 1704, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_GET_ATT_TWOBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_1D_EIGHTBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_1D_EIGHTBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINOPEN_WORK in FLINCOM (Line 537, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 551, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 562, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 604, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1572, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1579, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_GET_VAR_1D_FOURBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINGET_MAT in FLINCOM (Line 1431, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_GET_VAR_1D_FOURBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_1D_ONEBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_1D_TEXT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_1D_TWOBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_2D_EIGHTBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_2D_EIGHTBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINOPEN_WORK in FLINCOM (Line 533, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 547, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_GET_VAR_2D_FOURBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_2D_FOURBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_2D_ONEBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_2D_TEXT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_2D_TWOBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_3D_EIGHTBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_3D_EIGHTBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_3D_FOURBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_3D_FOURBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_3D_ONEBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_3D_TEXT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_3D_TWOBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_4D_EIGHTBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_4D_EIGHTBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_4D_FOURBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_4D_FOURBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_4D_ONEBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_4D_TEXT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_4D_TWOBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_5D_EIGHTBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_5D_EIGHTBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_5D_FOURBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_5D_FOURBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_5D_ONEBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_5D_TEXT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_5D_TWOBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_6D_EIGHTBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_6D_EIGHTBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_6D_FOURBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_6D_FOURBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_6D_ONEBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_6D_TEXT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_6D_TWOBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_7D_EIGHTBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_7D_EIGHTBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_7D_FOURBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_7D_FOURBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_7D_ONEBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_7D_TEXT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_7D_TWOBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_ANY in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_EIGHTBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_EIGHTBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINOPEN_WORK in FLINCOM (Line 469, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 470, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 490, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 491, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 508, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 509, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_GET_VAR_FOURBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_FOURBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_ONEBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_TEXT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_GET_VAR_TWOBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQUIRE in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLININFO in FLINCOM (Line 701, file flincom.f90)
+                   FLININSPECT in FLINCOM (Line 1854, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_INQUIRE_ATTRIBUTE in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINGET_MAT in FLINCOM (Line 1358, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_INQUIRE_DIMENSION in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLININFO in FLINCOM (Line 711, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1344, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1397, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 1771, file flincom.f90)
+                   FLININSPECT in FLINCOM (Line 1871, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_INQUIRE_VARIABLE in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINOPEN_WORK in FLINCOM (Line 585, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1332, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1413, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 1711, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 1742, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 1776, file flincom.f90)
+                   FLININSPECT in FLINCOM (Line 1926, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_INQ_ATTNAME in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINGET_MAT in FLINCOM (Line 1357, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_INQ_BASE_PE in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_CMP_FIELDDIM_SIZES in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_COMPOUND in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_COMPOUND_FIELD in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_COMPOUND_FIELDINDEX in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_COMPOUND_FIELDNAME in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_COMPOUND_FIELDNDIMS in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_COMPOUND_FIELDOFFSET in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_COMPOUND_FIELDTYPE in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_COMPOUND_NAME in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_COMPOUND_NFIELDS in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_COMPOUND_SIZE in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_DIMID in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_DIMIDS in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_ENUM in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_ENUM_IDENT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_ENUM_MEMBER in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_GRPNAME in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_GRPNAME_FULL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_GRPNAME_LEN in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_GRPS in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_GRP_FULL_NCID in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_GRP_NCID in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_GRP_PARENT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_LIBVERS in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_NCID in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_OPAQUE in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_TYPE in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_TYPEIDS in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_USER_TYPE in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_VARID in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINGET_MAT in FLINCOM (Line 1325, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1399, file flincom.f90)
+                   FLINQUERY_VAR in FLINCOM (Line 1826, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_INQ_VARIDS in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_VAR_CHUNKING in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_VAR_DEFLATE in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_VAR_ENDIAN in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_VAR_FILL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_VAR_FLETCHER32 in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INQ_VLEN in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INSERT_ARRAY_COMPOUND in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INSERT_COMPOUND in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_INSERT_ENUM in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_OPEN in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLININFO in FLINCOM (Line 696, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_OPEN_MP in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_OPEN_PAR in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_ATT_ANY in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_ATT_EIGHTBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_ATT_EIGHTBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_ATT_FOURBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_ATT_FOURBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_ATT_ONEBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_ATT_ONE_EIGHTBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_ATT_ONE_EIGHTBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_ATT_ONE_FOURBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_ATT_ONE_FOURBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINCRE in FLINCOM (Line 221, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 223, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 236, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 238, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 243, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 248, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 249, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 250, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 251, file flincom.f90)
+                   FLINPUT_SCAL in FLINCOM (Line 938, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_PUT_ATT_ONE_ONEBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_ATT_ONE_TWOBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_ATT_TEXT in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINCRE in FLINCOM (Line 198, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 199, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 200, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 207, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 208, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 209, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 217, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 218, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 219, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 232, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 233, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 234, file flincom.f90)
+                   FLINPUT_MAT in FLINCOM (Line 913, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_PUT_ATT_TWOBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_1D_EIGHTBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_1D_EIGHTBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINCRE in FLINCOM (Line 257, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 261, file flincom.f90)
+                   FLINPUT_R1D in FLINCOM (Line 786, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_1D_FOURBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_1D_FOURBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_1D_ONEBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_1D_TEXT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_1D_TWOBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_2D_EIGHTBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_2D_EIGHTBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINCRE in FLINCOM (Line 265, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 269, file flincom.f90)
+                   FLINPUT_R2D in FLINCOM (Line 813, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_2D_FOURBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_2D_FOURBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_2D_ONEBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_2D_TEXT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_2D_TWOBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_3D_EIGHTBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_3D_EIGHTBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINPUT_R3D in FLINCOM (Line 840, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_3D_FOURBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_3D_FOURBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_3D_ONEBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_3D_TEXT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_3D_TWOBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_4D_EIGHTBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_4D_EIGHTBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINPUT_R4D in FLINCOM (Line 867, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_4D_FOURBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_4D_FOURBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_4D_ONEBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_4D_TEXT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_4D_TWOBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_5D_EIGHTBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_5D_EIGHTBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_5D_FOURBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_5D_FOURBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_5D_ONEBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_5D_TEXT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_5D_TWOBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_6D_EIGHTBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_6D_EIGHTBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_6D_FOURBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_6D_FOURBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_6D_ONEBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_6D_TEXT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_6D_TWOBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_7D_EIGHTBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_7D_EIGHTBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_7D_FOURBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_7D_FOURBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_7D_ONEBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_7D_TEXT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_7D_TWOBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_ANY in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_EIGHTBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_EIGHTBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_FOURBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_FOURBYTEREAL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_ONEBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_TEXT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_PUT_VAR_TWOBYTEINT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_REDEF in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINPUT_MAT in FLINCOM (Line 911, file flincom.f90)
+                   FLINPUT_SCAL in FLINCOM (Line 937, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_RENAME_ATT in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_RENAME_DIM in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_RENAME_VAR in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_SET_BASE_PE in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_SET_FILL in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_STRERROR in NETCDF
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINGET_MAT in FLINCOM (Line 1583, file flincom.f90)
+
+Name  Messages
+----  --------
+NF90_SYNC in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NF90_VAR_PAR_ACCESS in NETCDF
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NINT(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINOPEN_WORK in FLINCOM (Line 605, file flincom.f90)
+
+Name  Messages
+----  --------
+REAL(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINCRE in FLINCOM (Line 222, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 224, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 237, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 239, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 244, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 248, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 249, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 250, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 251, file flincom.f90)
+                   FLINCRE in FLINCOM (Line 261, file flincom.f90)
+                   FLINPUT_SCAL in FLINCOM (Line 938, file flincom.f90)
+
+Name  Messages
+----  --------
+SIZE(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINPUT_R1D in FLINCOM (Line 780, file flincom.f90)
+                   FLINPUT_R2D in FLINCOM (Line 807, file flincom.f90)
+                   FLINPUT_R3D in FLINCOM (Line 834, file flincom.f90)
+                   FLINPUT_R4D in FLINCOM (Line 861, file flincom.f90)
+                   FLINGET_R1D in FLINCOM (Line 961, file flincom.f90)
+                   FLINGET_R1D in FLINCOM (Line 962, file flincom.f90)
+                   FLINGET_R1D in FLINCOM (Line 963, file flincom.f90)
+                   FLINGET_R1D in FLINCOM (Line 963, file flincom.f90)
+                   FLINGET_R1D in FLINCOM (Line 965, file flincom.f90)
+                   FLINGET_R1D in FLINCOM (Line 967, file flincom.f90)
+                   FLINGET_R1D in FLINCOM (Line 974, file flincom.f90)
+                   FLINGET_R2D in FLINCOM (Line 999, file flincom.f90)
+                   FLINGET_R2D in FLINCOM (Line 1000, file flincom.f90)
+                   FLINGET_R2D in FLINCOM (Line 1001, file flincom.f90)
+                   FLINGET_R2D in FLINCOM (Line 1001, file flincom.f90)
+                   FLINGET_R2D in FLINCOM (Line 1003, file flincom.f90)
+                   FLINGET_R2D in FLINCOM (Line 1005, file flincom.f90)
+                   FLINGET_R2D in FLINCOM (Line 1012, file flincom.f90)
+                   FLINGET_R2D in FLINCOM (Line 1013, file flincom.f90)
+                   FLINGET_R2D_ZOOM2D in FLINCOM (Line 1040, file flincom.f90)
+                   FLINGET_R2D_ZOOM2D in FLINCOM (Line 1041, file flincom.f90)
+                   FLINGET_R2D_ZOOM2D in FLINCOM (Line 1042, file flincom.f90)
+                   FLINGET_R2D_ZOOM2D in FLINCOM (Line 1042, file flincom.f90)
+                   FLINGET_R2D_ZOOM2D in FLINCOM (Line 1044, file flincom.f90)
+                   FLINGET_R2D_ZOOM2D in FLINCOM (Line 1046, file flincom.f90)
+                   FLINGET_R2D_ZOOM2D in FLINCOM (Line 1053, file flincom.f90)
+                   FLINGET_R2D_ZOOM2D in FLINCOM (Line 1054, file flincom.f90)
+                   FLINGET_R3D in FLINCOM (Line 1080, file flincom.f90)
+                   FLINGET_R3D in FLINCOM (Line 1081, file flincom.f90)
+                   FLINGET_R3D in FLINCOM (Line 1082, file flincom.f90)
+                   FLINGET_R3D in FLINCOM (Line 1082, file flincom.f90)
+                   FLINGET_R3D in FLINCOM (Line 1084, file flincom.f90)
+                   FLINGET_R3D in FLINCOM (Line 1086, file flincom.f90)
+                   FLINGET_R3D in FLINCOM (Line 1093, file flincom.f90)
+                   FLINGET_R3D in FLINCOM (Line 1094, file flincom.f90)
+                   FLINGET_R3D in FLINCOM (Line 1095, file flincom.f90)
+                   FLINGET_R3D_ZOOM2D in FLINCOM (Line 1123, file flincom.f90)
+                   FLINGET_R3D_ZOOM2D in FLINCOM (Line 1124, file flincom.f90)
+                   FLINGET_R3D_ZOOM2D in FLINCOM (Line 1125, file flincom.f90)
+                   FLINGET_R3D_ZOOM2D in FLINCOM (Line 1125, file flincom.f90)
+                   FLINGET_R3D_ZOOM2D in FLINCOM (Line 1127, file flincom.f90)
+                   FLINGET_R3D_ZOOM2D in FLINCOM (Line 1129, file flincom.f90)
+                   FLINGET_R3D_ZOOM2D in FLINCOM (Line 1136, file flincom.f90)
+                   FLINGET_R3D_ZOOM2D in FLINCOM (Line 1137, file flincom.f90)
+                   FLINGET_R3D_ZOOM2D in FLINCOM (Line 1138, file flincom.f90)
+                   FLINGET_R4D in FLINCOM (Line 1165, file flincom.f90)
+                   FLINGET_R4D in FLINCOM (Line 1166, file flincom.f90)
+                   FLINGET_R4D in FLINCOM (Line 1167, file flincom.f90)
+                   FLINGET_R4D in FLINCOM (Line 1167, file flincom.f90)
+                   FLINGET_R4D in FLINCOM (Line 1169, file flincom.f90)
+                   FLINGET_R4D in FLINCOM (Line 1171, file flincom.f90)
+                   FLINGET_R4D in FLINCOM (Line 1178, file flincom.f90)
+                   FLINGET_R4D in FLINCOM (Line 1179, file flincom.f90)
+                   FLINGET_R4D in FLINCOM (Line 1180, file flincom.f90)
+                   FLINGET_R4D in FLINCOM (Line 1181, file flincom.f90)
+                   FLINGET_R4D_ZOOM2D in FLINCOM (Line 1210, file flincom.f90)
+                   FLINGET_R4D_ZOOM2D in FLINCOM (Line 1211, file flincom.f90)
+                   FLINGET_R4D_ZOOM2D in FLINCOM (Line 1212, file flincom.f90)
+                   FLINGET_R4D_ZOOM2D in FLINCOM (Line 1212, file flincom.f90)
+                   FLINGET_R4D_ZOOM2D in FLINCOM (Line 1214, file flincom.f90)
+                   FLINGET_R4D_ZOOM2D in FLINCOM (Line 1216, file flincom.f90)
+                   FLINGET_R4D_ZOOM2D in FLINCOM (Line 1223, file flincom.f90)
+                   FLINGET_R4D_ZOOM2D in FLINCOM (Line 1224, file flincom.f90)
+                   FLINGET_R4D_ZOOM2D in FLINCOM (Line 1225, file flincom.f90)
+                   FLINGET_R4D_ZOOM2D in FLINCOM (Line 1226, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1564, file flincom.f90)
+
+Name  Messages
+----  --------
+STRINGOP
+      Defined as:  No definitions.
+
+      Used By:     FLINCOM
+
+Name  Messages
+----  --------
+STRLOWERCASE in STRINGOP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLININFO in FLINCOM (Line 712, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1359, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 1706, file flincom.f90)
+                   FLININSPECT in FLINCOM (Line 1872, file flincom.f90)
+
+Name  Messages
+----  --------
+TRIM(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLININFO in FLINCOM (Line 698, file flincom.f90)
+                   FLINPUT_MAT in FLINCOM (Line 913, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1309, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1329, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1364, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1369, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1378, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1378, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1402, file flincom.f90)
+                   FLINGET_MAT in FLINCOM (Line 1417, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 1707, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 1708, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 1709, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 1744, file flincom.f90)
+                   FLINFINDCOOD in FLINCOM (Line 1778, file flincom.f90)
+                   FLININSPECT in FLINCOM (Line 1876, file flincom.f90)
+                   FLININSPECT in FLINCOM (Line 1929, file flincom.f90)
+
+Name  Messages
+----  --------
+YMDS2JU in CALENDAR
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   FLINOPEN_WORK in FLINCOM (Line 627, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 639, file flincom.f90)
+                   FLINOPEN_WORK in FLINCOM (Line 655, file flincom.f90)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

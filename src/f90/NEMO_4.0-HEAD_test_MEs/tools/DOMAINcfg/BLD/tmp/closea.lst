@@ -1,0 +1,1073 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S u m m a r y   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Compilation
+-----------
+File     : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/closea.f90
+Compiled : 04/29/22  10:43:20
+Compiler : Version 8.3.4
+Ftnlx    : Version 8318 (libcif 83016)
+Target   : x86-64
+Command  : ftn_driver.exe -hcpu=haswell -hstatic -D__CRAYXC -D__CRAY_HASWELL
+           -D__CRAYXT_COMPUTE_LINUX_TARGET -hnetwork=aries -oclosea.o
+           -I/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HE
+           AD_test_MEs/tools/DOMAINcfg/BLD/inc -sreal64 -sinteger32 -Ovector0
+           -hfp0 -O0 -hflex_mp=intolerant -eCID
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/common/moci/modules/packages/XIOS/2.0/24708/952/inc
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/m
+           ct
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/p
+           smile.MPI1 -c -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/opt/cray/libsci/13.0.1/CRAY/83/haswell/include
+           -I/opt/cray/mpt/7.0.4/gni/mpich2-cray/83/include
+           -I/opt/cray/rca/1.0.0-2.0502.60530.1.62.ari/include
+           -I/opt/cray/alps/5.2.4-2.0502.9774.31.11.ari/include
+           -I/opt/cray/xpmem/0.1-2.0502.64982.5.3.ari/include
+           -I/opt/cray/gni-headers/4.0-1.0502.10859.7.8.ari/include
+           -I/opt/cray/dmapp/7.0.1-1.0502.11080.8.76.ari/include
+           -I/opt/cray/pmi/5.0.5-1.0000.10300.134.8.ari/include
+           -I/opt/cray/ugni/6.0-1.0502.10863.8.29.ari/include
+           -I/opt/cray/udreg/2.3.2-1.0502.10518.2.17.ari/include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/pkgconfig/../include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/wlm_detect/1.0-1.0502.64649.2.1.ari/include
+           -I/opt/cray/krca/1.0.0-2.0502.63139.4.31.ari/include
+           -I/opt/cray-hss-devel/7.2.0/include /projects/jmmp/dbruciaf/NEMO/CHEC
+           KOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/clo
+           sea.f90
+
+ftnlx report
+------------
+Source   : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp//projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/closea.f90
+Date     : 04/29/2022  10:43:20
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S o u r c e   L i s t i n g
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    1.    MODULE closea
+    2.       !!======================================================================
+    3.       !!                       ***  MODULE  closea  ***
+    4.       !! Closed Seas  : specific treatments associated with closed seas
+    5.       !!======================================================================
+    6.       !! History :   8.2  !  00-05  (O. Marti)  Original code
+    7.       !!             8.5  !  02-06  (E. Durand, G. Madec)  F90
+    8.       !!             9.0  !  06-07  (G. Madec)  add clo_rnf, clo_ups, clo_bat
+    9.       !!        NEMO 3.4  !  03-12  (P.G. Fogli) sbc_clo bug fix & mpp reproducibility
+   10.       !!----------------------------------------------------------------------
+   11.    
+   12.       !!----------------------------------------------------------------------
+   13.       !!   dom_clo    : modification of the ocean domain for closed seas cases
+   14.       !!   sbc_clo    : Special handling of closed seas
+   15.       !!   clo_rnf    : set close sea outflows as river mouths (see sbcrnf)
+   16.       !!   clo_ups    : set mixed centered/upstream scheme in closed sea (see traadv_cen2)
+   17.       !!   clo_bat    : set to zero a field over closed sea (see domzrg)
+   18.       !!----------------------------------------------------------------------
+   19.       USE oce             ! dynamics and tracers
+   20.       USE dom_oce         ! ocean space and time domain
+                 ^                                             
+ftn-1193 ftn: CAUTION CLOSEA, File = closea.f90, Line = 20, Column = 8 
+  Module "PAR_KIND" is indirectly used in module "DOM_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_kind.o".  That file no
+  longer exists.
+
+                 ^                                             
+ftn-1193 ftn: CAUTION CLOSEA, File = closea.f90, Line = 20, Column = 8 
+  Module "PAR_OCE" is indirectly used in module "DOM_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_oce.o".  That file no
+  longer exists.
+
+   21.       USE phycst          ! physical constants
+   22.       USE in_out_manager  ! I/O manager
+                 ^                             
+ftn-1193 ftn: CAUTION CLOSEA, File = closea.f90, Line = 22, Column = 8 
+  Module "NC4INTERFACE" is indirectly used in module "IN_OUT_MANAGER" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/nc4interface.o".  That file no
+  longer exists.
+
+   23.       USE lib_fortran,    ONLY: glob_sum, DDPDD
+   24.       USE lbclnk          ! lateral boundary condition - MPP exchanges
+   25.       USE lib_mpp         ! MPP library
+   26.       USE timing
+   27.    
+   28.       IMPLICIT NONE
+   29.       PRIVATE
+   30.    
+   31.       PUBLIC dom_clo      ! routine called by domain module
+   32.       PUBLIC clo_bat      ! routine called in domzgr module
+   33.    
+   34.       INTEGER, PUBLIC, PARAMETER          ::   jpncs   = 4      !: number of closed sea
+   35.       INTEGER, PUBLIC, DIMENSION(jpncs)   ::   ncstt            !: Type of closed sea
+   36.       INTEGER, PUBLIC, DIMENSION(jpncs)   ::   ncsi1, ncsj1     !: south-west closed sea limits (i,j)
+   37.       INTEGER, PUBLIC, DIMENSION(jpncs)   ::   ncsi2, ncsj2     !: north-east closed sea limits (i,j)
+   38.       INTEGER, PUBLIC, DIMENSION(jpncs)   ::   ncsnr            !: number of point where run-off pours
+   39.       INTEGER, PUBLIC, DIMENSION(jpncs,4) ::   ncsir, ncsjr     !: Location of runoff
+   40.    
+   41.       REAL(wp), DIMENSION (jpncs+1)       ::   surf             ! closed sea surface
+   42.    
+   43.       !! * Substitutions
+   44.       !!----------------------------------------------------------------------
+   45.       !!                   ***  vectopt_loop_substitute  ***
+   46.       !!----------------------------------------------------------------------
+   47.       !! ** purpose :   substitute the inner loop start/end indices with CPP macro
+   48.       !!                allow unrolling of do-loop (useful with vector processors)
+   49.       !!----------------------------------------------------------------------
+   50.       !!----------------------------------------------------------------------
+   51.       !! NEMO/OPA 3.7 , NEMO Consortium (2014)
+   52.       !! $Id: vectopt_loop_substitute.h90 4990 2014-12-15 16:42:49Z timgraham $ 
+   53.       !! Software governed by the CeCILL licence (./LICENSE)
+   54.       !!----------------------------------------------------------------------
+   55.       !!----------------------------------------------------------------------
+   56.       !! NEMO/OCE 4.0 , NEMO Consortium (2018)
+   57.       !! $Id: closea.F90 5836 2015-10-26 14:49:40Z cetlod $
+   58.       !! Software governed by the CeCILL licence     (./LICENSE)
+   59.       !!----------------------------------------------------------------------
+   60.    CONTAINS
+   61.    
+   62.       SUBROUTINE dom_clo
+   63.          !!---------------------------------------------------------------------
+   64.          !!                  ***  ROUTINE dom_clo  ***
+   65.          !!        
+   66.          !! ** Purpose :   Closed sea domain initialization
+   67.          !!
+   68.          !! ** Method  :   if a closed sea is located only in a model grid point
+   69.          !!                just the thermodynamic processes are applied.
+   70.          !!
+   71.          !! ** Action  :   ncsi1(), ncsj1() : south-west closed sea limits (i,j)
+   72.          !!                ncsi2(), ncsj2() : north-east Closed sea limits (i,j)
+   73.          !!                ncsir(), ncsjr() : Location of runoff
+   74.          !!                ncsnr            : number of point where run-off pours
+   75.          !!                ncstt            : Type of closed sea
+   76.          !!                                   =0 spread over the world ocean
+   77.          !!                                   =2 put at location runoff
+   78.          !!----------------------------------------------------------------------
+   79.          INTEGER ::   jc      ! dummy loop indices
+   80.          INTEGER ::   isrow   ! local index
+   81.          !!----------------------------------------------------------------------
+   82.          !
+   83.          IF(lwp) WRITE(numout,*)
+   84.          IF(lwp) WRITE(numout,*)'dom_clo : closed seas '
+   85.          IF(lwp) WRITE(numout,*)'~~~~~~~'
+   86.          !
+   87.          ! initial values
+   88.          ncsnr(:) = 1  ;  ncsi1(:) = 1  ;  ncsi2(:) = 1  ;  ncsir(:,:) = 1
+ftn-6210 ftn: VECTOR File = closea.f90, Line = 88 
+  A loop starting at line 88 was partially vectorized with a single vector iteration.
+
+   89.          ncstt(:) = 0  ;  ncsj1(:) = 1  ;  ncsj2(:) = 1  ;  ncsjr(:,:) = 1
+ftn-6210 ftn: VECTOR File = closea.f90, Line = 89 
+  A loop starting at line 89 was partially vectorized with a single vector iteration.
+
+   90.          !
+   91.          ! set the closed seas (in data domain indices)
+   92.          ! -------------------
+   93.          !
+   94.          IF( cp_cfg == "orca" ) THEN
+   95.             !
+   96.             SELECT CASE ( jp_cfg )
+   97.             !                                           ! =======================
+   98.             CASE ( 1 )                                  ! ORCA_R1 configuration
+   99.                !                                        ! =======================
+  100.                ! This dirty section will be suppressed by simplification process:
+  101.                ! all this will come back in input files
+  102.                ! Currently these hard-wired indices relate to configuration with
+  103.                ! extend grid (jpjglo=332)
+  104.                isrow = 332 - jpjglo
+  105.                !
+  106.                ncsnr(1)   = 1    ; ncstt(1)   = 0           ! Caspian Sea
+  107.                ncsi1(1)   = 332  ; ncsj1(1)   = 243 - isrow
+  108.                ncsi2(1)   = 344  ; ncsj2(1)   = 275 - isrow
+  109.                ncsir(1,1) = 1    ; ncsjr(1,1) = 1
+  110.                !                                        
+  111.                !                                        ! =======================
+  112.             CASE ( 2 )                                  !  ORCA_R2 configuration
+  113.                !                                        ! =======================
+  114.                !                                            ! Caspian Sea
+  115.                ncsnr(1)   =   1  ;  ncstt(1)   =   0           ! spread over the globe
+  116.                ncsi1(1)   =  11  ;  ncsj1(1)   = 103
+  117.                ncsi2(1)   =  17  ;  ncsj2(1)   = 112
+  118.                ncsir(1,1) =   1  ;  ncsjr(1,1) =   1 
+  119.                !                                            ! Great North American Lakes
+  120.                ncsnr(2)   =   1  ;  ncstt(2)   =   2           ! put at St Laurent mouth
+  121.                ncsi1(2)   =  97  ;  ncsj1(2)   = 107
+  122.                ncsi2(2)   = 103  ;  ncsj2(2)   = 111
+  123.                ncsir(2,1) = 110  ;  ncsjr(2,1) = 111           
+  124.                !                                            ! Black Sea (crossed by the cyclic boundary condition)
+  125.                ncsnr(3:4) =   4  ;  ncstt(3:4) =   2           ! put in Med Sea (north of Aegean Sea)
+ftn-6271 ftn: VECTOR File = closea.f90, Line = 125 
+  A loop starting at line 125 was not vectorized because its trip count is too small.
+
+  126.                ncsir(3:4,1) = 171;  ncsjr(3:4,1) = 106         !
+ftn-6271 ftn: VECTOR File = closea.f90, Line = 126 
+  A loop starting at line 126 was not vectorized because its trip count is too small.
+
+  127.                ncsir(3:4,2) = 170;  ncsjr(3:4,2) = 106 
+ftn-6271 ftn: VECTOR File = closea.f90, Line = 127 
+  A loop starting at line 127 was not vectorized because its trip count is too small.
+
+  128.                ncsir(3:4,3) = 171;  ncsjr(3:4,3) = 105 
+ftn-6271 ftn: VECTOR File = closea.f90, Line = 128 
+  A loop starting at line 128 was not vectorized because its trip count is too small.
+
+  129.                ncsir(3:4,4) = 170;  ncsjr(3:4,4) = 105 
+ftn-6271 ftn: VECTOR File = closea.f90, Line = 129 
+  A loop starting at line 129 was not vectorized because its trip count is too small.
+
+  130.                ncsi1(3)   = 174  ;  ncsj1(3)   = 107           ! 1 : west part of the Black Sea      
+  131.                ncsi2(3)   = 181  ;  ncsj2(3)   = 112           !            (ie west of the cyclic b.c.)
+  132.                ncsi1(4)   =   2  ;  ncsj1(4)   = 107           ! 2 : east part of the Black Sea 
+  133.                ncsi2(4)   =   6  ;  ncsj2(4)   = 112           !           (ie east of the cyclic b.c.)
+  134.                 
+  135.              
+  136.    
+  137.                !                                        ! =======================
+  138.             CASE ( 4 )                                  !  ORCA_R4 configuration
+  139.                !                                        ! =======================
+  140.                !                                            ! Caspian Sea
+  141.                ncsnr(1)   =  1  ;  ncstt(1)   =  0  
+  142.                ncsi1(1)   =  4  ;  ncsj1(1)   = 53 
+  143.                ncsi2(1)   =  4  ;  ncsj2(1)   = 56
+  144.                ncsir(1,1) =  1  ;  ncsjr(1,1) =  1
+  145.                !                                            ! Great North American Lakes
+  146.                ncsnr(2)   =  1  ;  ncstt(2)   =  2 
+  147.                ncsi1(2)   = 49  ;  ncsj1(2)   = 55
+  148.                ncsi2(2)   = 51  ;  ncsj2(2)   = 56
+  149.                ncsir(2,1) = 57  ;  ncsjr(2,1) = 55
+  150.                !                                            ! Black Sea
+  151.                ncsnr(3)   =  4  ;  ncstt(3)   =  2  
+  152.                ncsi1(3)   = 88  ;  ncsj1(3)   = 55 
+  153.                ncsi2(3)   = 91  ;  ncsj2(3)   = 56
+  154.                ncsir(3,1) = 86  ;  ncsjr(3,1) = 53
+  155.                ncsir(3,2) = 87  ;  ncsjr(3,2) = 53 
+  156.                ncsir(3,3) = 86  ;  ncsjr(3,3) = 52 
+  157.                ncsir(3,4) = 87  ;  ncsjr(3,4) = 52
+  158.                !                                            ! Baltic Sea
+  159.                ncsnr(4)   =  1  ;  ncstt(4)   =  2
+  160.                ncsi1(4)   = 75  ;  ncsj1(4)   = 59
+  161.                ncsi2(4)   = 76  ;  ncsj2(4)   = 61
+  162.                ncsir(4,1) = 84  ;  ncsjr(4,1) = 59 
+  163.                !                                        ! =======================
+  164.             CASE ( 025 )                                ! ORCA_R025 configuration
+  165.                !                                        ! =======================
+  166.                ncsnr(1)   = 1    ; ncstt(1)   = 0               ! Caspian + Aral sea
+  167.                ncsi1(1)   = 1330 ; ncsj1(1)   = 645
+  168.                ncsi2(1)   = 1400 ; ncsj2(1)   = 795
+  169.                ncsir(1,1) = 1    ; ncsjr(1,1) = 1
+  170.                !                                        
+  171.                ncsnr(2)   = 1    ; ncstt(2)   = 0               ! Azov Sea 
+  172.                ncsi1(2)   = 1284 ; ncsj1(2)   = 722
+  173.                ncsi2(2)   = 1304 ; ncsj2(2)   = 747
+  174.                ncsir(2,1) = 1    ; ncsjr(2,1) = 1
+  175.                !
+  176.             END SELECT
+  177.             !
+  178.          ENDIF
+  179.    
+  180.          ! convert the position in local domain indices
+  181.          ! --------------------------------------------
+  182.          DO jc = 1, jpncs
+  183.             ncsi1(jc)   = mi0( ncsi1(jc) )
+  184.             ncsj1(jc)   = mj0( ncsj1(jc) )
+  185.    
+  186.             ncsi2(jc)   = mi1( ncsi2(jc) )   
+  187.             ncsj2(jc)   = mj1( ncsj2(jc) )  
+  188.          END DO
+  189.          !
+  190.       END SUBROUTINE dom_clo
+  191.    
+  192.    
+  193.       SUBROUTINE clo_bat( pbat, kbat )
+  194.          !!---------------------------------------------------------------------
+  195.          !!                  ***  ROUTINE clo_bat  ***
+  196.          !!                    
+  197.          !! ** Purpose :   suppress closed sea from the domain
+  198.          !!
+  199.          !! ** Method  :   set to 0 the meter and level bathymetry (given in 
+  200.          !!                arguments) over the closed seas.
+  201.          !!
+  202.          !! ** Action  :   set pbat=0 and kbat=0 over closed seas
+  203.          !!----------------------------------------------------------------------
+  204.          REAL(wp), DIMENSION(jpi,jpj), INTENT(inout) ::   pbat   ! bathymetry in meters (bathy array)
+  205.          INTEGER , DIMENSION(jpi,jpj), INTENT(inout) ::   kbat   ! bathymetry in levels (mbathy array)
+  206.          !
+  207.          INTEGER  ::   jc, ji, jj      ! dummy loop indices
+  208.          !!----------------------------------------------------------------------
+  209.          !
+  210.          DO jc = 1, jpncs
+  211.             DO jj = ncsj1(jc), ncsj2(jc)
+  212.                DO ji = ncsi1(jc), ncsi2(jc)
+  213.                   pbat(ji,jj) = 0._wp   
+  214.                   kbat(ji,jj) = 0   
+  215.                END DO 
+  216.             END DO 
+  217.           END DO 
+  218.           !
+  219.       END SUBROUTINE clo_bat
+  220.    
+  221.       !!======================================================================
+  222.    END MODULE closea
+  223.    
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                         E x t e r n a l   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Name  Messages
+----  --------
+AGRIF_CFIXED in DOM_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+AGRIF_ROOT in DOM_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+CLOSEA
+      Defined as:  Module (line 1, file closea.f90)
+
+        Uses:      DOM_OCE
+                   PAR_KIND  (indirectly)
+                   PAR_OCE  (indirectly)
+                   PHYCST
+                   IN_OUT_MANAGER
+                   PAR_KIND  (indirectly)
+                   NC4INTERFACE  (indirectly)
+                   PAR_OCE  (indirectly)
+                   LIB_FORTRAN
+                   LBCLNK
+                   PAR_OCE  (indirectly)
+                   LIB_MPP  (indirectly)
+                   LIB_MPP
+                   TIMING
+
+Name  Messages
+----  --------
+CLO_BAT in CLOSEA
+      Defined as:  Subroutine (line 32, file closea.f90)
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+CTL_NAM in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+CTL_OPN in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+CTL_STOP in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+CTL_WARN in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+DDPDD in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+DOM_CLO in CLOSEA
+      Defined as:  Subroutine (line 31, file closea.f90)
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+DOM_OCE
+      Defined as:  No definitions.
+
+      Used By:     CLOSEA
+
+Name  Messages
+----  --------
+DOM_OCE_ALLOC in DOM_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GET_NF90_SYMBOL in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GET_UNIT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_SUM_1D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_SUM_2D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_SUM_2D_A in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_SUM_3D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_SUM_3D_A in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IN_OUT_MANAGER
+      Defined as:  No definitions.
+
+      Used By:     CLOSEA
+
+Name  Messages
+----  --------
+LBCLNK
+      Defined as:  No definitions.
+
+      Used By:     CLOSEA
+
+Name  Messages
+----  --------
+LIB_FORTRAN
+      Defined as:  No definitions.
+
+      Used By:     CLOSEA
+
+Name  Messages
+----  --------
+LIB_MPP
+      Defined as:  No definitions.
+
+      Used By:     CLOSEA  (indirectly)
+                   CLOSEA
+
+Name  Messages
+----  --------
+MPPBCAST_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPGATHER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_REAL_MULTIPLE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPRECV in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSCATTER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSEND in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSTOP in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_REALDD in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_REALDD in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSYNC in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_COMM_FREE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_ICE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_NORTH in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_ZNL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_E in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_ICB in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_9 in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_E in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_ICB in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_MULTIPLE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_3D_GATHER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_BDY_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_BDY_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_SUM_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_SUM_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MAXLOC2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MAXLOC3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MINLOC2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MINLOC3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MYNODE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NC4INTERFACE
+      Defined as:  No definitions.
+
+      Used By:     CLOSEA  (indirectly)
+
+Name  Messages
+----  --------
+OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+Name  Messages
+----  --------
+OCE_ALLOC in OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+PAR_KIND
+      Defined as:  No definitions.
+
+      Used By:     CLOSEA  (indirectly)
+                   CLOSEA  (indirectly)
+
+Name  Messages
+----  --------
+PAR_OCE
+      Defined as:  No definitions.
+
+      Used By:     CLOSEA  (indirectly)
+                   CLOSEA  (indirectly)
+                   CLOSEA  (indirectly)
+
+Name  Messages
+----  --------
+PHYCST
+      Defined as:  No definitions.
+
+      Used By:     CLOSEA
+
+Name  Messages
+----  --------
+PHY_CST in PHYCST
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SET_NF90_DEF_VAR_CHUNKING in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SET_NF90_DEF_VAR_DEFLATE in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING
+      Defined as:  No definitions.
+
+      Used By:     CLOSEA
+
+Name  Messages
+----  --------
+TIMING_FINALIZE in TIMING
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING_INIT in TIMING
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING_RESET in TIMING
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING_START in TIMING
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING_STOP in TIMING
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

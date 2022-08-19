@@ -1,0 +1,1875 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S u m m a r y   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Compilation
+-----------
+File     : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/zgrmes.F90
+Compiled : 04/29/22  10:43:43
+Compiler : Version 8.3.4
+Ftnlx    : Version 8318 (libcif 83016)
+Target   : x86-64
+Command  : ftn_driver.exe -hcpu=haswell -hstatic -D__CRAYXC -D__CRAY_HASWELL
+           -D__CRAYXT_COMPUTE_LINUX_TARGET -hnetwork=aries -ozgrmes.o
+           -I/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HE
+           AD_test_MEs/tools/DOMAINcfg/BLD/inc -sreal64 -sinteger32 -Ovector0
+           -hfp0 -O0 -hflex_mp=intolerant -eCID
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/common/moci/modules/packages/XIOS/2.0/24708/952/inc
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/m
+           ct
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/p
+           smile.MPI1 -c -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/opt/cray/libsci/13.0.1/CRAY/83/haswell/include
+           -I/opt/cray/mpt/7.0.4/gni/mpich2-cray/83/include
+           -I/opt/cray/rca/1.0.0-2.0502.60530.1.62.ari/include
+           -I/opt/cray/alps/5.2.4-2.0502.9774.31.11.ari/include
+           -I/opt/cray/xpmem/0.1-2.0502.64982.5.3.ari/include
+           -I/opt/cray/gni-headers/4.0-1.0502.10859.7.8.ari/include
+           -I/opt/cray/dmapp/7.0.1-1.0502.11080.8.76.ari/include
+           -I/opt/cray/pmi/5.0.5-1.0000.10300.134.8.ari/include
+           -I/opt/cray/ugni/6.0-1.0502.10863.8.29.ari/include
+           -I/opt/cray/udreg/2.3.2-1.0502.10518.2.17.ari/include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/pkgconfig/../include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/wlm_detect/1.0-1.0502.64649.2.1.ari/include
+           -I/opt/cray/krca/1.0.0-2.0502.63139.4.31.ari/include
+           -I/opt/cray-hss-devel/7.2.0/include /projects/jmmp/dbruciaf/NEMO/CHEC
+           KOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/zgr
+           mes.F90
+
+ftnlx report
+------------
+Source   : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp//projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/zgrmes.F90
+Date     : 04/29/2022  10:43:44
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S o u r c e   L i s t i n g
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    1.    MODULE zgrmes
+    2.       !!==============================================================================
+    3.       !!                       ***  MODULE zgrmes   ***
+    4.       !! Ocean initialization : Multiple Enveloped s coordinate (MES)
+    5.       !!==============================================================================
+    6.       !!  NEMO      4.0  ! 2021-07  (D. Bruciaferri)   
+    7.       !!----------------------------------------------------------------------
+    8.       !
+    9.       USE oce               ! ocean variables
+   10.       USE dom_oce           ! ocean domain
+                 ^                                
+ftn-1193 ftn: CAUTION ZGRMES, File = zgrmes.F90, Line = 10, Column = 8 
+  Module "PAR_KIND" is indirectly used in module "DOM_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_kind.o".  That file no
+  longer exists.
+
+                 ^                                
+ftn-1193 ftn: CAUTION ZGRMES, File = zgrmes.F90, Line = 10, Column = 8 
+  Module "PAR_OCE" is indirectly used in module "DOM_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_oce.o".  That file no
+  longer exists.
+
+   11.       USE depth_e3          ! depth <=> e3
+   12.       USE closea            ! closed seas
+   13.       USE mes               ! MEs-coordinates
+   14.       USE zgrloc            ! localised vert. coor. system 
+   15.       !
+   16.       USE in_out_manager    ! I/O manager
+                 ^                               
+ftn-1193 ftn: CAUTION ZGRMES, File = zgrmes.F90, Line = 16, Column = 8 
+  Module "NC4INTERFACE" is indirectly used in module "IN_OUT_MANAGER" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/nc4interface.o".  That file no
+  longer exists.
+
+   17.       USE iom               ! I/O library
+                 ^                               
+ftn-1193 ftn: CAUTION ZGRMES, File = zgrmes.F90, Line = 17, Column = 8 
+  Module "IOM_NF90" is indirectly used in module "IOM" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/iom_nf90.o".  That file no
+  longer exists.
+
+                 ^                               
+ftn-1193 ftn: CAUTION ZGRMES, File = zgrmes.F90, Line = 17, Column = 8 
+  Module "IOM_DEF" is indirectly used in module "IOM" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/iom_def.o".  That file no
+  longer exists.
+
+   18.       USE lbclnk            ! ocean lateral boundary conditions (or mpp link)
+   19.       USE lib_mpp           ! distributed memory computing library
+   20.       USE wrk_nemo          ! Memory allocation
+   21.       USE timing            ! Timing
+   22.    
+   23.       IMPLICIT NONE
+   24.       PRIVATE
+   25.    
+   26.       PUBLIC   zgr_mes        ! called by domzgr.F90
+   27.    
+   28.       !! * Substitutions
+   29.    #  include "vectopt_loop_substitute.h90"
+   30.    
+   31.    CONTAINS
+   32.    
+   33.    ! =====================================================================================================
+   34.    
+   35.       SUBROUTINE zgr_mes
+   36.          !!---------------------------------------------------------------------
+   37.          !!              ***  ROUTINE zgr_mes  ***
+   38.          !!
+   39.          !! ** Purpose : Wrap the steps to generate gloabal or localised 
+   40.          !!              MEs-coordinates systems
+   41.          !!----------------------------------------------------------------------
+   42.          INTEGER  ::   ji, jj, jk     ! dummy loop index
+   43.          !-----------------------------------------------------------------------
+   44.          !
+   45.          ! Initialise the mask to use MEs-coord. globally
+   46.          l2g_msk(:,:) = 2.0
+ftn-6263 ftn: VECTOR File = zgrmes.F90, Line = 46 
+  A loop starting at line 46 was not vectorized because it contains a reference to a non-vector intrinsic on line 46.
+
+   47.         
+   48.          ! Generating a global MEs vertical grid
+   49.          ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   50.          CALL mes_build
+   51.          
+   52.          ! Local MEs
+   53.          ! ~~~~~~~~~
+   54.          IF( ln_loc_zgr )  CALL zgr_loc
+   55.          
+   56.          ! MEs with partial steps
+   57.          ! ~~~~~~~~~~~~~~~~~~~~~~
+   58.          IF(ln_pst_mes .OR. ln_pst_l2g)  CALL zgr_pst_mes
+   59.          !
+   60.          ! Computing gdep3w
+   61.          gde3w_0(:,:,1) = 0.5 * e3w_0(:,:,1)
+ftn-6262 ftn: VECTOR File = zgrmes.F90, Line = 61 
+  A loop starting at line 61 was not vectorized because it contains a call to a subroutine or function on line 61.
+
+   62.          DO jk = 2, jpk
+   63.             gde3w_0(:,:,jk) = gde3w_0(:,:,jk-1) + e3w_0(:,:,jk)
+ftn-6262 ftn: VECTOR File = zgrmes.F90, Line = 63 
+  A loop starting at line 63 was not vectorized because it contains a call to a subroutine or function on line 63.
+
+   64.          END DO
+   65.          !
+   66.          ! From here equal to sco code - domzgr.F90 line 2183
+   67.          !
+   68.          CALL lbc_lnk( e3t_0 , 'T', 1._wp )
+   69.          CALL lbc_lnk( e3u_0 , 'U', 1._wp )
+   70.          CALL lbc_lnk( e3v_0 , 'V', 1._wp )
+   71.          CALL lbc_lnk( e3f_0 , 'F', 1._wp )
+   72.          CALL lbc_lnk( e3w_0 , 'W', 1._wp )
+   73.          CALL lbc_lnk( e3uw_0, 'U', 1._wp )
+   74.          CALL lbc_lnk( e3vw_0, 'V', 1._wp )
+   75.          !
+   76.          WHERE (e3t_0   (:,:,:).eq.0.0)  e3t_0(:,:,:) = 1.0
+ftn-6262 ftn: VECTOR File = zgrmes.F90, Line = 76 
+  A loop starting at line 76 was not vectorized because it contains a call to a subroutine or function on line 76.
+
+   77.          WHERE (e3u_0   (:,:,:).eq.0.0)  e3u_0(:,:,:) = 1.0
+ftn-6262 ftn: VECTOR File = zgrmes.F90, Line = 77 
+  A loop starting at line 77 was not vectorized because it contains a call to a subroutine or function on line 77.
+
+   78.          WHERE (e3v_0   (:,:,:).eq.0.0)  e3v_0(:,:,:) = 1.0
+ftn-6262 ftn: VECTOR File = zgrmes.F90, Line = 78 
+  A loop starting at line 78 was not vectorized because it contains a call to a subroutine or function on line 78.
+
+   79.          WHERE (e3f_0   (:,:,:).eq.0.0)  e3f_0(:,:,:) = 1.0
+ftn-6262 ftn: VECTOR File = zgrmes.F90, Line = 79 
+  A loop starting at line 79 was not vectorized because it contains a call to a subroutine or function on line 79.
+
+   80.          WHERE (e3w_0   (:,:,:).eq.0.0)  e3w_0(:,:,:) = 1.0
+ftn-6262 ftn: VECTOR File = zgrmes.F90, Line = 80 
+  A loop starting at line 80 was not vectorized because it contains a call to a subroutine or function on line 80.
+
+   81.          WHERE (e3uw_0  (:,:,:).eq.0.0)  e3uw_0(:,:,:) = 1.0
+ftn-6262 ftn: VECTOR File = zgrmes.F90, Line = 81 
+  A loop starting at line 81 was not vectorized because it contains a call to a subroutine or function on line 81.
+
+   82.          WHERE (e3vw_0  (:,:,:).eq.0.0)  e3vw_0(:,:,:) = 1.0
+ftn-6262 ftn: VECTOR File = zgrmes.F90, Line = 82 
+  A loop starting at line 82 was not vectorized because it contains a call to a subroutine or function on line 82.
+
+   83.          !
+   84.          IF ( ln_loc_zgr ) THEN
+   85.             IF ( .NOT. ln_pst_l2g ) THEN
+   86.                ! Only in the transition zone since MEs
+   87.                ! zone has been already taken care of
+   88.                IF ( lwp ) WRITE(numout,*) 'Refine mbathy'
+   89.                DO jj = 1, jpj
+   90.                   DO ji = 1, jpi
+   91.                      IF ( l2g_msk(ji,jj) == 1._wp ) THEN
+   92.                         DO jk = 1, jpkm1
+   93.                            IF( scobot(ji,jj) >= gdept_0(ji,jj,jk) )   mbathy(ji,jj) = MAX( 2, jk )
+   94.                         END DO
+   95.                         IF( scobot(ji,jj) == 0._wp               )   mbathy(ji,jj) = 0
+   96.                      END IF
+   97.                   END DO
+   98.                END DO
+   99.             END IF
+  100.          END IF
+  101.    
+  102.       END SUBROUTINE zgr_mes
+  103.    
+  104.    ! =====================================================================================================
+  105.    
+  106.       SUBROUTINE zgr_pst_mes
+  107.         !!---------------------------------------------------------------------
+  108.         !!              ***  ROUTINE zgr_pst_mes  ***
+  109.         !!
+  110.         !! ** Purpose : Apply partial steps to MEs coordinates 
+  111.         !!              (and transition zone if using local MEs)
+  112.         !!
+  113.         !!----------------------------------------------------------------------
+  114.         INTEGER                             ::   ji, jj, jk, jp, jl   ! dummy loop index
+  115.         INTEGER                             ::   jbku, jbkv, jbkf     ! dummy loop index
+  116.         REAL(wp)                            ::   zdepth, e3psm, e3psr ! local variables
+  117.         REAL(wp)                            ::   zgdept, zgdepw, zgdepwp1
+  118.         REAL(wp)                            ::   ze3t, ze3w, e3u_j, e3u_jp1
+  119.         REAL(wp)                            ::   e3t_i, e3t_ip1, e3w_i, e3w_ip1
+  120.         REAL(wp)                            ::   e3t_j, e3t_jp1, e3w_j, e3w_jp1
+  121.         REAL(wp)                            ::   ps_i, ps_ip1, ps_j, ps_jp1
+  122.         REAL(wp)                            ::   ps_uj, ps_ujp1, ps_p, ps_s
+  123.         !
+  124.         REAL(wp), POINTER, DIMENSION(:,:)   :: pst_msk              !: mask for areas where to
+  125.                                                                     !: apply partial steps
+  126.         REAL(wp), POINTER, DIMENSION(:,:)   :: apst                 !: tracking points where
+  127.                                                                     !: we apply partial steps
+  128.         ! ARRAYS TO BACKUP ORIGINAL MEs COORDINATE SYSTEM 
+  129.         REAL(wp), POINTER, DIMENSION(:,:,:) :: e3t_mes, e3w_mes     !: scale factors [m]
+  130.         REAL(wp), POINTER, DIMENSION(:,:,:) :: gdept_mes, gdepw_mes !: depths [m]
+  131.         !!----------------------------------------------------------------------
+  132.    
+  133.         e3psm = rn_e3pst_min
+  134.         e3psr = rn_e3pst_rat
+  135.    
+  136.         CALL wrk_alloc( jpi, jpj, pst_msk, apst)
+  137.         CALL wrk_alloc( jpi, jpj, jpk, gdept_mes, gdepw_mes, e3t_mes, e3w_mes)
+  138.    
+  139.         ! Initialise the mask to identify where to apply partial steps
+  140.         pst_msk(:,:) = 0.0
+ftn-6263 ftn: VECTOR File = zgrmes.F90, Line = 140 
+  A loop starting at line 140 was not vectorized because it contains a reference to a non-vector intrinsic on line 140.
+
+  141.         IF(ln_pst_mes)  WHERE (l2g_msk(:,:) == 2.0)  pst_msk(:,:) = 1.0
+ftn-6262 ftn: VECTOR File = zgrmes.F90, Line = 141 
+  A loop starting at line 141 was not vectorized because it contains a call to a subroutine or function on line 141.
+
+  142.         IF(ln_pst_l2g)  WHERE (l2g_msk(:,:) == 1.0)  pst_msk(:,:) = 1.0
+ftn-6262 ftn: VECTOR File = zgrmes.F90, Line = 142 
+  A loop starting at line 142 was not vectorized because it contains a call to a subroutine or function on line 142.
+
+  143.    
+  144.    
+  145.         ! Compute mbathy for ocean points (i.e. the number of ocean levels)
+  146.         ! find the number of ocean levels such that the last level thickness
+  147.         ! is larger than the minimum of e3zps_min and e3zps_rat * e3t_0
+  148.         DO jj = 1, jpj
+  149.            DO ji = 1, jpi
+  150.               IF ( pst_msk(ji,jj) == 1.0 .AND. bathy(ji,jj) > 0._wp) THEN
+  151.                  DO jk = jpkm1, 1, -1
+  152.                     zdepth = gdepw_0(ji,jj,jk) + MIN( e3psm, e3t_0(ji,jj,jk)*e3psr )
+  153.                     IF ( bathy(ji,jj) <= zdepth )   mbathy(ji,jj) = jk-1
+  154.                  END DO
+  155.                END IF
+  156.            END DO
+  157.         END DO
+  158.    
+  159.         ! ===================================================== 
+  160.         ! Scale factors and depth at T- and W- points
+  161.         ! =====================================================
+  162.         !
+  163.         ! Backup to the reference MEs-coordinate
+  164.         e3t_mes  (:,:,:) = e3t_0  (:,:,:)
+ftn-6262 ftn: VECTOR File = zgrmes.F90, Line = 164 
+  A loop starting at line 164 was not vectorized because it contains a call to a subroutine or function on line 164.
+
+  165.         e3w_mes  (:,:,:) = e3w_0  (:,:,:)
+ftn-6262 ftn: VECTOR File = zgrmes.F90, Line = 165 
+  A loop starting at line 165 was not vectorized because it contains a call to a subroutine or function on line 165.
+
+  166.         gdept_mes(:,:,:) = gdept_0(:,:,:)
+ftn-6262 ftn: VECTOR File = zgrmes.F90, Line = 166 
+  A loop starting at line 166 was not vectorized because it contains a call to a subroutine or function on line 166.
+
+  167.         gdepw_mes(:,:,:) = gdepw_0(:,:,:)
+ftn-6262 ftn: VECTOR File = zgrmes.F90, Line = 167 
+  A loop starting at line 167 was not vectorized because it contains a call to a subroutine or function on line 167.
+
+  168.         
+  169.         ! Mask identifying points where we apply partial steps:
+  170.         !  bottom cell is     a partial cell = 0 
+  171.         !  bottom cell is not a partial cell = 1
+  172.         apst(:,:) = 1._wp
+ftn-6263 ftn: VECTOR File = zgrmes.F90, Line = 172 
+  A loop starting at line 172 was not vectorized because it contains a reference to a non-vector intrinsic on line 172.
+
+  173.         
+  174.         DO jj = 1, jpj
+  175.            DO ji = 1, jpi
+  176.               jk = mbathy(ji,jj)
+  177.               !
+  178.               ! We use partial steps only at ocean points where 
+  179.               ! envelopes differ from the bottom topography 
+  180.               IF ( pst_msk(ji,jj) == 1.0 .AND. jk > 0 ) THEN    
+  181.                  !
+  182.                  IF ( gdepw_0(ji,jj,jk+1) /= bathy(ji,jj) ) apst(ji,jj) = 0     
+  183.                  !
+  184.                  IF ( jk == jpkm1 ) THEN          ! max ocean level case
+  185.                     zgdepw = bathy(ji,jj)
+  186.                     ze3t   = bathy(ji,jj) - gdepw_mes(ji,jj,jk)
+  187.                     ze3w   = 0.5_wp * e3w_mes(ji,jj,jk) * ( 1._wp + ( ze3t/e3t_mes(ji,jj,jk) ) )
+  188.                     e3t_0(ji,jj,jk  ) = ze3t
+  189.                     e3w_0(ji,jj,jk  ) = ze3w
+  190.                     gdepw_0(ji,jj,jk+1) = zgdepw
+  191.                     gdept_0(ji,jj,jk  ) = gdept_mes(ji,jj,jk-1) + ze3w
+  192.                     gdept_0(ji,jj,jk+1) = gdept_0(ji,jj,jk) + ze3t
+  193.                     !
+  194.                  ELSE                             ! standard case
+  195.                     zgdepw   = gdepw_mes(ji,jj,jk  )
+  196.                     zgdepwp1 = gdepw_mes(ji,jj,jk+1)
+  197.                     zgdept   = gdept_mes(ji,jj,jk  )
+  198.                     ze3t     = e3t_mes  (ji,jj,jk  )
+  199.                     ze3w     = e3w_mes  (ji,jj,jk  )
+  200.                     IF ( bathy(ji,jj) <= zgdepwp1 ) gdepw_0(ji,jj,jk+1) = bathy(ji,jj)
+  201.                     !gm Bug?  check the gdepw_1d
+  202.                     !       ... on jk
+  203.                     gdept_0(ji,jj,jk) = zgdepw + ( gdepw_0(ji,jj,jk+1) - zgdepw      ) &
+  204.                        &                       * ((zgdept-zgdepw) / (zgdepwp1-zgdepw))
+  205.                     e3t_0  (ji,jj,jk) = ze3t   * (gdepw_0(ji,jj,jk+1) - zgdepw) / (zgdepwp1 - zgdepw)
+  206.                     e3w_0  (ji,jj,jk) = 0.5_wp * (gdepw_0(ji,jj,jk+1) + zgdepwp1 - 2._wp * zgdepw) &
+  207.                        &                       * (ze3w / (zgdepwp1 - zgdepw))
+  208.                     !       ... on jk+1
+  209.                     gdept_0(ji,jj,jk+1) = gdept_0(ji,jj,jk) + e3t_0(ji,jj,jk)
+  210.                  ENDIF
+  211.               ENDIF
+  212.            ENDDO
+  213.         ENDDO     
+  214.         !
+  215.         ! set value at mbathy+1
+  216.         DO jj = 1, jpj
+  217.            DO ji = 1, jpi
+  218.               jk = mbathy(ji,jj)
+  219.               IF ( pst_msk(ji,jj) == 1.0 .AND. jk > 0) THEN
+  220.                   e3t_0  (ji,jj,jk+1) = e3t_0  (ji,jj,jk)
+  221.                   e3w_0  (ji,jj,jk+1) = e3t_0  (ji,jj,jk)
+  222.               END IF
+  223.            END DO
+  224.         END DO
+  225.         !
+  226.         ! =========================================== 
+  227.         ! Scale factors at U-, V-, UW- and VW- points
+  228.         ! ===========================================
+  229.         DO jj = 1, jpjm1
+  230.            DO ji = 1, jpim1
+  231.               !
+  232.               DO jp = 0,1
+  233.                  !  
+  234.                  ! e3u at the bottom
+  235.                  ! ~~~~~~~~~~~~~~~~~
+  236.                  jbku = mbathy(ji+jp,jj)
+  237.                  ! Only ocean points  
+  238.                  IF (pst_msk(ji,jj) == 1.0 .AND. jbku > 0) THEN
+  239.                     ! work at bottom topography and level below
+  240.                     DO jk = jbku, jbku+1
+  241.                        ps_i   = apst(ji  ,jj  )   ! is bottom cell at T(ji  ,jj) point a partial cell or not
+  242.                        ps_ip1 = apst(ji+1,jj  )   ! is bottom cell at T(ji+1,jj) point a partial cell or not
+  243.                        ! correction for level jk
+  244.                        IF ( (jk /= mbathy(ji  ,jj)) .AND. (jk /= mbathy(ji  ,jj)+1) ) ps_i   = 1
+  245.                        IF ( (jk /= mbathy(ji+1,jj)) .AND. (jk /= mbathy(ji+1,jj)+1) ) ps_ip1 = 1
+  246.                        !
+  247.                        ps_p = ps_i * ps_ip1
+  248.                        ps_s = ps_i + ps_ip1
+  249.                        !
+  250.                        e3t_i   = e3t_0(ji  ,jj,jk)
+  251.                        e3t_ip1 = e3t_0(ji+1,jj,jk)
+  252.                        e3w_i   = e3w_0(ji  ,jj,jk)
+  253.                        e3w_ip1 = e3w_0(ji+1,jj,jk)
+  254.                        !
+  255.                        e3u_0(ji,jj,jk)  = MIN( e3u_0(ji,jj,jk) ,                              &
+  256.                         &                        ps_p    * e3u_0(ji,jj,jk)                    & ! no zps cell
+  257.                         &                     + (1-ps_p) * ( ps_ip1 * e3t_i + ps_i * e3t_ip1  & ! one of neighb is zps
+  258.                         &                                   + (1-ps_s) * MIN(e3t_i,e3t_ip1) ) & ! both neighb are zps
+  259.                         &                    )
+  260.                         
+  261.                        e3uw_0(ji,jj,jk) = MIN(e3uw_0(ji,jj,jk),                               &
+  262.                         &                        ps_p    * e3uw_0(ji,jj,jk)                   & ! no zps 
+  263.                         &                     + (1-ps_p) * ( ps_ip1 * e3w_i + ps_i * e3w_ip1  & ! one of neighb is zps
+  264.                         &                                   + (1-ps_s) * MIN(e3w_i,e3w_ip1) ) & ! both side are zps
+  265.                         &                    )
+  266.                     END DO
+  267.                  END IF
+  268.                  ! 
+  269.                  ! e3v at the bottom
+  270.                  ! ~~~~~~~~~~~~~~~~~
+  271.                  jbkv = mbathy(ji,jj+jp)
+  272.                  ! Only ocean points  
+  273.                  IF (pst_msk(ji,jj) == 1.0 .AND. jbkv > 0) THEN
+  274.                     ! work at bottom topography and level below
+  275.                     DO jk = jbkv, jbkv+1
+  276.                        ps_j   = apst(ji, jj  )   ! is bottom cell at T(ji,jj  ) point a partial cell or not
+  277.                        ps_jp1 = apst(ji, jj+1)   ! is bottom cell at T(ji,jj+1) point a partial cell or not
+  278.                        ! correction for level jk
+  279.                        IF ( (jk /= mbathy(ji  ,jj)) .AND. (jk /= mbathy(ji  ,jj)+1) ) ps_j   = 1
+  280.                        IF ( (jk /= mbathy(ji+1,jj)) .AND. (jk /= mbathy(ji+1,jj)+1) ) ps_jp1 = 1
+  281.                        !
+  282.                        ps_p = ps_j * ps_jp1
+  283.                        ps_s = ps_j + ps_jp1
+  284.                        !
+  285.                        e3t_j   = e3t_0(ji,jj  ,jk)
+  286.                        e3t_jp1 = e3t_0(ji,jj+1,jk)
+  287.                        e3w_j   = e3w_0(ji,jj  ,jk)
+  288.                        e3w_jp1 = e3w_0(ji,jj+1,jk)
+  289.                        !
+  290.                        e3v_0(ji,jj,jk)  = MIN( e3v_0(ji,jj,jk) ,                              &
+  291.                         &                        ps_p    * e3v_0(ji,jj,jk)                    & ! no zps cell
+  292.                         &                     + (1-ps_p) * ( ps_jp1 * e3t_j + ps_j * e3t_jp1  & ! one of neighb is zps
+  293.                         &                                   + (1-ps_s) * MIN(e3t_j,e3t_jp1) ) & ! both neighb are zps
+  294.                         &                    )
+  295.    
+  296.                        e3vw_0(ji,jj,jk) = MIN(e3vw_0(ji,jj,jk),                               &
+  297.                         &                        ps_p    * e3vw_0(ji,jj,jk)                   & ! no zps 
+  298.                         &                     + (1-ps_p) * ( ps_jp1 * e3w_j + ps_j * e3w_jp1  & ! one of neighb is zps
+  299.                         &                                   + (1-ps_s) * MIN(e3w_j,e3w_jp1) ) & ! both side are zps
+  300.                         &                    )
+  301.                     END DO
+  302.                  END IF
+  303.               END DO
+  304.            END DO
+  305.         END DO
+  306.    
+  307.         ! ========================= 
+  308.         ! Scale factors at F-points
+  309.         ! =========================   
+  310.         DO jj = 1, jpjm1
+  311.            DO ji = 1, jpim1
+  312.               DO jp = 0,1
+  313.                  DO jl = 0,1
+  314.                     jbkf = mbathy(ji+jl,jj+jp)
+  315.                     ! Only ocean points  
+  316.                     IF (pst_msk(ji,jj) == 1.0 .AND. jbkf > 0) THEN
+  317.                        ! work at bottom topography and level below
+  318.                        DO jk = jbkf, jbkf+1
+  319.                           ps_uj   = MIN(apst(ji,jj  ),apst(ji+1,jj  )) ! is bot cell at U(ji,jj  ) pnt a part. cell or not
+  320.                           ps_ujp1 = MIN(apst(ji,jj+1),apst(ji+1,jj+1)) ! is bot cell at U(ji,jj+1) pnt a part. cell or not
+  321.                           ! correction for level jk
+  322.                           IF (      (jk /= mbathy(ji  ,jj  )) .AND. (jk /= mbathy(ji  ,jj  )+1) &
+  323.                             & .AND. (jk /= mbathy(ji+1,jj  )) .AND. (jk /= mbathy(ji+1,jj  )+1) ) ps_uj   = 1
+  324.                           IF (      (jk /= mbathy(ji  ,jj+1)) .AND. (jk /= mbathy(ji  ,jj+1)+1) &
+  325.                             & .AND. (jk /= mbathy(ji+1,jj+1)) .AND. (jk /= mbathy(ji+1,jj+1)+1) ) ps_ujp1 = 1
+  326.                           !
+  327.                           ps_p = ps_uj * ps_ujp1
+  328.                           ps_s = ps_uj + ps_ujp1
+  329.                           !
+  330.                           e3u_j   = e3u_0(ji,jj  ,jk)
+  331.                           e3u_jp1 = e3u_0(ji,jj+1,jk)
+  332.                           !
+  333.                           e3f_0(ji,jj,jk) = MIN( e3f_0(ji,jj,jk) ,                                &
+  334.                            &                       ps_p    * e3f_0(ji,jj,jk)                      & ! no zps cell
+  335.                            &                    + (1-ps_p) * ( ps_ujp1 * e3u_j + ps_uj * e3u_jp1  & ! one of neighb is zps
+  336.                            &                                  + (1-ps_s) * MIN(e3u_j,e3u_jp1)   ) & ! both neighb are zps
+  337.                            &                   )
+  338.                        END DO
+  339.                     END IF
+  340.                  END DO
+  341.               END DO
+  342.            END DO
+  343.         END DO
+  344.         !
+  345.         ! set to z-scale factor if zero (i.e. along closed boundaries)
+  346.         DO jk = 1, jpk
+  347.            WHERE( e3f_0(:,:,jk) == 0._wp ) e3f_0(:,:,jk) = e3t_0(ji,jj,jk)
+ftn-6262 ftn: VECTOR File = zgrmes.F90, Line = 347 
+  A loop starting at line 347 was not vectorized because it contains a call to a subroutine or function on line 347.
+
+  348.         END DO
+  349.         !
+  350.         e3t_0(:,mj0(1),:) = e3t_0(:,mj0(2),:)     ! we duplicate factor scales for jj = 1 and jj = 2
+ftn-6263 ftn: VECTOR File = zgrmes.F90, Line = 350 
+  A loop starting at line 350 was not vectorized because it contains a reference to a non-vector intrinsic on line 350.
+
+  351.         e3w_0(:,mj0(1),:) = e3w_0(:,mj0(2),:)
+ftn-6263 ftn: VECTOR File = zgrmes.F90, Line = 351 
+  A loop starting at line 351 was not vectorized because it contains a reference to a non-vector intrinsic on line 351.
+
+  352.         e3u_0(:,mj0(1),:) = e3u_0(:,mj0(2),:)
+ftn-6263 ftn: VECTOR File = zgrmes.F90, Line = 352 
+  A loop starting at line 352 was not vectorized because it contains a reference to a non-vector intrinsic on line 352.
+
+  353.         e3v_0(:,mj0(1),:) = e3v_0(:,mj0(2),:)
+ftn-6263 ftn: VECTOR File = zgrmes.F90, Line = 353 
+  A loop starting at line 353 was not vectorized because it contains a reference to a non-vector intrinsic on line 353.
+
+  354.         e3f_0(:,mj0(1),:) = e3f_0(:,mj0(2),:)
+ftn-6263 ftn: VECTOR File = zgrmes.F90, Line = 354 
+  A loop starting at line 354 was not vectorized because it contains a reference to a non-vector intrinsic on line 354.
+
+  355.    
+  356.         ! Control of the sign
+  357.         IF( MINVAL( e3t_0  (:,:,:) ) <= 0._wp )   CALL ctl_stop( '  zgr_pst_mes : e r r o r   e3t_0 <= 0' )
+ftn-6263 ftn: VECTOR File = zgrmes.F90, Line = 357 
+  A loop starting at line 357 was not vectorized because it contains a reference to a non-vector intrinsic on line 357.
+
+  358.         IF( MINVAL( e3w_0  (:,:,:) ) <= 0._wp )   CALL ctl_stop( '  zgr_pst_mes : e r r o r   e3w_0 <= 0' )
+ftn-6263 ftn: VECTOR File = zgrmes.F90, Line = 358 
+  A loop starting at line 358 was not vectorized because it contains a reference to a non-vector intrinsic on line 358.
+
+  359.         IF( MINVAL( gdept_0(:,:,:) ) <  0._wp )   CALL ctl_stop( '  zgr_pst_mes : e r r o r   gdept_0 < 0' )
+ftn-6263 ftn: VECTOR File = zgrmes.F90, Line = 359 
+  A loop starting at line 359 was not vectorized because it contains a reference to a non-vector intrinsic on line 359.
+
+  360.         IF( MINVAL( gdepw_0(:,:,:) ) <  0._wp )   CALL ctl_stop( '  zgr_pst_mes : e r r o r   gdepw_0 < 0' )
+ftn-6263 ftn: VECTOR File = zgrmes.F90, Line = 360 
+  A loop starting at line 360 was not vectorized because it contains a reference to a non-vector intrinsic on line 360.
+
+  361.    
+  362.         CALL wrk_dealloc( jpi, jpj, pst_msk, apst)
+  363.         CALL wrk_dealloc( jpi, jpj, jpk, gdept_mes, gdepw_mes, e3t_mes, e3w_mes)
+  364.    
+  365.       END SUBROUTINE zgr_pst_mes
+  366.    
+  367.    END MODULE zgrmes
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                         E x t e r n a l   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Name  Messages
+----  --------
+AGRIF_CFIXED in DOM_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+AGRIF_ROOT in DOM_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+CLOSEA
+      Defined as:  No definitions.
+
+      Used By:     ZGRMES
+
+Name  Messages
+----  --------
+CLO_BAT in CLOSEA
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+CTL_NAM in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+CTL_OPN in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+CTL_STOP in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   ZGR_PST_MES in ZGRMES (Line 375, file zgrmes.F90)
+                   ZGR_PST_MES in ZGRMES (Line 376, file zgrmes.F90)
+                   ZGR_PST_MES in ZGRMES (Line 377, file zgrmes.F90)
+                   ZGR_PST_MES in ZGRMES (Line 378, file zgrmes.F90)
+
+Name  Messages
+----  --------
+CTL_WARN in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+DEPTH_E3
+      Defined as:  No definitions.
+
+      Used By:     ZGRMES
+
+Name  Messages
+----  --------
+DEPTH_TO_E3_1D in DEPTH_E3
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+DEPTH_TO_E3_3D in DEPTH_E3
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+DOM_CLO in CLOSEA
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+DOM_OCE
+      Defined as:  No definitions.
+
+      Used By:     ZGRMES
+                   ZGRMES  (indirectly)
+                   ZGRMES  (indirectly)
+
+Name  Messages
+----  --------
+DOM_OCE_ALLOC in DOM_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+E3_TO_DEPTH_1D in DEPTH_E3
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+E3_TO_DEPTH_3D in DEPTH_E3
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GET_NF90_SYMBOL in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GET_UNIT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IN_OUT_MANAGER
+      Defined as:  No definitions.
+
+      Used By:     ZGRMES
+                   ZGRMES  (indirectly)
+
+Name  Messages
+----  --------
+IOM
+      Defined as:  No definitions.
+
+      Used By:     ZGRMES
+
+Name  Messages
+----  --------
+IOM_CLOSE in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_CONTEXT_FINALIZE in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_DEF
+      Defined as:  No definitions.
+
+      Used By:     ZGRMES  (indirectly)
+
+Name  Messages
+----  --------
+IOM_G0D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_G0D_INTATT in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_G1D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_G2D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_G3D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_GETTIME in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_INIT in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90
+      Defined as:  No definitions.
+
+      Used By:     ZGRMES  (indirectly)
+
+Name  Messages
+----  --------
+IOM_NF90_CLOSE in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_G0D in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_G123D in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_GETTIME in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_INTATT in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_OPEN in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_RP0123D in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_NF90_VARID in IOM_NF90
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_OPEN in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_P0D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_P1D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_P2D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_P3D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_RP0D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_RP1D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_RP2D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_RP3D in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_SETKT in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_SWAP in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_USE in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IOM_VARID in IOM
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+LBCLNK
+      Defined as:  No definitions.
+
+      Used By:     ZGRMES  (indirectly)
+                   ZGRMES
+
+Name  Messages
+----  --------
+LIB_MPP
+      Defined as:  No definitions.
+
+      Used By:     ZGRMES  (indirectly)
+                   ZGRMES
+                   ZGRMES  (indirectly)
+
+Name  Messages
+----  --------
+MAX(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   ZGR_MES in ZGRMES (Line 111, file zgrmes.F90)
+
+Name  Messages
+----  --------
+MES
+      Defined as:  No definitions.
+
+      Used By:     ZGRMES
+
+Name  Messages
+----  --------
+MES_BUILD in MES
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   ZGR_MES in ZGRMES (Line 68, file zgrmes.F90)
+
+Name  Messages
+----  --------
+MIN(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   ZGR_PST_MES in ZGRMES (Line 170, file zgrmes.F90)
+                   ZGR_PST_MES in ZGRMES (Line 273, file zgrmes.F90)
+                   ZGR_PST_MES in ZGRMES (Line 276, file zgrmes.F90)
+                   ZGR_PST_MES in ZGRMES (Line 279, file zgrmes.F90)
+                   ZGR_PST_MES in ZGRMES (Line 282, file zgrmes.F90)
+                   ZGR_PST_MES in ZGRMES (Line 308, file zgrmes.F90)
+                   ZGR_PST_MES in ZGRMES (Line 311, file zgrmes.F90)
+                   ZGR_PST_MES in ZGRMES (Line 314, file zgrmes.F90)
+                   ZGR_PST_MES in ZGRMES (Line 317, file zgrmes.F90)
+                   ZGR_PST_MES in ZGRMES (Line 337, file zgrmes.F90)
+                   ZGR_PST_MES in ZGRMES (Line 338, file zgrmes.F90)
+                   ZGR_PST_MES in ZGRMES (Line 351, file zgrmes.F90)
+                   ZGR_PST_MES in ZGRMES (Line 354, file zgrmes.F90)
+
+Name  Messages
+----  --------
+MINVAL(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   ZGR_PST_MES in ZGRMES (Line 375, file zgrmes.F90)
+                   ZGR_PST_MES in ZGRMES (Line 376, file zgrmes.F90)
+                   ZGR_PST_MES in ZGRMES (Line 377, file zgrmes.F90)
+                   ZGR_PST_MES in ZGRMES (Line 378, file zgrmes.F90)
+
+Name  Messages
+----  --------
+MPPBCAST_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPGATHER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_REAL_MULTIPLE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPRECV in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSCATTER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSEND in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSTOP in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_REALDD in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_REALDD in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSYNC in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_COMM_FREE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_ICE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_NORTH in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_ZNL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_E in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_ICB in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_9 in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_E in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_ICB in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_MULTIPLE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_3D in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   ZGR_MES in ZGRMES (Line 86, file zgrmes.F90)
+                   ZGR_MES in ZGRMES (Line 87, file zgrmes.F90)
+                   ZGR_MES in ZGRMES (Line 88, file zgrmes.F90)
+                   ZGR_MES in ZGRMES (Line 89, file zgrmes.F90)
+                   ZGR_MES in ZGRMES (Line 90, file zgrmes.F90)
+                   ZGR_MES in ZGRMES (Line 91, file zgrmes.F90)
+                   ZGR_MES in ZGRMES (Line 92, file zgrmes.F90)
+
+Name  Messages
+----  --------
+MPP_LNK_3D_GATHER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_BDY_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_BDY_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_SUM_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_SUM_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MAXLOC2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MAXLOC3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MINLOC2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MINLOC3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MYNODE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NC4INTERFACE
+      Defined as:  No definitions.
+
+      Used By:     ZGRMES  (indirectly)
+                   ZGRMES  (indirectly)
+
+Name  Messages
+----  --------
+OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+Name  Messages
+----  --------
+OCE_ALLOC in OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+PAR_KIND
+      Defined as:  No definitions.
+
+      Used By:     ZGRMES  (indirectly)
+                   ZGRMES  (indirectly)
+                   ZGRMES  (indirectly)
+
+Name  Messages
+----  --------
+PAR_OCE
+      Defined as:  No definitions.
+
+      Used By:     ZGRMES  (indirectly)
+                   ZGRMES  (indirectly)
+                   ZGRMES  (indirectly)
+                   ZGRMES  (indirectly)
+
+Name  Messages
+----  --------
+SET_NF90_DEF_VAR_CHUNKING in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SET_NF90_DEF_VAR_DEFLATE in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING
+      Defined as:  No definitions.
+
+      Used By:     ZGRMES
+
+Name  Messages
+----  --------
+TIMING_FINALIZE in TIMING
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING_INIT in TIMING
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING_RESET in TIMING
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING_START in TIMING
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING_STOP in TIMING
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_ALLOC_1DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_ALLOC_1DR in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_ALLOC_2DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_ALLOC_2DR in WRK_NEMO
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   ZGR_PST_MES in ZGRMES (Line 154, file zgrmes.F90)
+
+Name  Messages
+----  --------
+WRK_ALLOC_3DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_ALLOC_3DR in WRK_NEMO
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   ZGR_PST_MES in ZGRMES (Line 155, file zgrmes.F90)
+
+Name  Messages
+----  --------
+WRK_ALLOC_4DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_ALLOC_4DR in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_DEALLOC_1DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_DEALLOC_1DR in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_DEALLOC_2DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_DEALLOC_2DR in WRK_NEMO
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   ZGR_PST_MES in ZGRMES (Line 380, file zgrmes.F90)
+
+Name  Messages
+----  --------
+WRK_DEALLOC_3DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_DEALLOC_3DR in WRK_NEMO
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   ZGR_PST_MES in ZGRMES (Line 381, file zgrmes.F90)
+
+Name  Messages
+----  --------
+WRK_DEALLOC_4DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_DEALLOC_4DR in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_LIST in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_NEMO
+      Defined as:  No definitions.
+
+      Used By:     ZGRMES
+
+Name  Messages
+----  --------
+ZGRLOC
+      Defined as:  No definitions.
+
+      Used By:     ZGRMES
+
+Name  Messages
+----  --------
+ZGRMES
+      Defined as:  Module (line 1, file zgrmes.F90)
+
+        Uses:      DOM_OCE
+                   PAR_KIND  (indirectly)
+                   PAR_OCE  (indirectly)
+                   DEPTH_E3
+                   CLOSEA
+                   PAR_OCE  (indirectly)
+                   DOM_OCE  (indirectly)
+                   MES
+                   ZGRLOC
+                   IN_OUT_MANAGER
+                   PAR_KIND  (indirectly)
+                   NC4INTERFACE  (indirectly)
+                   PAR_OCE  (indirectly)
+                   IOM
+                   NC4INTERFACE  (indirectly)
+                   PAR_KIND  (indirectly)
+                   PAR_OCE  (indirectly)
+                   LIB_MPP  (indirectly)
+                   LIB_MPP
+                   IN_OUT_MANAGER  (indirectly)
+                   IOM_NF90  (indirectly)
+                   IOM_DEF  (indirectly)
+                   LBCLNK  (indirectly)
+                   LBCLNK
+                   DOM_OCE  (indirectly)
+                   LIB_MPP  (indirectly)
+                   WRK_NEMO
+                   TIMING
+
+Name  Messages
+----  --------
+ZGR_LOC in ZGRLOC
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   ZGR_MES in ZGRMES (Line 72, file zgrmes.F90)
+
+Name  Messages
+----  --------
+ZGR_MES in ZGRMES
+      Defined as:  Subroutine (line 26, file zgrmes.F90)
+
+      Interface:   None
+
+      Calls:       ZGR_PST_MES in ZGRMES (Line 76, file zgrmes.F90)
+                   MPP_LNK_3D in LIB_MPP (Line 86, file zgrmes.F90)
+                   MPP_LNK_3D in LIB_MPP (Line 87, file zgrmes.F90)
+                   MPP_LNK_3D in LIB_MPP (Line 88, file zgrmes.F90)
+                   MPP_LNK_3D in LIB_MPP (Line 89, file zgrmes.F90)
+                   MPP_LNK_3D in LIB_MPP (Line 90, file zgrmes.F90)
+                   MPP_LNK_3D in LIB_MPP (Line 91, file zgrmes.F90)
+                   MPP_LNK_3D in LIB_MPP (Line 92, file zgrmes.F90)
+                   MES_BUILD in MES (Line 68, file zgrmes.F90)
+                   ZGR_LOC in ZGRLOC (Line 72, file zgrmes.F90)
+                   MAX(Intrinsic) (Line 111, file zgrmes.F90)
+
+Name  Messages
+----  --------
+ZGR_PST_MES in ZGRMES
+      Defined as:  Subroutine (line 124, file zgrmes.F90)
+
+      Interface:   None
+
+      Called By:   ZGR_MES in ZGRMES (Line 76, file zgrmes.F90)
+
+      Calls:       CTL_STOP in LIB_MPP (Line 375, file zgrmes.F90)
+                   CTL_STOP in LIB_MPP (Line 376, file zgrmes.F90)
+                   CTL_STOP in LIB_MPP (Line 377, file zgrmes.F90)
+                   CTL_STOP in LIB_MPP (Line 378, file zgrmes.F90)
+                   WRK_ALLOC_2DR in WRK_NEMO (Line 154, file zgrmes.F90)
+                   WRK_ALLOC_3DR in WRK_NEMO (Line 155, file zgrmes.F90)
+                   WRK_DEALLOC_2DR in WRK_NEMO (Line 380, file zgrmes.F90)
+                   WRK_DEALLOC_3DR in WRK_NEMO (Line 381, file zgrmes.F90)
+                   MIN(Intrinsic) (Line 170, file zgrmes.F90)
+                   MIN(Intrinsic) (Line 273, file zgrmes.F90)
+                   MIN(Intrinsic) (Line 276, file zgrmes.F90)
+                   MIN(Intrinsic) (Line 279, file zgrmes.F90)
+                   MIN(Intrinsic) (Line 282, file zgrmes.F90)
+                   MIN(Intrinsic) (Line 308, file zgrmes.F90)
+                   MIN(Intrinsic) (Line 311, file zgrmes.F90)
+                   MIN(Intrinsic) (Line 314, file zgrmes.F90)
+                   MIN(Intrinsic) (Line 317, file zgrmes.F90)
+                   MIN(Intrinsic) (Line 337, file zgrmes.F90)
+                   MIN(Intrinsic) (Line 338, file zgrmes.F90)
+                   MIN(Intrinsic) (Line 351, file zgrmes.F90)
+                   MIN(Intrinsic) (Line 354, file zgrmes.F90)
+                   MINVAL(Intrinsic) (Line 375, file zgrmes.F90)
+                   MINVAL(Intrinsic) (Line 376, file zgrmes.F90)
+                   MINVAL(Intrinsic) (Line 377, file zgrmes.F90)
+                   MINVAL(Intrinsic) (Line 378, file zgrmes.F90)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

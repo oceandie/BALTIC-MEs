@@ -1,0 +1,132 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S u m m a r y   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Compilation
+-----------
+File     : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/par_kind.f90
+Compiled : 04/29/22  10:43:07
+Compiler : Version 8.3.4
+Ftnlx    : Version 8318 (libcif 83016)
+Target   : x86-64
+Command  : ftn_driver.exe -hcpu=haswell -hstatic -D__CRAYXC -D__CRAY_HASWELL
+           -D__CRAYXT_COMPUTE_LINUX_TARGET -hnetwork=aries -opar_kind.o
+           -I/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HE
+           AD_test_MEs/tools/DOMAINcfg/BLD/inc -sreal64 -sinteger32 -Ovector0
+           -hfp0 -O0 -hflex_mp=intolerant -eCID
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/common/moci/modules/packages/XIOS/2.0/24708/952/inc
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/m
+           ct
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/p
+           smile.MPI1 -c -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/opt/cray/libsci/13.0.1/CRAY/83/haswell/include
+           -I/opt/cray/mpt/7.0.4/gni/mpich2-cray/83/include
+           -I/opt/cray/rca/1.0.0-2.0502.60530.1.62.ari/include
+           -I/opt/cray/alps/5.2.4-2.0502.9774.31.11.ari/include
+           -I/opt/cray/xpmem/0.1-2.0502.64982.5.3.ari/include
+           -I/opt/cray/gni-headers/4.0-1.0502.10859.7.8.ari/include
+           -I/opt/cray/dmapp/7.0.1-1.0502.11080.8.76.ari/include
+           -I/opt/cray/pmi/5.0.5-1.0000.10300.134.8.ari/include
+           -I/opt/cray/ugni/6.0-1.0502.10863.8.29.ari/include
+           -I/opt/cray/udreg/2.3.2-1.0502.10518.2.17.ari/include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/pkgconfig/../include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/wlm_detect/1.0-1.0502.64649.2.1.ari/include
+           -I/opt/cray/krca/1.0.0-2.0502.63139.4.31.ari/include
+           -I/opt/cray-hss-devel/7.2.0/include /projects/jmmp/dbruciaf/NEMO/CHEC
+           KOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/par
+           _kind.f90
+
+ftnlx report
+------------
+Source   : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp//projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/par_kind.f90
+Date     : 04/29/2022  10:43:07
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S o u r c e   L i s t i n g
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    1.    MODULE par_kind
+    2.       !!======================================================================
+    3.       !!                   ***  MODULE par_kind  ***
+    4.       !! Ocean :  define the kind of real for the whole model
+    5.       !!======================================================================
+    6.       !! History :  1.0  ! 2002-06  (G. Madec)  Original code
+    7.       !!            3.3  ! 2010-12  (G. Madec)  add a standard length of character strings
+    8.       !!----------------------------------------------------------------------
+    9.    
+   10.       IMPLICIT NONE
+   11.       PRIVATE
+   12.    
+   13.       INTEGER, PUBLIC, PARAMETER ::   jpbyt   = 8    !: real size for mpp communications
+   14.       INTEGER, PUBLIC, PARAMETER ::   jpbytda = 4    !: real size in input data files 4 or 8
+   15.    
+   16.       ! Number model from which the SELECTED_*_KIND are requested:
+   17.       !             4 byte REAL       8 byte REAL
+   18.       ! CRAY:           -            precision = 13
+   19.       !                              exponent = 2465
+   20.       ! IEEE:      precision = 6     precision = 15
+   21.       !            exponent = 37     exponent = 307
+   22.    
+   23.       !                                                                !!** Floating point **
+   24.       INTEGER, PUBLIC, PARAMETER ::   sp = SELECTED_REAL_KIND( 6, 37)   !: single precision (real 4)
+   25.       INTEGER, PUBLIC, PARAMETER ::   dp = SELECTED_REAL_KIND(12,307)   !: double precision (real 8)
+   26.       INTEGER, PUBLIC, PARAMETER ::   wp = dp                              !: working precision
+   27.    
+   28.       !                                                                !!** Integer **
+   29.       INTEGER, PUBLIC, PARAMETER ::   i4 = SELECTED_INT_KIND( 9)        !: single precision (integer 4)
+   30.       INTEGER, PUBLIC, PARAMETER ::   i8 = SELECTED_INT_KIND(14)        !: double precision (integer 8)
+   31.       
+   32.       !                                                                !!** Integer **
+   33.       INTEGER, PUBLIC, PARAMETER ::   lc = 256                          !: Lenght of Character strings
+   34.    
+   35.       !!----------------------------------------------------------------------
+   36.       !! NEMO/OCE 4.0 , NEMO Consortium (2018)
+   37.       !! $Id: par_kind.F90 2528 2010-12-27 17:33:53Z rblod $ 
+   38.       !! Software governed by the CeCILL licence     (./LICENSE)
+   39.       !!----------------------------------------------------------------------
+   40.    END MODULE par_kind
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                         E x t e r n a l   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Name  Messages
+----  --------
+PAR_KIND
+      Defined as:  Module (line 1, file par_kind.f90)
+
+      Calls:       SELECTED_REAL_KIND(Intrinsic) (Line 24, file par_kind.f90)
+                   SELECTED_REAL_KIND(Intrinsic) (Line 25, file par_kind.f90)
+                   SELECTED_INT_KIND(Intrinsic) (Line 29, file par_kind.f90)
+                   SELECTED_INT_KIND(Intrinsic) (Line 30, file par_kind.f90)
+
+Name  Messages
+----  --------
+SELECTED_INT_KIND(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   PAR_KIND (Line 29, file par_kind.f90)
+                   PAR_KIND (Line 30, file par_kind.f90)
+
+Name  Messages
+----  --------
+SELECTED_REAL_KIND(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   PAR_KIND (Line 24, file par_kind.f90)
+                   PAR_KIND (Line 25, file par_kind.f90)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

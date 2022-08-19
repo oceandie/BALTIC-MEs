@@ -1,0 +1,3153 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S u m m a r y   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Compilation
+-----------
+File     : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/eosbn2.f90
+Compiled : 04/29/22  10:44:32
+Compiler : Version 8.3.4
+Ftnlx    : Version 8318 (libcif 83016)
+Target   : x86-64
+Command  : ftn_driver.exe -hcpu=haswell -hstatic -D__CRAYXC -D__CRAY_HASWELL
+           -D__CRAYXT_COMPUTE_LINUX_TARGET -hnetwork=aries -oeosbn2.o
+           -I/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HE
+           AD_test_MEs/tools/DOMAINcfg/BLD/inc -sreal64 -sinteger32 -Ovector0
+           -hfp0 -O0 -hflex_mp=intolerant -eCID
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/common/moci/modules/packages/XIOS/2.0/24708/952/inc
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/m
+           ct
+           -I/common/moci/modules/packages/oasis3-mct/2.0/24708/1765/build/lib/p
+           smile.MPI1 -c -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83/include
+           -I/opt/cray/hdf5-parallel/1.8.13/CRAY/83/include
+           -I/opt/cray/libsci/13.0.1/CRAY/83/haswell/include
+           -I/opt/cray/mpt/7.0.4/gni/mpich2-cray/83/include
+           -I/opt/cray/rca/1.0.0-2.0502.60530.1.62.ari/include
+           -I/opt/cray/alps/5.2.4-2.0502.9774.31.11.ari/include
+           -I/opt/cray/xpmem/0.1-2.0502.64982.5.3.ari/include
+           -I/opt/cray/gni-headers/4.0-1.0502.10859.7.8.ari/include
+           -I/opt/cray/dmapp/7.0.1-1.0502.11080.8.76.ari/include
+           -I/opt/cray/pmi/5.0.5-1.0000.10300.134.8.ari/include
+           -I/opt/cray/ugni/6.0-1.0502.10863.8.29.ari/include
+           -I/opt/cray/udreg/2.3.2-1.0502.10518.2.17.ari/include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/pkgconfig/../include
+           -I/opt/cray/cce/8.3.4/craylibs/x86-64/include
+           -I/opt/cray/wlm_detect/1.0-1.0502.64649.2.1.ari/include
+           -I/opt/cray/krca/1.0.0-2.0502.63139.4.31.ari/include
+           -I/opt/cray-hss-devel/7.2.0/include /projects/jmmp/dbruciaf/NEMO/CHEC
+           KOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/eos
+           bn2.f90
+
+ftnlx report
+------------
+Source   : /projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp//projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/NEMO_4.0-HEAD_test_MEs/tools/DOMAINcfg/src/eosbn2.f90
+Date     : 04/29/2022  10:44:33
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S o u r c e   L i s t i n g
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    1.    MODULE eosbn2
+    2.       !!==============================================================================
+    3.       !!                       ***  MODULE  eosbn2  ***
+    4.       !! Equation Of Seawater : in situ density - Brunt-Vaisala frequency
+    5.       !!==============================================================================
+    6.       !! History :  OPA  ! 1989-03  (O. Marti)  Original code
+    7.       !!            6.0  ! 1994-07  (G. Madec, M. Imbard)  add bn2
+    8.       !!            6.0  ! 1994-08  (G. Madec)  Add Jackett & McDougall eos
+    9.       !!            7.0  ! 1996-01  (G. Madec)  statement function for e3
+   10.       !!            8.1  ! 1997-07  (G. Madec)  density instead of volumic mass
+   11.       !!             -   ! 1999-02  (G. Madec, N. Grima) semi-implicit pressure gradient
+   12.       !!            8.2  ! 2001-09  (M. Ben Jelloul)  bugfix on linear eos
+   13.       !!   NEMO     1.0  ! 2002-10  (G. Madec)  add eos_init
+   14.       !!             -   ! 2002-11  (G. Madec, A. Bozec)  partial step, eos_insitu_2d
+   15.       !!             -   ! 2003-08  (G. Madec)  F90, free form
+   16.       !!            3.0  ! 2006-08  (G. Madec)  add tfreez function (now eos_fzp function)
+   17.       !!            3.3  ! 2010-05  (C. Ethe, G. Madec)  merge TRC-TRA
+   18.       !!             -   ! 2010-10  (G. Nurser, G. Madec)  add alpha/beta used in ldfslp
+   19.       !!            3.7  ! 2012-03  (F. Roquet, G. Madec)  add primitive of alpha and beta used in PE computation
+   20.       !!             -   ! 2012-05  (F. Roquet)  add Vallis and original JM95 equation of state
+   21.       !!             -   ! 2013-04  (F. Roquet, G. Madec)  add eos_rab, change bn2 computation and reorganize the module
+   22.       !!             -   ! 2014-09  (F. Roquet)  add TEOS-10, S-EOS, and modify EOS-80
+   23.       !!             -   ! 2015-06  (P.A. Bouttier) eos_fzp functions changed to subroutines for AGRIF
+   24.       !!----------------------------------------------------------------------
+   25.    
+   26.       !!----------------------------------------------------------------------
+   27.       !!   eos           : generic interface of the equation of state
+   28.       !!   eos_insitu    : Compute the in situ density
+   29.       !!   eos_insitu_pot: Compute the insitu and surface referenced potential volumic mass
+   30.       !!   eos_insitu_2d : Compute the in situ density for 2d fields
+   31.       !!   bn2           : Compute the Brunt-Vaisala frequency
+   32.       !!   eos_rab       : generic interface of in situ thermal/haline expansion ratio 
+   33.       !!   eos_rab_3d    : compute in situ thermal/haline expansion ratio
+   34.       !!   eos_rab_2d    : compute in situ thermal/haline expansion ratio for 2d fields
+   35.       !!   eos_fzp_2d    : freezing temperature for 2d fields
+   36.       !!   eos_fzp_0d    : freezing temperature for scalar
+   37.       !!   eos_init      : set eos parameters (namelist)
+   38.       !!----------------------------------------------------------------------
+   39.       USE dom_oce        ! ocean space and time domain
+                 ^                                            
+ftn-1193 ftn: CAUTION EOSBN2, File = eosbn2.f90, Line = 39, Column = 8 
+  Module "PAR_KIND" is indirectly used in module "DOM_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_kind.o".  That file no
+  longer exists.
+
+                 ^                                            
+ftn-1193 ftn: CAUTION EOSBN2, File = eosbn2.f90, Line = 39, Column = 8 
+  Module "PAR_OCE" is indirectly used in module "DOM_OCE" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/par_oce.o".  That file no
+  longer exists.
+
+   40.       USE phycst         ! physical constants
+   41.       !
+   42.       USE in_out_manager ! I/O manager
+                 ^                            
+ftn-1193 ftn: CAUTION EOSBN2, File = eosbn2.f90, Line = 42, Column = 8 
+  Module "NC4INTERFACE" is indirectly used in module "IN_OUT_MANAGER" and is from file
+  "/projects/jmmp/dbruciaf/NEMO/CHECKOUTS_RELEASE-4.0-HEAD/tools_r4.0-HEAD_dev_MEs/DOMAINcfg/BLD/tmp/nc4interface.o".  That file no
+  longer exists.
+
+   43.       USE lib_mpp        ! MPP library
+   44.       USE lib_fortran    ! Fortran utilities (allows no signed zero when 'key_nosignedzero' defined)  
+   45.       USE prtctl         ! Print control
+   46.       USE wrk_nemo       ! Memory Allocation
+   47.       USE lbclnk         ! ocean lateral boundary conditions
+   48.       USE timing         ! Timing
+   49.    
+   50.       IMPLICIT NONE
+   51.       PRIVATE
+   52.    
+   53.       !                  !! * Interface
+   54.       INTERFACE eos
+   55.          MODULE PROCEDURE eos_insitu, eos_insitu_pot, eos_insitu_2d
+   56.       END INTERFACE
+   57.       !
+   58.       INTERFACE eos_rab
+   59.          MODULE PROCEDURE rab_3d, rab_2d, rab_0d
+   60.       END INTERFACE
+   61.       !
+   62.       INTERFACE eos_fzp 
+   63.          MODULE PROCEDURE eos_fzp_2d, eos_fzp_0d
+   64.       END INTERFACE
+   65.       !
+   66.       PUBLIC   eos            ! called by step, istate, tranpc and zpsgrd modules
+   67.       PUBLIC   bn2            ! called by step module
+   68.       PUBLIC   eos_rab        ! called by ldfslp, zdfddm, trabbl
+   69.       PUBLIC   eos_pt_from_ct ! called by sbcssm
+   70.       PUBLIC   eos_fzp        ! called by traadv_cen2 and sbcice_... modules
+   71.       PUBLIC   eos_pen        ! used for pe diagnostics in trdpen module
+   72.       PUBLIC   eos_init       ! called by istate module
+   73.    
+   74.       !                               !!** Namelist nameos **
+   75.       LOGICAL , PUBLIC ::   ln_TEOS10   ! determine if eos_pt_from_ct is used to compute sst_m
+   76.       LOGICAL , PUBLIC ::   ln_EOS80   ! determine if eos_pt_from_ct is used to compute sst_m
+   77.       LOGICAL , PUBLIC ::   ln_SEOS   ! determine if eos_pt_from_ct is used to compute sst_m
+   78.    
+   79.       ! Parameters
+   80.       LOGICAL , PUBLIC    ::   l_useCT         ! =T in ln_TEOS10=T (i.e. use eos_pt_from_ct to compute sst_m), =F otherwise
+   81.       INTEGER , PUBLIC    ::   neos            ! Identifier for equation of state used
+   82.    
+   83.       INTEGER , PARAMETER ::   np_teos10 = -1  ! parameter for using TEOS10
+   84.       INTEGER , PARAMETER ::   np_eos80  =  0  ! parameter for using EOS80
+   85.       INTEGER , PARAMETER ::   np_seos   = 1   ! parameter for using Simplified Equation of state
+   86.    
+   87.       !                               !!!  simplified eos coefficients (default value: Vallis 2006)
+   88.       REAL(wp) ::   rn_a0      = 1.6550e-1_wp     ! thermal expansion coeff. 
+   89.       REAL(wp) ::   rn_b0      = 7.6554e-1_wp     ! saline  expansion coeff. 
+   90.       REAL(wp) ::   rn_lambda1 = 5.9520e-2_wp     ! cabbeling coeff. in T^2        
+   91.       REAL(wp) ::   rn_lambda2 = 5.4914e-4_wp     ! cabbeling coeff. in S^2        
+   92.       REAL(wp) ::   rn_mu1     = 1.4970e-4_wp     ! thermobaric coeff. in T  
+   93.       REAL(wp) ::   rn_mu2     = 1.1090e-5_wp     ! thermobaric coeff. in S  
+   94.       REAL(wp) ::   rn_nu      = 2.4341e-3_wp     ! cabbeling coeff. in theta*salt  
+   95.       
+   96.       ! TEOS10/EOS80 parameters
+   97.       REAL(wp) ::   r1_S0, r1_T0, r1_Z0, rdeltaS
+   98.       
+   99.       ! EOS parameters
+  100.       REAL(wp) ::   EOS000 , EOS100 , EOS200 , EOS300 , EOS400 , EOS500 , EOS600
+  101.       REAL(wp) ::   EOS010 , EOS110 , EOS210 , EOS310 , EOS410 , EOS510
+  102.       REAL(wp) ::   EOS020 , EOS120 , EOS220 , EOS320 , EOS420
+  103.       REAL(wp) ::   EOS030 , EOS130 , EOS230 , EOS330
+  104.       REAL(wp) ::   EOS040 , EOS140 , EOS240
+  105.       REAL(wp) ::   EOS050 , EOS150
+  106.       REAL(wp) ::   EOS060
+  107.       REAL(wp) ::   EOS001 , EOS101 , EOS201 , EOS301 , EOS401
+  108.       REAL(wp) ::   EOS011 , EOS111 , EOS211 , EOS311
+  109.       REAL(wp) ::   EOS021 , EOS121 , EOS221
+  110.       REAL(wp) ::   EOS031 , EOS131
+  111.       REAL(wp) ::   EOS041
+  112.       REAL(wp) ::   EOS002 , EOS102 , EOS202
+  113.       REAL(wp) ::   EOS012 , EOS112
+  114.       REAL(wp) ::   EOS022
+  115.       REAL(wp) ::   EOS003 , EOS103
+  116.       REAL(wp) ::   EOS013 
+  117.       
+  118.       ! ALPHA parameters
+  119.       REAL(wp) ::   ALP000 , ALP100 , ALP200 , ALP300 , ALP400 , ALP500
+  120.       REAL(wp) ::   ALP010 , ALP110 , ALP210 , ALP310 , ALP410
+  121.       REAL(wp) ::   ALP020 , ALP120 , ALP220 , ALP320
+  122.       REAL(wp) ::   ALP030 , ALP130 , ALP230
+  123.       REAL(wp) ::   ALP040 , ALP140
+  124.       REAL(wp) ::   ALP050
+  125.       REAL(wp) ::   ALP001 , ALP101 , ALP201 , ALP301
+  126.       REAL(wp) ::   ALP011 , ALP111 , ALP211
+  127.       REAL(wp) ::   ALP021 , ALP121
+  128.       REAL(wp) ::   ALP031
+  129.       REAL(wp) ::   ALP002 , ALP102
+  130.       REAL(wp) ::   ALP012
+  131.       REAL(wp) ::   ALP003
+  132.       
+  133.       ! BETA parameters
+  134.       REAL(wp) ::   BET000 , BET100 , BET200 , BET300 , BET400 , BET500
+  135.       REAL(wp) ::   BET010 , BET110 , BET210 , BET310 , BET410
+  136.       REAL(wp) ::   BET020 , BET120 , BET220 , BET320
+  137.       REAL(wp) ::   BET030 , BET130 , BET230
+  138.       REAL(wp) ::   BET040 , BET140
+  139.       REAL(wp) ::   BET050
+  140.       REAL(wp) ::   BET001 , BET101 , BET201 , BET301
+  141.       REAL(wp) ::   BET011 , BET111 , BET211
+  142.       REAL(wp) ::   BET021 , BET121
+  143.       REAL(wp) ::   BET031
+  144.       REAL(wp) ::   BET002 , BET102
+  145.       REAL(wp) ::   BET012
+  146.       REAL(wp) ::   BET003
+  147.    
+  148.       ! PEN parameters
+  149.       REAL(wp) ::   PEN000 , PEN100 , PEN200 , PEN300 , PEN400
+  150.       REAL(wp) ::   PEN010 , PEN110 , PEN210 , PEN310
+  151.       REAL(wp) ::   PEN020 , PEN120 , PEN220
+  152.       REAL(wp) ::   PEN030 , PEN130
+  153.       REAL(wp) ::   PEN040
+  154.       REAL(wp) ::   PEN001 , PEN101 , PEN201
+  155.       REAL(wp) ::   PEN011 , PEN111
+  156.       REAL(wp) ::   PEN021
+  157.       REAL(wp) ::   PEN002 , PEN102
+  158.       REAL(wp) ::   PEN012
+  159.       
+  160.       ! ALPHA_PEN parameters
+  161.       REAL(wp) ::   APE000 , APE100 , APE200 , APE300
+  162.       REAL(wp) ::   APE010 , APE110 , APE210
+  163.       REAL(wp) ::   APE020 , APE120
+  164.       REAL(wp) ::   APE030
+  165.       REAL(wp) ::   APE001 , APE101
+  166.       REAL(wp) ::   APE011
+  167.       REAL(wp) ::   APE002
+  168.    
+  169.       ! BETA_PEN parameters
+  170.       REAL(wp) ::   BPE000 , BPE100 , BPE200 , BPE300
+  171.       REAL(wp) ::   BPE010 , BPE110 , BPE210
+  172.       REAL(wp) ::   BPE020 , BPE120
+  173.       REAL(wp) ::   BPE030
+  174.       REAL(wp) ::   BPE001 , BPE101
+  175.       REAL(wp) ::   BPE011
+  176.       REAL(wp) ::   BPE002
+  177.    
+  178.       !! * Substitutions
+  179.       !!----------------------------------------------------------------------
+  180.       !!                   ***  vectopt_loop_substitute  ***
+  181.       !!----------------------------------------------------------------------
+  182.       !! ** purpose :   substitute the inner loop start/end indices with CPP macro
+  183.       !!                allow unrolling of do-loop (useful with vector processors)
+  184.       !!----------------------------------------------------------------------
+  185.       !!----------------------------------------------------------------------
+  186.       !! NEMO/OPA 3.7 , NEMO Consortium (2014)
+  187.       !! $Id: vectopt_loop_substitute.h90 4990 2014-12-15 16:42:49Z timgraham $ 
+  188.       !! Software governed by the CeCILL licence (./LICENSE)
+  189.       !!----------------------------------------------------------------------
+  190.       !!----------------------------------------------------------------------
+  191.       !! NEMO/OPA 3.7 , NEMO Consortium (2014)
+  192.       !! $Id: eosbn2.F90 6505 2016-05-01 16:11:06Z gm $
+  193.       !! Software governed by the CeCILL licence     (./LICENSE)
+  194.       !!----------------------------------------------------------------------
+  195.    CONTAINS
+  196.    
+  197.       SUBROUTINE eos_insitu( pts, prd, pdep )
+  198.          !!----------------------------------------------------------------------
+  199.          !!                   ***  ROUTINE eos_insitu  ***
+  200.          !!
+  201.          !! ** Purpose :   Compute the in situ density (ratio rho/rau0) from
+  202.          !!       potential temperature and salinity using an equation of state
+  203.          !!       selected in the nameos namelist
+  204.          !!
+  205.          !! ** Method  :   prd(t,s,z) = ( rho(t,s,z) - rau0 ) / rau0
+  206.          !!         with   prd    in situ density anomaly      no units
+  207.          !!                t      TEOS10: CT or EOS80: PT      Celsius
+  208.          !!                s      TEOS10: SA or EOS80: SP      TEOS10: g/kg or EOS80: psu
+  209.          !!                z      depth                        meters
+  210.          !!                rho    in situ density              kg/m^3
+  211.          !!                rau0   reference density            kg/m^3
+  212.          !!
+  213.          !!     ln_teos10 : polynomial TEOS-10 equation of state is used for rho(t,s,z).
+  214.          !!         Check value: rho = 1028.21993233072 kg/m^3 for z=3000 dbar, ct=3 Celcius, sa=35.5 g/kg
+  215.          !!
+  216.          !!     ln_eos80 : polynomial EOS-80 equation of state is used for rho(t,s,z).
+  217.          !!         Check value: rho = 1028.35011066567 kg/m^3 for z=3000 dbar, pt=3 Celcius, sp=35.5 psu
+  218.          !!
+  219.          !!     ln_seos : simplified equation of state
+  220.          !!              prd(t,s,z) = ( -a0*(1+lambda/2*(T-T0)+mu*z+nu*(S-S0))*(T-T0) + b0*(S-S0) ) / rau0
+  221.          !!              linear case function of T only: rn_alpha<>0, other coefficients = 0
+  222.          !!              linear eos function of T and S: rn_alpha and rn_beta<>0, other coefficients=0
+  223.          !!              Vallis like equation: use default values of coefficients
+  224.          !!
+  225.          !! ** Action  :   compute prd , the in situ density (no units)
+  226.          !!
+  227.          !! References :   Roquet et al, Ocean Modelling, in preparation (2014)
+  228.          !!                Vallis, Atmospheric and Oceanic Fluid Dynamics, 2006
+  229.          !!                TEOS-10 Manual, 2010
+  230.          !!----------------------------------------------------------------------
+  231.          REAL(wp), DIMENSION(jpi,jpj,jpk,jpts), INTENT(in   ) ::   pts   ! 1 : potential temperature  [Celcius]
+  232.          !                                                               ! 2 : salinity               [psu]
+  233.          REAL(wp), DIMENSION(jpi,jpj,jpk     ), INTENT(  out) ::   prd   ! in situ density            [-]
+  234.          REAL(wp), DIMENSION(jpi,jpj,jpk     ), INTENT(in   ) ::   pdep  ! depth                      [m]
+  235.          !
+  236.          INTEGER  ::   ji, jj, jk                ! dummy loop indices
+  237.          REAL(wp) ::   zt , zh , zs , ztm        ! local scalars
+  238.          REAL(wp) ::   zn , zn0, zn1, zn2, zn3   !   -      -
+  239.          !!----------------------------------------------------------------------
+  240.          !
+  241.          IF( nn_timing == 1 )   CALL timing_start('eos-insitu')
+  242.          !
+  243.          SELECT CASE( neos )
+  244.          !
+  245.          CASE( np_teos10, np_eos80 )                !==  polynomial TEOS-10 / EOS-80 ==!
+  246.             !
+  247.             DO jk = 1, jpkm1
+  248.                DO jj = 1, jpj
+  249.                   DO ji = 1, jpi
+  250.                      !
+  251.                      zh  = pdep(ji,jj,jk) * r1_Z0                                  ! depth
+  252.                      zt  = pts (ji,jj,jk,jp_tem) * r1_T0                           ! temperature
+  253.                      zs  = SQRT( ABS( pts(ji,jj,jk,jp_sal) + rdeltaS ) * r1_S0 )   ! square root salinity
+  254.                      ztm = tmask(ji,jj,jk)                                         ! tmask
+  255.                      !
+  256.                      zn3 = EOS013*zt   &
+  257.                         &   + EOS103*zs+EOS003
+  258.                         !
+  259.                      zn2 = (EOS022*zt   &
+  260.                         &   + EOS112*zs+EOS012)*zt   &
+  261.                         &   + (EOS202*zs+EOS102)*zs+EOS002
+  262.                         !
+  263.                      zn1 = (((EOS041*zt   &
+  264.                         &   + EOS131*zs+EOS031)*zt   &
+  265.                         &   + (EOS221*zs+EOS121)*zs+EOS021)*zt   &
+  266.                         &   + ((EOS311*zs+EOS211)*zs+EOS111)*zs+EOS011)*zt   &
+  267.                         &   + (((EOS401*zs+EOS301)*zs+EOS201)*zs+EOS101)*zs+EOS001
+  268.                         !
+  269.                      zn0 = (((((EOS060*zt   &
+  270.                         &   + EOS150*zs+EOS050)*zt   &
+  271.                         &   + (EOS240*zs+EOS140)*zs+EOS040)*zt   &
+  272.                         &   + ((EOS330*zs+EOS230)*zs+EOS130)*zs+EOS030)*zt   &
+  273.                         &   + (((EOS420*zs+EOS320)*zs+EOS220)*zs+EOS120)*zs+EOS020)*zt   &
+  274.                         &   + ((((EOS510*zs+EOS410)*zs+EOS310)*zs+EOS210)*zs+EOS110)*zs+EOS010)*zt   &
+  275.                         &   + (((((EOS600*zs+EOS500)*zs+EOS400)*zs+EOS300)*zs+EOS200)*zs+EOS100)*zs+EOS000
+  276.                         !
+  277.                      zn  = ( ( zn3 * zh + zn2 ) * zh + zn1 ) * zh + zn0
+  278.                      !
+  279.                      prd(ji,jj,jk) = (  zn * r1_rau0 - 1._wp  ) * ztm  ! density anomaly (masked)
+  280.                      !
+  281.                   END DO
+  282.                END DO
+  283.             END DO
+  284.             !
+  285.          CASE( np_seos )                !==  simplified EOS  ==!
+  286.             !
+  287.             DO jk = 1, jpkm1
+  288.                DO jj = 1, jpj
+  289.                   DO ji = 1, jpi
+  290.                      zt  = pts  (ji,jj,jk,jp_tem) - 10._wp
+  291.                      zs  = pts  (ji,jj,jk,jp_sal) - 35._wp
+  292.                      zh  = pdep (ji,jj,jk)
+  293.                      ztm = tmask(ji,jj,jk)
+  294.                      !
+  295.                      zn =  - rn_a0 * ( 1._wp + 0.5_wp*rn_lambda1*zt + rn_mu1*zh ) * zt   &
+  296.                         &  + rn_b0 * ( 1._wp - 0.5_wp*rn_lambda2*zs - rn_mu2*zh ) * zs   &
+  297.                         &  - rn_nu * zt * zs
+  298.                         !                                 
+  299.                      prd(ji,jj,jk) = zn * r1_rau0 * ztm                ! density anomaly (masked)
+  300.                   END DO
+  301.                END DO
+  302.             END DO
+  303.             !
+  304.          END SELECT
+  305.          !
+  306.          IF(ln_ctl)   CALL prt_ctl( tab3d_1=prd, clinfo1=' eos-insitu  : ', ovlap=1, kdim=jpk )
+  307.          !
+  308.          IF( nn_timing == 1 )   CALL timing_stop('eos-insitu')
+  309.          !
+  310.       END SUBROUTINE eos_insitu
+  311.    
+  312.    
+  313.       SUBROUTINE eos_insitu_pot( pts, prd, prhop, pdep )
+  314.          !!----------------------------------------------------------------------
+  315.          !!                  ***  ROUTINE eos_insitu_pot  ***
+  316.          !!
+  317.          !! ** Purpose :   Compute the in situ density (ratio rho/rau0) and the
+  318.          !!      potential volumic mass (Kg/m3) from potential temperature and
+  319.          !!      salinity fields using an equation of state selected in the
+  320.          !!     namelist.
+  321.          !!
+  322.          !! ** Action  : - prd  , the in situ density (no units)
+  323.          !!              - prhop, the potential volumic mass (Kg/m3)
+  324.          !!
+  325.          !!----------------------------------------------------------------------
+  326.          REAL(wp), DIMENSION(jpi,jpj,jpk,jpts), INTENT(in   ) ::   pts    ! 1 : potential temperature  [Celcius]
+  327.          !                                                                ! 2 : salinity               [psu]
+  328.          REAL(wp), DIMENSION(jpi,jpj,jpk     ), INTENT(  out) ::   prd    ! in situ density            [-]
+  329.          REAL(wp), DIMENSION(jpi,jpj,jpk     ), INTENT(  out) ::   prhop  ! potential density (surface referenced)
+  330.          REAL(wp), DIMENSION(jpi,jpj,jpk     ), INTENT(in   ) ::   pdep   ! depth                      [m]
+  331.          !
+  332.          INTEGER  ::   ji, jj, jk, jsmp             ! dummy loop indices
+  333.          INTEGER  ::   jdof
+  334.          REAL(wp) ::   zt , zh , zstemp, zs , ztm   ! local scalars
+  335.          REAL(wp) ::   zn , zn0, zn1, zn2, zn3      !   -      -
+  336.          REAL(wp), DIMENSION(:), ALLOCATABLE :: zn0_sto, zn_sto, zsign    ! local vectors
+  337.          !!----------------------------------------------------------------------
+  338.          !
+  339.          IF( nn_timing == 1 )   CALL timing_start('eos-pot')
+  340.          !
+  341.          SELECT CASE ( neos )
+  342.          !
+  343.          CASE( np_teos10, np_eos80 )                !==  polynomial TEOS-10 / EOS-80 ==!
+  344.             !
+  345.                DO jk = 1, jpkm1
+  346.                   DO jj = 1, jpj
+  347.                      DO ji = 1, jpi
+  348.                         !
+  349.                         zh  = pdep(ji,jj,jk) * r1_Z0                                  ! depth
+  350.                         zt  = pts (ji,jj,jk,jp_tem) * r1_T0                           ! temperature
+  351.                         zs  = SQRT( ABS( pts(ji,jj,jk,jp_sal) + rdeltaS ) * r1_S0 )   ! square root salinity
+  352.                         ztm = tmask(ji,jj,jk)                                         ! tmask
+  353.                         !
+  354.                         zn3 = EOS013*zt   &
+  355.                            &   + EOS103*zs+EOS003
+  356.                            !
+  357.                         zn2 = (EOS022*zt   &
+  358.                            &   + EOS112*zs+EOS012)*zt   &
+  359.                            &   + (EOS202*zs+EOS102)*zs+EOS002
+  360.                            !
+  361.                         zn1 = (((EOS041*zt   &
+  362.                            &   + EOS131*zs+EOS031)*zt   &
+  363.                            &   + (EOS221*zs+EOS121)*zs+EOS021)*zt   &
+  364.                            &   + ((EOS311*zs+EOS211)*zs+EOS111)*zs+EOS011)*zt   &
+  365.                            &   + (((EOS401*zs+EOS301)*zs+EOS201)*zs+EOS101)*zs+EOS001
+  366.                            !
+  367.                         zn0 = (((((EOS060*zt   &
+  368.                            &   + EOS150*zs+EOS050)*zt   &
+  369.                            &   + (EOS240*zs+EOS140)*zs+EOS040)*zt   &
+  370.                            &   + ((EOS330*zs+EOS230)*zs+EOS130)*zs+EOS030)*zt   &
+  371.                            &   + (((EOS420*zs+EOS320)*zs+EOS220)*zs+EOS120)*zs+EOS020)*zt   &
+  372.                            &   + ((((EOS510*zs+EOS410)*zs+EOS310)*zs+EOS210)*zs+EOS110)*zs+EOS010)*zt   &
+  373.                            &   + (((((EOS600*zs+EOS500)*zs+EOS400)*zs+EOS300)*zs+EOS200)*zs+EOS100)*zs+EOS000
+  374.                            !
+  375.                         zn  = ( ( zn3 * zh + zn2 ) * zh + zn1 ) * zh + zn0
+  376.                         !
+  377.                         prhop(ji,jj,jk) = zn0 * ztm                           ! potential density referenced at the surface
+  378.                         !
+  379.                         prd(ji,jj,jk) = (  zn * r1_rau0 - 1._wp  ) * ztm      ! density anomaly (masked)
+  380.                      END DO
+  381.                   END DO
+  382.                END DO
+  383.             
+  384.          CASE( np_seos )                !==  simplified EOS  ==!
+  385.             !
+  386.             DO jk = 1, jpkm1
+  387.                DO jj = 1, jpj
+  388.                   DO ji = 1, jpi
+  389.                      zt  = pts  (ji,jj,jk,jp_tem) - 10._wp
+  390.                      zs  = pts  (ji,jj,jk,jp_sal) - 35._wp
+  391.                      zh  = pdep (ji,jj,jk)
+  392.                      ztm = tmask(ji,jj,jk)
+  393.                      !                                                     ! potential density referenced at the surface
+  394.                      zn =  - rn_a0 * ( 1._wp + 0.5_wp*rn_lambda1*zt ) * zt   &
+  395.                         &  + rn_b0 * ( 1._wp - 0.5_wp*rn_lambda2*zs ) * zs   &
+  396.                         &  - rn_nu * zt * zs
+  397.                      prhop(ji,jj,jk) = ( rau0 + zn ) * ztm
+  398.                      !                                                     ! density anomaly (masked)
+  399.                      zn = zn - ( rn_a0 * rn_mu1 * zt + rn_b0 * rn_mu2 * zs ) * zh
+  400.                      prd(ji,jj,jk) = zn * r1_rau0 * ztm
+  401.                      !
+  402.                   END DO
+  403.                END DO
+  404.             END DO
+  405.             !
+  406.          END SELECT
+  407.          !
+  408.          IF(ln_ctl)   CALL prt_ctl( tab3d_1=prd, clinfo1=' eos-pot: ', tab3d_2=prhop, clinfo2=' pot : ', ovlap=1, kdim=jpk )
+  409.          !
+  410.          IF( nn_timing == 1 )   CALL timing_stop('eos-pot')
+  411.          !
+  412.       END SUBROUTINE eos_insitu_pot
+ftn-5002 ftn: NOTE File = eosbn2.f90, Line = 412 
+  Local variable "ZN_STO" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = eosbn2.f90, Line = 412 
+  Local variable "ZN0_STO" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = eosbn2.f90, Line = 412 
+  Local variable "ZSIGN" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = eosbn2.f90, Line = 412 
+  Local variable "JSMP" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = eosbn2.f90, Line = 412 
+  Local variable "JDOF" is declared but neither defined nor used.
+
+ftn-5002 ftn: NOTE File = eosbn2.f90, Line = 412 
+  Local variable "ZSTEMP" is declared but neither defined nor used.
+
+  413.    
+  414.    
+  415.       SUBROUTINE eos_insitu_2d( pts, pdep, prd )
+  416.          !!----------------------------------------------------------------------
+  417.          !!                  ***  ROUTINE eos_insitu_2d  ***
+  418.          !!
+  419.          !! ** Purpose :   Compute the in situ density (ratio rho/rau0) from
+  420.          !!      potential temperature and salinity using an equation of state
+  421.          !!      selected in the nameos namelist. * 2D field case
+  422.          !!
+  423.          !! ** Action  : - prd , the in situ density (no units) (unmasked)
+  424.          !!
+  425.          !!----------------------------------------------------------------------
+  426.          REAL(wp), DIMENSION(jpi,jpj,jpts), INTENT(in   ) ::   pts   ! 1 : potential temperature  [Celcius]
+  427.          !                                                           ! 2 : salinity               [psu]
+  428.          REAL(wp), DIMENSION(jpi,jpj)     , INTENT(in   ) ::   pdep  ! depth                      [m]
+  429.          REAL(wp), DIMENSION(jpi,jpj)     , INTENT(  out) ::   prd   ! in situ density
+  430.          !
+  431.          INTEGER  ::   ji, jj, jk                ! dummy loop indices
+  432.          REAL(wp) ::   zt , zh , zs              ! local scalars
+  433.          REAL(wp) ::   zn , zn0, zn1, zn2, zn3   !   -      -
+  434.          !!----------------------------------------------------------------------
+  435.          !
+  436.          IF( nn_timing == 1 )   CALL timing_start('eos2d')
+  437.          !
+  438.          prd(:,:) = 0._wp
+ftn-6263 ftn: VECTOR File = eosbn2.f90, Line = 438 
+  A loop starting at line 438 was not vectorized because it contains a reference to a non-vector intrinsic on line 438.
+
+  439.          !
+  440.          SELECT CASE( neos )
+  441.          !
+  442.          CASE( np_teos10, np_eos80 )                !==  polynomial TEOS-10 / EOS-80 ==!
+  443.             !
+  444.             DO jj = 1, jpjm1
+  445.                DO ji = 1, jpim1   ! vector opt.
+  446.                   !
+  447.                   zh  = pdep(ji,jj) * r1_Z0                                  ! depth
+  448.                   zt  = pts (ji,jj,jp_tem) * r1_T0                           ! temperature
+  449.                   zs  = SQRT( ABS( pts(ji,jj,jp_sal) + rdeltaS ) * r1_S0 )   ! square root salinity
+  450.                   !
+  451.                   zn3 = EOS013*zt   &
+  452.                      &   + EOS103*zs+EOS003
+  453.                      !
+  454.                   zn2 = (EOS022*zt   &
+  455.                      &   + EOS112*zs+EOS012)*zt   &
+  456.                      &   + (EOS202*zs+EOS102)*zs+EOS002
+  457.                      !
+  458.                   zn1 = (((EOS041*zt   &
+  459.                      &   + EOS131*zs+EOS031)*zt   &
+  460.                      &   + (EOS221*zs+EOS121)*zs+EOS021)*zt   &
+  461.                      &   + ((EOS311*zs+EOS211)*zs+EOS111)*zs+EOS011)*zt   &
+  462.                      &   + (((EOS401*zs+EOS301)*zs+EOS201)*zs+EOS101)*zs+EOS001
+  463.                      !
+  464.                   zn0 = (((((EOS060*zt   &
+  465.                      &   + EOS150*zs+EOS050)*zt   &
+  466.                      &   + (EOS240*zs+EOS140)*zs+EOS040)*zt   &
+  467.                      &   + ((EOS330*zs+EOS230)*zs+EOS130)*zs+EOS030)*zt   &
+  468.                      &   + (((EOS420*zs+EOS320)*zs+EOS220)*zs+EOS120)*zs+EOS020)*zt   &
+  469.                      &   + ((((EOS510*zs+EOS410)*zs+EOS310)*zs+EOS210)*zs+EOS110)*zs+EOS010)*zt   &
+  470.                      &   + (((((EOS600*zs+EOS500)*zs+EOS400)*zs+EOS300)*zs+EOS200)*zs+EOS100)*zs+EOS000
+  471.                      !
+  472.                   zn  = ( ( zn3 * zh + zn2 ) * zh + zn1 ) * zh + zn0
+  473.                   !
+  474.                   prd(ji,jj) = zn * r1_rau0 - 1._wp               ! unmasked in situ density anomaly
+  475.                   !
+  476.                END DO
+  477.             END DO
+  478.             !
+  479.             CALL lbc_lnk( prd, 'T', 1. )                    ! Lateral boundary conditions
+  480.             !
+  481.          CASE( np_seos )                !==  simplified EOS  ==!
+  482.             !
+  483.             DO jj = 1, jpjm1
+  484.                DO ji = 1, jpim1   ! vector opt.
+  485.                   !
+  486.                   zt    = pts  (ji,jj,jp_tem)  - 10._wp
+  487.                   zs    = pts  (ji,jj,jp_sal)  - 35._wp
+  488.                   zh    = pdep (ji,jj)                         ! depth at the partial step level
+  489.                   !
+  490.                   zn =  - rn_a0 * ( 1._wp + 0.5_wp*rn_lambda1*zt + rn_mu1*zh ) * zt   &
+  491.                      &  + rn_b0 * ( 1._wp - 0.5_wp*rn_lambda2*zs - rn_mu2*zh ) * zs   &
+  492.                      &  - rn_nu * zt * zs
+  493.                      !
+  494.                   prd(ji,jj) = zn * r1_rau0               ! unmasked in situ density anomaly
+  495.                   !
+  496.                END DO
+  497.             END DO
+  498.             !
+  499.             CALL lbc_lnk( prd, 'T', 1. )                    ! Lateral boundary conditions
+  500.             !
+  501.          END SELECT
+  502.          !
+  503.          IF(ln_ctl)   CALL prt_ctl( tab2d_1=prd, clinfo1=' eos2d: ' )
+  504.          !
+  505.          IF( nn_timing == 1 )   CALL timing_stop('eos2d')
+  506.          !
+  507.       END SUBROUTINE eos_insitu_2d
+ftn-5002 ftn: NOTE File = eosbn2.f90, Line = 507 
+  Local variable "JK" is declared but neither defined nor used.
+
+  508.    
+  509.    
+  510.       SUBROUTINE rab_3d( pts, pab )
+  511.          !!----------------------------------------------------------------------
+  512.          !!                 ***  ROUTINE rab_3d  ***
+  513.          !!
+  514.          !! ** Purpose :   Calculates thermal/haline expansion ratio at T-points
+  515.          !!
+  516.          !! ** Method  :   calculates alpha / beta at T-points
+  517.          !!
+  518.          !! ** Action  : - pab     : thermal/haline expansion ratio at T-points
+  519.          !!----------------------------------------------------------------------
+  520.          REAL(wp), DIMENSION(jpi,jpj,jpk,jpts), INTENT(in   ) ::   pts   ! pot. temperature & salinity
+  521.          REAL(wp), DIMENSION(jpi,jpj,jpk,jpts), INTENT(  out) ::   pab   ! thermal/haline expansion ratio
+  522.          !
+  523.          INTEGER  ::   ji, jj, jk                ! dummy loop indices
+  524.          REAL(wp) ::   zt , zh , zs , ztm        ! local scalars
+  525.          REAL(wp) ::   zn , zn0, zn1, zn2, zn3   !   -      -
+  526.          !!----------------------------------------------------------------------
+  527.          !
+  528.          IF( nn_timing == 1 )   CALL timing_start('rab_3d')
+  529.          !
+  530.          SELECT CASE ( neos )
+  531.          !
+  532.          CASE( np_teos10, np_eos80 )                !==  polynomial TEOS-10 / EOS-80 ==!
+  533.             !
+  534.             DO jk = 1, jpkm1
+  535.                DO jj = 1, jpj
+  536.                   DO ji = 1, jpi
+  537.                      !
+  538.                      zh  = gdept_n(ji,jj,jk) * r1_Z0                                ! depth
+  539.                      zt  = pts (ji,jj,jk,jp_tem) * r1_T0                           ! temperature
+  540.                      zs  = SQRT( ABS( pts(ji,jj,jk,jp_sal) + rdeltaS ) * r1_S0 )   ! square root salinity
+  541.                      ztm = tmask(ji,jj,jk)                                         ! tmask
+  542.                      !
+  543.                      ! alpha
+  544.                      zn3 = ALP003
+  545.                      !
+  546.                      zn2 = ALP012*zt + ALP102*zs+ALP002
+  547.                      !
+  548.                      zn1 = ((ALP031*zt   &
+  549.                         &   + ALP121*zs+ALP021)*zt   &
+  550.                         &   + (ALP211*zs+ALP111)*zs+ALP011)*zt   &
+  551.                         &   + ((ALP301*zs+ALP201)*zs+ALP101)*zs+ALP001
+  552.                         !
+  553.                      zn0 = ((((ALP050*zt   &
+  554.                         &   + ALP140*zs+ALP040)*zt   &
+  555.                         &   + (ALP230*zs+ALP130)*zs+ALP030)*zt   &
+  556.                         &   + ((ALP320*zs+ALP220)*zs+ALP120)*zs+ALP020)*zt   &
+  557.                         &   + (((ALP410*zs+ALP310)*zs+ALP210)*zs+ALP110)*zs+ALP010)*zt   &
+  558.                         &   + ((((ALP500*zs+ALP400)*zs+ALP300)*zs+ALP200)*zs+ALP100)*zs+ALP000
+  559.                         !
+  560.                      zn  = ( ( zn3 * zh + zn2 ) * zh + zn1 ) * zh + zn0
+  561.                      !
+  562.                      pab(ji,jj,jk,jp_tem) = zn * r1_rau0 * ztm
+  563.                      !
+  564.                      ! beta
+  565.                      zn3 = BET003
+  566.                      !
+  567.                      zn2 = BET012*zt + BET102*zs+BET002
+  568.                      !
+  569.                      zn1 = ((BET031*zt   &
+  570.                         &   + BET121*zs+BET021)*zt   &
+  571.                         &   + (BET211*zs+BET111)*zs+BET011)*zt   &
+  572.                         &   + ((BET301*zs+BET201)*zs+BET101)*zs+BET001
+  573.                         !
+  574.                      zn0 = ((((BET050*zt   &
+  575.                         &   + BET140*zs+BET040)*zt   &
+  576.                         &   + (BET230*zs+BET130)*zs+BET030)*zt   &
+  577.                         &   + ((BET320*zs+BET220)*zs+BET120)*zs+BET020)*zt   &
+  578.                         &   + (((BET410*zs+BET310)*zs+BET210)*zs+BET110)*zs+BET010)*zt   &
+  579.                         &   + ((((BET500*zs+BET400)*zs+BET300)*zs+BET200)*zs+BET100)*zs+BET000
+  580.                         !
+  581.                      zn  = ( ( zn3 * zh + zn2 ) * zh + zn1 ) * zh + zn0
+  582.                      !
+  583.                      pab(ji,jj,jk,jp_sal) = zn / zs * r1_rau0 * ztm
+  584.                      !
+  585.                   END DO
+  586.                END DO
+  587.             END DO
+  588.             !
+  589.          CASE( np_seos )                  !==  simplified EOS  ==!
+  590.             !
+  591.             DO jk = 1, jpkm1
+  592.                DO jj = 1, jpj
+  593.                   DO ji = 1, jpi
+  594.                      zt  = pts (ji,jj,jk,jp_tem) - 10._wp   ! pot. temperature anomaly (t-T0)
+  595.                      zs  = pts (ji,jj,jk,jp_sal) - 35._wp   ! abs. salinity anomaly (s-S0)
+  596.                      zh  = gdept_n(ji,jj,jk)                ! depth in meters at t-point
+  597.                      ztm = tmask(ji,jj,jk)                  ! land/sea bottom mask = surf. mask
+  598.                      !
+  599.                      zn  = rn_a0 * ( 1._wp + rn_lambda1*zt + rn_mu1*zh ) + rn_nu*zs
+  600.                      pab(ji,jj,jk,jp_tem) = zn * r1_rau0 * ztm   ! alpha
+  601.                      !
+  602.                      zn  = rn_b0 * ( 1._wp - rn_lambda2*zs - rn_mu2*zh ) - rn_nu*zt
+  603.                      pab(ji,jj,jk,jp_sal) = zn * r1_rau0 * ztm   ! beta
+  604.                      !
+  605.                   END DO
+  606.                END DO
+  607.             END DO
+  608.             !
+  609.          CASE DEFAULT
+  610.             IF(lwp) WRITE(numout,cform_err)
+  611.             IF(lwp) WRITE(numout,*) '          bad flag value for neos = ', neos
+  612.             nstop = nstop + 1
+  613.             !
+  614.          END SELECT
+  615.          !
+  616.          IF(ln_ctl)   CALL prt_ctl( tab3d_1=pab(:,:,:,jp_tem), clinfo1=' rab_3d_t: ', &
+  617.             &                       tab3d_2=pab(:,:,:,jp_sal), clinfo2=' rab_3d_s : ', ovlap=1, kdim=jpk )
+  618.          !
+  619.          IF( nn_timing == 1 )   CALL timing_stop('rab_3d')
+  620.          !
+  621.       END SUBROUTINE rab_3d
+  622.    
+  623.    
+  624.       SUBROUTINE rab_2d( pts, pdep, pab )
+  625.          !!----------------------------------------------------------------------
+  626.          !!                 ***  ROUTINE rab_2d  ***
+  627.          !!
+  628.          !! ** Purpose :   Calculates thermal/haline expansion ratio for a 2d field (unmasked)
+  629.          !!
+  630.          !! ** Action  : - pab     : thermal/haline expansion ratio at T-points
+  631.          !!----------------------------------------------------------------------
+  632.          REAL(wp), DIMENSION(jpi,jpj,jpts)    , INTENT(in   ) ::   pts    ! pot. temperature & salinity
+  633.          REAL(wp), DIMENSION(jpi,jpj)         , INTENT(in   ) ::   pdep   ! depth                  [m]
+  634.          REAL(wp), DIMENSION(jpi,jpj,jpts)    , INTENT(  out) ::   pab    ! thermal/haline expansion ratio
+  635.          !
+  636.          INTEGER  ::   ji, jj, jk                ! dummy loop indices
+  637.          REAL(wp) ::   zt , zh , zs              ! local scalars
+  638.          REAL(wp) ::   zn , zn0, zn1, zn2, zn3   !   -      -
+  639.          !!----------------------------------------------------------------------
+  640.          !
+  641.          IF( nn_timing == 1 ) CALL timing_start('rab_2d')
+  642.          !
+  643.          pab(:,:,:) = 0._wp
+ftn-6263 ftn: VECTOR File = eosbn2.f90, Line = 643 
+  A loop starting at line 643 was not vectorized because it contains a reference to a non-vector intrinsic on line 643.
+
+  644.          !
+  645.          SELECT CASE ( neos )
+  646.          !
+  647.          CASE( np_teos10, np_eos80 )                !==  polynomial TEOS-10 / EOS-80 ==!
+  648.             !
+  649.             DO jj = 1, jpjm1
+  650.                DO ji = 1, jpim1   ! vector opt.
+  651.                   !
+  652.                   zh  = pdep(ji,jj) * r1_Z0                                  ! depth
+  653.                   zt  = pts (ji,jj,jp_tem) * r1_T0                           ! temperature
+  654.                   zs  = SQRT( ABS( pts(ji,jj,jp_sal) + rdeltaS ) * r1_S0 )   ! square root salinity
+  655.                   !
+  656.                   ! alpha
+  657.                   zn3 = ALP003
+  658.                   !
+  659.                   zn2 = ALP012*zt + ALP102*zs+ALP002
+  660.                   !
+  661.                   zn1 = ((ALP031*zt   &
+  662.                      &   + ALP121*zs+ALP021)*zt   &
+  663.                      &   + (ALP211*zs+ALP111)*zs+ALP011)*zt   &
+  664.                      &   + ((ALP301*zs+ALP201)*zs+ALP101)*zs+ALP001
+  665.                      !
+  666.                   zn0 = ((((ALP050*zt   &
+  667.                      &   + ALP140*zs+ALP040)*zt   &
+  668.                      &   + (ALP230*zs+ALP130)*zs+ALP030)*zt   &
+  669.                      &   + ((ALP320*zs+ALP220)*zs+ALP120)*zs+ALP020)*zt   &
+  670.                      &   + (((ALP410*zs+ALP310)*zs+ALP210)*zs+ALP110)*zs+ALP010)*zt   &
+  671.                      &   + ((((ALP500*zs+ALP400)*zs+ALP300)*zs+ALP200)*zs+ALP100)*zs+ALP000
+  672.                      !
+  673.                   zn  = ( ( zn3 * zh + zn2 ) * zh + zn1 ) * zh + zn0
+  674.                   !
+  675.                   pab(ji,jj,jp_tem) = zn * r1_rau0
+  676.                   !
+  677.                   ! beta
+  678.                   zn3 = BET003
+  679.                   !
+  680.                   zn2 = BET012*zt + BET102*zs+BET002
+  681.                   !
+  682.                   zn1 = ((BET031*zt   &
+  683.                      &   + BET121*zs+BET021)*zt   &
+  684.                      &   + (BET211*zs+BET111)*zs+BET011)*zt   &
+  685.                      &   + ((BET301*zs+BET201)*zs+BET101)*zs+BET001
+  686.                      !
+  687.                   zn0 = ((((BET050*zt   &
+  688.                      &   + BET140*zs+BET040)*zt   &
+  689.                      &   + (BET230*zs+BET130)*zs+BET030)*zt   &
+  690.                      &   + ((BET320*zs+BET220)*zs+BET120)*zs+BET020)*zt   &
+  691.                      &   + (((BET410*zs+BET310)*zs+BET210)*zs+BET110)*zs+BET010)*zt   &
+  692.                      &   + ((((BET500*zs+BET400)*zs+BET300)*zs+BET200)*zs+BET100)*zs+BET000
+  693.                      !
+  694.                   zn  = ( ( zn3 * zh + zn2 ) * zh + zn1 ) * zh + zn0
+  695.                   !
+  696.                   pab(ji,jj,jp_sal) = zn / zs * r1_rau0
+  697.                   !
+  698.                   !
+  699.                END DO
+  700.             END DO
+  701.             !
+  702.             CALL lbc_lnk( pab(:,:,jp_tem), 'T', 1. )                    ! Lateral boundary conditions
+  703.             CALL lbc_lnk( pab(:,:,jp_sal), 'T', 1. )                    
+  704.             !
+  705.          CASE( np_seos )                  !==  simplified EOS  ==!
+  706.             !
+  707.             DO jj = 1, jpjm1
+  708.                DO ji = 1, jpim1   ! vector opt.
+  709.                   !
+  710.                   zt    = pts  (ji,jj,jp_tem) - 10._wp   ! pot. temperature anomaly (t-T0)
+  711.                   zs    = pts  (ji,jj,jp_sal) - 35._wp   ! abs. salinity anomaly (s-S0)
+  712.                   zh    = pdep (ji,jj)                   ! depth at the partial step level
+  713.                   !
+  714.                   zn  = rn_a0 * ( 1._wp + rn_lambda1*zt + rn_mu1*zh ) + rn_nu*zs
+  715.                   pab(ji,jj,jp_tem) = zn * r1_rau0   ! alpha
+  716.                   !
+  717.                   zn  = rn_b0 * ( 1._wp - rn_lambda2*zs - rn_mu2*zh ) - rn_nu*zt
+  718.                   pab(ji,jj,jp_sal) = zn * r1_rau0   ! beta
+  719.                   !
+  720.                END DO
+  721.             END DO
+  722.             !
+  723.             CALL lbc_lnk( pab(:,:,jp_tem), 'T', 1. )                    ! Lateral boundary conditions
+  724.             CALL lbc_lnk( pab(:,:,jp_sal), 'T', 1. )                    
+  725.             !
+  726.          CASE DEFAULT
+  727.             IF(lwp) WRITE(numout,cform_err)
+  728.             IF(lwp) WRITE(numout,*) '          bad flag value for neos = ', neos
+  729.             nstop = nstop + 1
+  730.             !
+  731.          END SELECT
+  732.          !
+  733.          IF(ln_ctl)   CALL prt_ctl( tab2d_1=pab(:,:,jp_tem), clinfo1=' rab_2d_t: ', &
+  734.             &                       tab2d_2=pab(:,:,jp_sal), clinfo2=' rab_2d_s : ' )
+  735.          !
+  736.          IF( nn_timing == 1 )   CALL timing_stop('rab_2d')
+  737.          !
+  738.       END SUBROUTINE rab_2d
+ftn-5002 ftn: NOTE File = eosbn2.f90, Line = 738 
+  Local variable "JK" is declared but neither defined nor used.
+
+  739.    
+  740.    
+  741.       SUBROUTINE rab_0d( pts, pdep, pab )
+  742.          !!----------------------------------------------------------------------
+  743.          !!                 ***  ROUTINE rab_0d  ***
+  744.          !!
+  745.          !! ** Purpose :   Calculates thermal/haline expansion ratio for a 2d field (unmasked)
+  746.          !!
+  747.          !! ** Action  : - pab     : thermal/haline expansion ratio at T-points
+  748.          !!----------------------------------------------------------------------
+  749.          REAL(wp), DIMENSION(jpts)    , INTENT(in   ) ::   pts    ! pot. temperature & salinity
+  750.          REAL(wp),                      INTENT(in   ) ::   pdep   ! depth                  [m]
+  751.          REAL(wp), DIMENSION(jpts)    , INTENT(  out) ::   pab    ! thermal/haline expansion ratio
+  752.          !
+  753.          REAL(wp) ::   zt , zh , zs              ! local scalars
+  754.          REAL(wp) ::   zn , zn0, zn1, zn2, zn3   !   -      -
+  755.          !!----------------------------------------------------------------------
+  756.          !
+  757.          IF( nn_timing == 1 ) CALL timing_start('rab_2d')
+  758.          !
+  759.          pab(:) = 0._wp
+ftn-6205 ftn: VECTOR File = eosbn2.f90, Line = 759 
+  A loop starting at line 759 was vectorized with a single vector iteration.
+
+  760.          !
+  761.          SELECT CASE ( neos )
+  762.          !
+  763.          CASE( np_teos10, np_eos80 )      !==  polynomial TEOS-10 / EOS-80 ==!
+  764.             !
+  765.             !
+  766.             zh  = pdep * r1_Z0                                  ! depth
+  767.             zt  = pts (jp_tem) * r1_T0                           ! temperature
+  768.             zs  = SQRT( ABS( pts(jp_sal) + rdeltaS ) * r1_S0 )   ! square root salinity
+  769.             !
+  770.             ! alpha
+  771.             zn3 = ALP003
+  772.             !
+  773.             zn2 = ALP012*zt + ALP102*zs+ALP002
+  774.             !
+  775.             zn1 = ((ALP031*zt   &
+  776.                &   + ALP121*zs+ALP021)*zt   &
+  777.                &   + (ALP211*zs+ALP111)*zs+ALP011)*zt   &
+  778.                &   + ((ALP301*zs+ALP201)*zs+ALP101)*zs+ALP001
+  779.                !
+  780.             zn0 = ((((ALP050*zt   &
+  781.                &   + ALP140*zs+ALP040)*zt   &
+  782.                &   + (ALP230*zs+ALP130)*zs+ALP030)*zt   &
+  783.                &   + ((ALP320*zs+ALP220)*zs+ALP120)*zs+ALP020)*zt   &
+  784.                &   + (((ALP410*zs+ALP310)*zs+ALP210)*zs+ALP110)*zs+ALP010)*zt   &
+  785.                &   + ((((ALP500*zs+ALP400)*zs+ALP300)*zs+ALP200)*zs+ALP100)*zs+ALP000
+  786.                !
+  787.             zn  = ( ( zn3 * zh + zn2 ) * zh + zn1 ) * zh + zn0
+  788.             !
+  789.             pab(jp_tem) = zn * r1_rau0
+  790.             !
+  791.             ! beta
+  792.             zn3 = BET003
+  793.             !
+  794.             zn2 = BET012*zt + BET102*zs+BET002
+  795.             !
+  796.             zn1 = ((BET031*zt   &
+  797.                &   + BET121*zs+BET021)*zt   &
+  798.                &   + (BET211*zs+BET111)*zs+BET011)*zt   &
+  799.                &   + ((BET301*zs+BET201)*zs+BET101)*zs+BET001
+  800.                !
+  801.             zn0 = ((((BET050*zt   &
+  802.                &   + BET140*zs+BET040)*zt   &
+  803.                &   + (BET230*zs+BET130)*zs+BET030)*zt   &
+  804.                &   + ((BET320*zs+BET220)*zs+BET120)*zs+BET020)*zt   &
+  805.                &   + (((BET410*zs+BET310)*zs+BET210)*zs+BET110)*zs+BET010)*zt   &
+  806.                &   + ((((BET500*zs+BET400)*zs+BET300)*zs+BET200)*zs+BET100)*zs+BET000
+  807.                !
+  808.             zn  = ( ( zn3 * zh + zn2 ) * zh + zn1 ) * zh + zn0
+  809.             !
+  810.             pab(jp_sal) = zn / zs * r1_rau0
+  811.             !
+  812.             !
+  813.             !
+  814.          CASE( np_seos )                  !==  simplified EOS  ==!
+  815.             !
+  816.             zt    = pts(jp_tem) - 10._wp   ! pot. temperature anomaly (t-T0)
+  817.             zs    = pts(jp_sal) - 35._wp   ! abs. salinity anomaly (s-S0)
+  818.             zh    = pdep                   ! depth at the partial step level
+  819.             !
+  820.             zn  = rn_a0 * ( 1._wp + rn_lambda1*zt + rn_mu1*zh ) + rn_nu*zs
+  821.             pab(jp_tem) = zn * r1_rau0   ! alpha
+  822.             !
+  823.             zn  = rn_b0 * ( 1._wp - rn_lambda2*zs - rn_mu2*zh ) - rn_nu*zt
+  824.             pab(jp_sal) = zn * r1_rau0   ! beta
+  825.             !
+  826.          CASE DEFAULT
+  827.             IF(lwp) WRITE(numout,cform_err)
+  828.             IF(lwp) WRITE(numout,*) '          bad flag value for neos = ', neos
+  829.             nstop = nstop + 1
+  830.             !
+  831.          END SELECT
+  832.          !
+  833.          IF( nn_timing == 1 )   CALL timing_stop('rab_2d')
+  834.          !
+  835.       END SUBROUTINE rab_0d
+  836.    
+  837.    
+  838.       SUBROUTINE bn2( pts, pab, pn2 )
+  839.          !!----------------------------------------------------------------------
+  840.          !!                  ***  ROUTINE bn2  ***
+  841.          !!
+  842.          !! ** Purpose :   Compute the local Brunt-Vaisala frequency at the 
+  843.          !!                time-step of the input arguments
+  844.          !!
+  845.          !! ** Method  :   pn2 = grav * (alpha dk[T] + beta dk[S] ) / e3w
+  846.          !!      where alpha and beta are given in pab, and computed on T-points.
+  847.          !!      N.B. N^2 is set one for all to zero at jk=1 in istate module.
+  848.          !!
+  849.          !! ** Action  :   pn2 : square of the brunt-vaisala frequency at w-point 
+  850.          !!
+  851.          !!----------------------------------------------------------------------
+  852.          REAL(wp), DIMENSION(jpi,jpj,jpk,jpts), INTENT(in   ) ::  pts   ! pot. temperature and salinity   [Celcius,psu]
+  853.          REAL(wp), DIMENSION(jpi,jpj,jpk,jpts), INTENT(in   ) ::  pab   ! thermal/haline expansion coef.  [Celcius-1,psu-1]
+  854.          REAL(wp), DIMENSION(jpi,jpj,jpk     ), INTENT(  out) ::  pn2   ! Brunt-Vaisala frequency squared [1/s^2]
+  855.          !
+  856.          INTEGER  ::   ji, jj, jk      ! dummy loop indices
+  857.          REAL(wp) ::   zaw, zbw, zrw   ! local scalars
+  858.          !!----------------------------------------------------------------------
+  859.          !
+  860.          IF( nn_timing == 1 ) CALL timing_start('bn2')
+  861.          !
+  862.          DO jk = 2, jpkm1           ! interior points only (2=< jk =< jpkm1 )
+  863.             DO jj = 1, jpj          ! surface and bottom value set to zero one for all in istate.F90
+  864.                DO ji = 1, jpi
+  865.                   zrw =   ( gdepw_n(ji,jj,jk  ) - gdept_n(ji,jj,jk) )   &
+  866.                      &  / ( gdept_n(ji,jj,jk-1) - gdept_n(ji,jj,jk) ) 
+  867.                      !
+  868.                   zaw = pab(ji,jj,jk,jp_tem) * (1. - zrw) + pab(ji,jj,jk-1,jp_tem) * zrw 
+  869.                   zbw = pab(ji,jj,jk,jp_sal) * (1. - zrw) + pab(ji,jj,jk-1,jp_sal) * zrw
+  870.                   !
+  871.                   pn2(ji,jj,jk) = grav * (  zaw * ( pts(ji,jj,jk-1,jp_tem) - pts(ji,jj,jk,jp_tem) )     &
+  872.                      &                    - zbw * ( pts(ji,jj,jk-1,jp_sal) - pts(ji,jj,jk,jp_sal) )  )  &
+  873.                      &            / e3w_n(ji,jj,jk) * tmask(ji,jj,jk)
+  874.                END DO
+  875.             END DO
+  876.          END DO
+  877.          !
+  878.          IF(ln_ctl)   CALL prt_ctl( tab3d_1=pn2, clinfo1=' bn2  : ', ovlap=1, kdim=jpk )
+  879.          !
+  880.          IF( nn_timing == 1 )   CALL timing_stop('bn2')
+  881.          !
+  882.       END SUBROUTINE bn2
+  883.    
+  884.    
+  885.       FUNCTION eos_pt_from_ct( ctmp, psal ) RESULT( ptmp )
+  886.          !!----------------------------------------------------------------------
+  887.          !!                 ***  ROUTINE eos_pt_from_ct  ***
+  888.          !!
+  889.          !! ** Purpose :   Compute pot.temp. from cons. temp. [Celcius]
+  890.          !!
+  891.          !! ** Method  :   rational approximation (5/3th order) of TEOS-10 algorithm
+  892.          !!       checkvalue: pt=20.02391895 Celsius for sa=35.7g/kg, ct=20degC
+  893.          !!
+  894.          !! Reference  :   TEOS-10, UNESCO
+  895.          !!                Rational approximation to TEOS10 algorithm (rms error on WOA13 values: 4.0e-5 degC)
+  896.          !!----------------------------------------------------------------------
+  897.          REAL(wp), DIMENSION(jpi,jpj), INTENT(in   ) ::   ctmp   ! Cons. Temp [Celcius]
+  898.          REAL(wp), DIMENSION(jpi,jpj), INTENT(in   ) ::   psal   ! salinity   [psu]
+  899.          ! Leave result array automatic rather than making explicitly allocated
+  900.          REAL(wp), DIMENSION(jpi,jpj) ::   ptmp   ! potential temperature [Celcius]
+  901.          !
+  902.          INTEGER  ::   ji, jj               ! dummy loop indices
+  903.          REAL(wp) ::   zt , zs , ztm        ! local scalars
+  904.          REAL(wp) ::   zn , zd              ! local scalars
+  905.          REAL(wp) ::   zdeltaS , z1_S0 , z1_T0
+  906.          !!----------------------------------------------------------------------
+  907.          !
+  908.          IF ( nn_timing == 1 )   CALL timing_start('eos_pt_from_ct')
+  909.          !
+  910.          zdeltaS = 5._wp
+  911.          z1_S0   = 0.875_wp/35.16504_wp
+  912.          z1_T0   = 1._wp/40._wp
+  913.          !
+  914.          DO jj = 1, jpj
+  915.             DO ji = 1, jpi
+  916.                !
+  917.                zt  = ctmp   (ji,jj) * z1_T0
+  918.                zs  = SQRT( ABS( psal(ji,jj) + zdeltaS ) * r1_S0 )
+  919.                ztm = tmask(ji,jj,1)
+  920.                !
+  921.                zn = ((((-2.1385727895e-01_wp*zt   &
+  922.                   &   - 2.7674419971e-01_wp*zs+1.0728094330_wp)*zt   &
+  923.                   &   + (2.6366564313_wp*zs+3.3546960647_wp)*zs-7.8012209473_wp)*zt   &
+  924.                   &   + ((1.8835586562_wp*zs+7.3949191679_wp)*zs-3.3937395875_wp)*zs-5.6414948432_wp)*zt   &
+  925.                   &   + (((3.5737370589_wp*zs-1.5512427389e+01_wp)*zs+2.4625741105e+01_wp)*zs   &
+  926.                   &      +1.9912291000e+01_wp)*zs-3.2191146312e+01_wp)*zt   &
+  927.                   &   + ((((5.7153204649e-01_wp*zs-3.0943149543_wp)*zs+9.3052495181_wp)*zs   &
+  928.                   &      -9.4528934807_wp)*zs+3.1066408996_wp)*zs-4.3504021262e-01_wp
+  929.                   !
+  930.                zd = (2.0035003456_wp*zt   &
+  931.                   &   -3.4570358592e-01_wp*zs+5.6471810638_wp)*zt   &
+  932.                   &   + (1.5393993508_wp*zs-6.9394762624_wp)*zs+1.2750522650e+01_wp
+  933.                   !
+  934.                ptmp(ji,jj) = ( zt / z1_T0 + zn / zd ) * ztm
+  935.                   !
+  936.             END DO
+  937.          END DO
+  938.          !
+  939.          IF( nn_timing == 1 )   CALL timing_stop('eos_pt_from_ct')
+  940.          !
+  941.       END FUNCTION eos_pt_from_ct
+ftn-5001 ftn: NOTE File = eosbn2.f90, Line = 941 
+  Local variable "Z1_S0" is assigned a value but never used.
+
+  942.    
+  943.    
+  944.       SUBROUTINE  eos_fzp_2d( psal, ptf, pdep )
+  945.          !!----------------------------------------------------------------------
+  946.          !!                 ***  ROUTINE eos_fzp  ***
+  947.          !!
+  948.          !! ** Purpose :   Compute the freezing point temperature [Celcius]
+  949.          !!
+  950.          !! ** Method  :   UNESCO freezing point (ptf) in Celcius is given by
+  951.          !!       ptf(t,z) = (-.0575+1.710523e-3*sqrt(abs(s))-2.154996e-4*s)*s - 7.53e-4*z
+  952.          !!       checkvalue: tf=-2.588567 Celsius for s=40psu, z=500m
+  953.          !!
+  954.          !! Reference  :   UNESCO tech. papers in the marine science no. 28. 1978
+  955.          !!----------------------------------------------------------------------
+  956.          REAL(wp), DIMENSION(jpi,jpj), INTENT(in   )           ::   psal   ! salinity   [psu]
+  957.          REAL(wp), DIMENSION(jpi,jpj), INTENT(in   ), OPTIONAL ::   pdep   ! depth      [m]
+  958.          REAL(wp), DIMENSION(jpi,jpj), INTENT(out  )           ::   ptf    ! freezing temperature [Celcius]
+  959.          !
+  960.          INTEGER  ::   ji, jj          ! dummy loop indices
+  961.          REAL(wp) ::   zt, zs, z1_S0   ! local scalars
+  962.          !!----------------------------------------------------------------------
+  963.          !
+  964.          SELECT CASE ( neos )
+  965.          !
+  966.          CASE ( np_teos10, np_seos )      !==  CT,SA (TEOS-10 and S-EOS formulations) ==!
+  967.             !
+  968.             z1_S0 = 1._wp / 35.16504_wp
+  969.             DO jj = 1, jpj
+  970.                DO ji = 1, jpi
+  971.                   zs= SQRT( ABS( psal(ji,jj) ) * z1_S0 )           ! square root salinity
+  972.                   ptf(ji,jj) = ((((1.46873e-03_wp*zs-9.64972e-03_wp)*zs+2.28348e-02_wp)*zs &
+  973.                      &          - 3.12775e-02_wp)*zs+2.07679e-02_wp)*zs-5.87701e-02_wp
+  974.                END DO
+  975.             END DO
+  976.             ptf(:,:) = ptf(:,:) * psal(:,:)
+ftn-6263 ftn: VECTOR File = eosbn2.f90, Line = 976 
+  A loop starting at line 976 was not vectorized because it contains a reference to a non-vector intrinsic on line 976.
+
+  977.             !
+  978.             IF( PRESENT( pdep ) )   ptf(:,:) = ptf(:,:) - 7.53e-4 * pdep(:,:)
+ftn-6263 ftn: VECTOR File = eosbn2.f90, Line = 978 
+  A loop starting at line 978 was not vectorized because it contains a reference to a non-vector intrinsic on line 978.
+
+  979.             !
+  980.          CASE ( np_eos80 )                !==  PT,SP (UNESCO formulation)  ==!
+  981.             !
+  982.             ptf(:,:) = ( - 0.0575_wp + 1.710523e-3_wp * SQRT( psal(:,:) )   &
+ftn-6263 ftn: VECTOR File = eosbn2.f90, Line = 982 
+  A loop starting at line 982 was not vectorized because it contains a reference to a non-vector intrinsic on line 982.
+
+  983.                &                     - 2.154996e-4_wp *       psal(:,:)   ) * psal(:,:)
+  984.                !
+  985.             IF( PRESENT( pdep ) )   ptf(:,:) = ptf(:,:) - 7.53e-4 * pdep(:,:)
+ftn-6263 ftn: VECTOR File = eosbn2.f90, Line = 985 
+  A loop starting at line 985 was not vectorized because it contains a reference to a non-vector intrinsic on line 985.
+
+  986.             !
+  987.          CASE DEFAULT
+  988.             IF(lwp) WRITE(numout,cform_err)
+  989.             IF(lwp) WRITE(numout,*) '          bad flag value for neos = ', neos
+  990.             nstop = nstop + 1
+  991.             !
+  992.          END SELECT      
+  993.          !
+  994.      END SUBROUTINE eos_fzp_2d
+ftn-5002 ftn: NOTE File = eosbn2.f90, Line = 994 
+  Local variable "ZT" is declared but neither defined nor used.
+
+  995.    
+  996.    
+  997.      SUBROUTINE eos_fzp_0d( psal, ptf, pdep )
+  998.          !!----------------------------------------------------------------------
+  999.          !!                 ***  ROUTINE eos_fzp  ***
+ 1000.          !!
+ 1001.          !! ** Purpose :   Compute the freezing point temperature [Celcius]
+ 1002.          !!
+ 1003.          !! ** Method  :   UNESCO freezing point (ptf) in Celcius is given by
+ 1004.          !!       ptf(t,z) = (-.0575+1.710523e-3*sqrt(abs(s))-2.154996e-4*s)*s - 7.53e-4*z
+ 1005.          !!       checkvalue: tf=-2.588567 Celsius for s=40psu, z=500m
+ 1006.          !!
+ 1007.          !! Reference  :   UNESCO tech. papers in the marine science no. 28. 1978
+ 1008.          !!----------------------------------------------------------------------
+ 1009.          REAL(wp), INTENT(in )           ::   psal         ! salinity   [psu]
+ 1010.          REAL(wp), INTENT(in ), OPTIONAL ::   pdep         ! depth      [m]
+ 1011.          REAL(wp), INTENT(out)           ::   ptf          ! freezing temperature [Celcius]
+ 1012.          !
+ 1013.          REAL(wp) :: zs   ! local scalars
+ 1014.          !!----------------------------------------------------------------------
+ 1015.          !
+ 1016.          SELECT CASE ( neos )
+ 1017.          !
+ 1018.          CASE ( np_teos10, np_seos )      !==  CT,SA (TEOS-10 and S-EOS formulations) ==!
+ 1019.             !
+ 1020.             zs  = SQRT( ABS( psal ) / 35.16504_wp )           ! square root salinity
+ 1021.             ptf = ((((1.46873e-03_wp*zs-9.64972e-03_wp)*zs+2.28348e-02_wp)*zs &
+ 1022.                      &          - 3.12775e-02_wp)*zs+2.07679e-02_wp)*zs-5.87701e-02_wp
+ 1023.             ptf = ptf * psal
+ 1024.             !
+ 1025.             IF( PRESENT( pdep ) )   ptf = ptf - 7.53e-4 * pdep
+ 1026.             !
+ 1027.          CASE ( np_eos80 )                !==  PT,SP (UNESCO formulation)  ==!
+ 1028.             !
+ 1029.             ptf = ( - 0.0575_wp + 1.710523e-3_wp * SQRT( psal )   &
+ 1030.                &                - 2.154996e-4_wp *       psal   ) * psal
+ 1031.                !
+ 1032.             IF( PRESENT( pdep ) )   ptf = ptf - 7.53e-4 * pdep
+ 1033.             !
+ 1034.          CASE DEFAULT
+ 1035.             IF(lwp) WRITE(numout,cform_err)
+ 1036.             IF(lwp) WRITE(numout,*) '          bad flag value for neos = ', neos
+ 1037.             nstop = nstop + 1
+ 1038.             !
+ 1039.          END SELECT
+ 1040.          !
+ 1041.       END SUBROUTINE eos_fzp_0d
+ 1042.    
+ 1043.    
+ 1044.       SUBROUTINE eos_pen( pts, pab_pe, ppen )
+ 1045.          !!----------------------------------------------------------------------
+ 1046.          !!                 ***  ROUTINE eos_pen  ***
+ 1047.          !!
+ 1048.          !! ** Purpose :   Calculates nonlinear anomalies of alpha_PE, beta_PE and PE at T-points
+ 1049.          !!
+ 1050.          !! ** Method  :   PE is defined analytically as the vertical 
+ 1051.          !!                   primitive of EOS times -g integrated between 0 and z>0.
+ 1052.          !!                pen is the nonlinear bsq-PE anomaly: pen = ( PE - rau0 gz ) / rau0 gz - rd
+ 1053.          !!                                                      = 1/z * /int_0^z rd dz - rd 
+ 1054.          !!                                where rd is the density anomaly (see eos_rhd function)
+ 1055.          !!                ab_pe are partial derivatives of PE anomaly with respect to T and S:
+ 1056.          !!                    ab_pe(1) = - 1/(rau0 gz) * dPE/dT + drd/dT = - d(pen)/dT
+ 1057.          !!                    ab_pe(2) =   1/(rau0 gz) * dPE/dS + drd/dS =   d(pen)/dS
+ 1058.          !!
+ 1059.          !! ** Action  : - pen         : PE anomaly given at T-points
+ 1060.          !!            : - pab_pe  : given at T-points
+ 1061.          !!                    pab_pe(:,:,:,jp_tem) is alpha_pe
+ 1062.          !!                    pab_pe(:,:,:,jp_sal) is beta_pe
+ 1063.          !!----------------------------------------------------------------------
+ 1064.          REAL(wp), DIMENSION(jpi,jpj,jpk,jpts), INTENT(in   ) ::   pts     ! pot. temperature & salinity
+ 1065.          REAL(wp), DIMENSION(jpi,jpj,jpk,jpts), INTENT(  out) ::   pab_pe  ! alpha_pe and beta_pe
+ 1066.          REAL(wp), DIMENSION(jpi,jpj,jpk)     , INTENT(  out) ::   ppen     ! potential energy anomaly
+ 1067.          !
+ 1068.          INTEGER  ::   ji, jj, jk                ! dummy loop indices
+ 1069.          REAL(wp) ::   zt , zh , zs , ztm        ! local scalars
+ 1070.          REAL(wp) ::   zn , zn0, zn1, zn2        !   -      -
+ 1071.          !!----------------------------------------------------------------------
+ 1072.          !
+ 1073.          IF( nn_timing == 1 )   CALL timing_start('eos_pen')
+ 1074.          !
+ 1075.          SELECT CASE ( neos )
+ 1076.          !
+ 1077.          CASE( np_teos10, np_eos80 )                !==  polynomial TEOS-10 / EOS-80 ==!
+ 1078.             !
+ 1079.             DO jk = 1, jpkm1
+ 1080.                DO jj = 1, jpj
+ 1081.                   DO ji = 1, jpi
+ 1082.                      !
+ 1083.                      zh  = gdept_n(ji,jj,jk) * r1_Z0                                ! depth
+ 1084.                      zt  = pts (ji,jj,jk,jp_tem) * r1_T0                           ! temperature
+ 1085.                      zs  = SQRT( ABS( pts(ji,jj,jk,jp_sal) + rdeltaS ) * r1_S0 )   ! square root salinity
+ 1086.                      ztm = tmask(ji,jj,jk)                                         ! tmask
+ 1087.                      !
+ 1088.                      ! potential energy non-linear anomaly
+ 1089.                      zn2 = (PEN012)*zt   &
+ 1090.                         &   + PEN102*zs+PEN002
+ 1091.                         !
+ 1092.                      zn1 = ((PEN021)*zt   &
+ 1093.                         &   + PEN111*zs+PEN011)*zt   &
+ 1094.                         &   + (PEN201*zs+PEN101)*zs+PEN001
+ 1095.                         !
+ 1096.                      zn0 = ((((PEN040)*zt   &
+ 1097.                         &   + PEN130*zs+PEN030)*zt   &
+ 1098.                         &   + (PEN220*zs+PEN120)*zs+PEN020)*zt   &
+ 1099.                         &   + ((PEN310*zs+PEN210)*zs+PEN110)*zs+PEN010)*zt   &
+ 1100.                         &   + (((PEN400*zs+PEN300)*zs+PEN200)*zs+PEN100)*zs+PEN000
+ 1101.                         !
+ 1102.                      zn  = ( zn2 * zh + zn1 ) * zh + zn0
+ 1103.                      !
+ 1104.                      ppen(ji,jj,jk)  = zn * zh * r1_rau0 * ztm
+ 1105.                      !
+ 1106.                      ! alphaPE non-linear anomaly
+ 1107.                      zn2 = APE002
+ 1108.                      !
+ 1109.                      zn1 = (APE011)*zt   &
+ 1110.                         &   + APE101*zs+APE001
+ 1111.                         !
+ 1112.                      zn0 = (((APE030)*zt   &
+ 1113.                         &   + APE120*zs+APE020)*zt   &
+ 1114.                         &   + (APE210*zs+APE110)*zs+APE010)*zt   &
+ 1115.                         &   + ((APE300*zs+APE200)*zs+APE100)*zs+APE000
+ 1116.                         !
+ 1117.                      zn  = ( zn2 * zh + zn1 ) * zh + zn0
+ 1118.                      !                              
+ 1119.                      pab_pe(ji,jj,jk,jp_tem) = zn * zh * r1_rau0 * ztm
+ 1120.                      !
+ 1121.                      ! betaPE non-linear anomaly
+ 1122.                      zn2 = BPE002
+ 1123.                      !
+ 1124.                      zn1 = (BPE011)*zt   &
+ 1125.                         &   + BPE101*zs+BPE001
+ 1126.                         !
+ 1127.                      zn0 = (((BPE030)*zt   &
+ 1128.                         &   + BPE120*zs+BPE020)*zt   &
+ 1129.                         &   + (BPE210*zs+BPE110)*zs+BPE010)*zt   &
+ 1130.                         &   + ((BPE300*zs+BPE200)*zs+BPE100)*zs+BPE000
+ 1131.                         !
+ 1132.                      zn  = ( zn2 * zh + zn1 ) * zh + zn0
+ 1133.                      !                              
+ 1134.                      pab_pe(ji,jj,jk,jp_sal) = zn / zs * zh * r1_rau0 * ztm
+ 1135.                      !
+ 1136.                   END DO
+ 1137.                END DO
+ 1138.             END DO
+ 1139.             !
+ 1140.          CASE( np_seos )                !==  Vallis (2006) simplified EOS  ==!
+ 1141.             !
+ 1142.             DO jk = 1, jpkm1
+ 1143.                DO jj = 1, jpj
+ 1144.                   DO ji = 1, jpi
+ 1145.                      zt  = pts(ji,jj,jk,jp_tem) - 10._wp  ! temperature anomaly (t-T0)
+ 1146.                      zs = pts (ji,jj,jk,jp_sal) - 35._wp  ! abs. salinity anomaly (s-S0)
+ 1147.                      zh  = gdept_n(ji,jj,jk)              ! depth in meters  at t-point
+ 1148.                      ztm = tmask(ji,jj,jk)                ! tmask
+ 1149.                      zn  = 0.5_wp * zh * r1_rau0 * ztm
+ 1150.                      !                                    ! Potential Energy
+ 1151.                      ppen(ji,jj,jk) = ( rn_a0 * rn_mu1 * zt + rn_b0 * rn_mu2 * zs ) * zn
+ 1152.                      !                                    ! alphaPE
+ 1153.                      pab_pe(ji,jj,jk,jp_tem) = - rn_a0 * rn_mu1 * zn
+ 1154.                      pab_pe(ji,jj,jk,jp_sal) =   rn_b0 * rn_mu2 * zn
+ 1155.                      !
+ 1156.                   END DO
+ 1157.                END DO
+ 1158.             END DO
+ 1159.             !
+ 1160.          CASE DEFAULT
+ 1161.             IF(lwp) WRITE(numout,cform_err)
+ 1162.             IF(lwp) WRITE(numout,*) '          bad flag value for neos = ', neos
+ 1163.             nstop = nstop + 1
+ 1164.             !
+ 1165.          END SELECT
+ 1166.          !
+ 1167.          IF( nn_timing == 1 )   CALL timing_stop('eos_pen')
+ 1168.          !
+ 1169.       END SUBROUTINE eos_pen
+ 1170.    
+ 1171.    
+ 1172.       SUBROUTINE eos_init
+ 1173.          !!----------------------------------------------------------------------
+ 1174.          !!                 ***  ROUTINE eos_init  ***
+ 1175.          !!
+ 1176.          !! ** Purpose :   initializations for the equation of state
+ 1177.          !!
+ 1178.          !! ** Method  :   Read the namelist nameos and control the parameters
+ 1179.          !!----------------------------------------------------------------------
+ 1180.          INTEGER  ::   ios   ! local integer
+ 1181.          INTEGER  ::   ioptio   ! local integer
+ 1182.          !!
+ 1183.          NAMELIST/nameos/ ln_TEOS10, ln_EOS80, ln_SEOS, rn_a0, rn_b0, rn_lambda1, rn_mu1,   &
+ 1184.             &                                             rn_lambda2, rn_mu2, rn_nu
+ 1185.          !!----------------------------------------------------------------------
+ 1186.          !
+ 1187.          REWIND( numnam_ref )              ! Namelist nameos in reference namelist : equation of state
+ 1188.          READ  ( numnam_ref, nameos, IOSTAT = ios, ERR = 901 )
+ 1189.    901   IF( ios /= 0 ) CALL ctl_nam ( ios , 'nameos in reference namelist', lwp )
+ 1190.          !
+ 1191.          REWIND( numnam_cfg )              ! Namelist nameos in configuration namelist : equation of state
+ 1192.          READ  ( numnam_cfg, nameos, IOSTAT = ios, ERR = 902 )
+ 1193.    902   IF( ios /= 0 ) CALL ctl_nam ( ios , 'nameos in configuration namelist', lwp )
+ 1194.          IF(lwm) WRITE( numond, nameos )
+ 1195.          !
+ 1196.          rau0        = 1026._wp                 !: volumic mass of reference     [kg/m3]
+ 1197.          rcp         = 3991.86795711963_wp      !: heat capacity     [J/K]
+ 1198.          !
+ 1199.          IF(lwp) THEN                ! Control print
+ 1200.             WRITE(numout,*)
+ 1201.             WRITE(numout,*) 'eos_init : equation of state'
+ 1202.             WRITE(numout,*) '~~~~~~~~'
+ 1203.             WRITE(numout,*) '   Namelist nameos : Chosen the Equation Of Seawater (EOS)'
+ 1204.             WRITE(numout,*) '      TEOS-10 : rho=F(Conservative Temperature, Absolute  Salinity, depth)   ln_TEOS10 = ', ln_TEOS10
+ 1205.             WRITE(numout,*) '      EOS-80  : rho=F(Potential    Temperature, Practical Salinity, depth)   ln_EOS80  = ', ln_EOS80
+ 1206.             WRITE(numout,*) '      S-EOS   : rho=F(Conservative Temperature, Absolute  Salinity, depth)   ln_SEOS   = ', ln_SEOS
+ 1207.          ENDIF
+ 1208.    
+ 1209.          ! Check options for equation of state & set neos based on logical flags
+ 1210.          ioptio = 0
+ 1211.          IF( ln_TEOS10 ) THEN   ;   ioptio = ioptio+1   ;   neos = np_teos10   ;   ENDIF
+ 1212.          IF( ln_EOS80  ) THEN   ;   ioptio = ioptio+1   ;   neos = np_eos80    ;   ENDIF
+ 1213.          IF( ln_SEOS   ) THEN   ;   ioptio = ioptio+1   ;   neos = np_seos     ;   ENDIF
+ 1214.          IF( ioptio /= 1 )   CALL ctl_stop("Exactly one equation of state option must be selected")
+ 1215.          !
+ 1216.          SELECT CASE( neos )         ! check option
+ 1217.          !
+ 1218.          CASE( np_teos10 )                       !==  polynomial TEOS-10  ==!
+ 1219.             IF(lwp) WRITE(numout,*)
+ 1220.             IF(lwp) WRITE(numout,*) '          use of TEOS-10 equation of state (cons. temp. and abs. salinity)'
+ 1221.             !
+ 1222.             l_useCT = .TRUE.                          ! model temperature is Conservative temperature 
+ 1223.             !
+ 1224.             rdeltaS = 32._wp
+ 1225.             r1_S0  = 0.875_wp/35.16504_wp
+ 1226.             r1_T0  = 1._wp/40._wp
+ 1227.             r1_Z0  = 1.e-4_wp
+ 1228.             !
+ 1229.             EOS000 = 8.0189615746e+02_wp
+ 1230.             EOS100 = 8.6672408165e+02_wp
+ 1231.             EOS200 = -1.7864682637e+03_wp
+ 1232.             EOS300 = 2.0375295546e+03_wp
+ 1233.             EOS400 = -1.2849161071e+03_wp
+ 1234.             EOS500 = 4.3227585684e+02_wp
+ 1235.             EOS600 = -6.0579916612e+01_wp
+ 1236.             EOS010 = 2.6010145068e+01_wp
+ 1237.             EOS110 = -6.5281885265e+01_wp
+ 1238.             EOS210 = 8.1770425108e+01_wp
+ 1239.             EOS310 = -5.6888046321e+01_wp
+ 1240.             EOS410 = 1.7681814114e+01_wp
+ 1241.             EOS510 = -1.9193502195_wp
+ 1242.             EOS020 = -3.7074170417e+01_wp
+ 1243.             EOS120 = 6.1548258127e+01_wp
+ 1244.             EOS220 = -6.0362551501e+01_wp
+ 1245.             EOS320 = 2.9130021253e+01_wp
+ 1246.             EOS420 = -5.4723692739_wp
+ 1247.             EOS030 = 2.1661789529e+01_wp
+ 1248.             EOS130 = -3.3449108469e+01_wp
+ 1249.             EOS230 = 1.9717078466e+01_wp
+ 1250.             EOS330 = -3.1742946532_wp
+ 1251.             EOS040 = -8.3627885467_wp
+ 1252.             EOS140 = 1.1311538584e+01_wp
+ 1253.             EOS240 = -5.3563304045_wp
+ 1254.             EOS050 = 5.4048723791e-01_wp
+ 1255.             EOS150 = 4.8169980163e-01_wp
+ 1256.             EOS060 = -1.9083568888e-01_wp
+ 1257.             EOS001 = 1.9681925209e+01_wp
+ 1258.             EOS101 = -4.2549998214e+01_wp
+ 1259.             EOS201 = 5.0774768218e+01_wp
+ 1260.             EOS301 = -3.0938076334e+01_wp
+ 1261.             EOS401 = 6.6051753097_wp
+ 1262.             EOS011 = -1.3336301113e+01_wp
+ 1263.             EOS111 = -4.4870114575_wp
+ 1264.             EOS211 = 5.0042598061_wp
+ 1265.             EOS311 = -6.5399043664e-01_wp
+ 1266.             EOS021 = 6.7080479603_wp
+ 1267.             EOS121 = 3.5063081279_wp
+ 1268.             EOS221 = -1.8795372996_wp
+ 1269.             EOS031 = -2.4649669534_wp
+ 1270.             EOS131 = -5.5077101279e-01_wp
+ 1271.             EOS041 = 5.5927935970e-01_wp
+ 1272.             EOS002 = 2.0660924175_wp
+ 1273.             EOS102 = -4.9527603989_wp
+ 1274.             EOS202 = 2.5019633244_wp
+ 1275.             EOS012 = 2.0564311499_wp
+ 1276.             EOS112 = -2.1311365518e-01_wp
+ 1277.             EOS022 = -1.2419983026_wp
+ 1278.             EOS003 = -2.3342758797e-02_wp
+ 1279.             EOS103 = -1.8507636718e-02_wp
+ 1280.             EOS013 = 3.7969820455e-01_wp
+ 1281.             !
+ 1282.             ALP000 = -6.5025362670e-01_wp
+ 1283.             ALP100 = 1.6320471316_wp
+ 1284.             ALP200 = -2.0442606277_wp
+ 1285.             ALP300 = 1.4222011580_wp
+ 1286.             ALP400 = -4.4204535284e-01_wp
+ 1287.             ALP500 = 4.7983755487e-02_wp
+ 1288.             ALP010 = 1.8537085209_wp
+ 1289.             ALP110 = -3.0774129064_wp
+ 1290.             ALP210 = 3.0181275751_wp
+ 1291.             ALP310 = -1.4565010626_wp
+ 1292.             ALP410 = 2.7361846370e-01_wp
+ 1293.             ALP020 = -1.6246342147_wp
+ 1294.             ALP120 = 2.5086831352_wp
+ 1295.             ALP220 = -1.4787808849_wp
+ 1296.             ALP320 = 2.3807209899e-01_wp
+ 1297.             ALP030 = 8.3627885467e-01_wp
+ 1298.             ALP130 = -1.1311538584_wp
+ 1299.             ALP230 = 5.3563304045e-01_wp
+ 1300.             ALP040 = -6.7560904739e-02_wp
+ 1301.             ALP140 = -6.0212475204e-02_wp
+ 1302.             ALP050 = 2.8625353333e-02_wp
+ 1303.             ALP001 = 3.3340752782e-01_wp
+ 1304.             ALP101 = 1.1217528644e-01_wp
+ 1305.             ALP201 = -1.2510649515e-01_wp
+ 1306.             ALP301 = 1.6349760916e-02_wp
+ 1307.             ALP011 = -3.3540239802e-01_wp
+ 1308.             ALP111 = -1.7531540640e-01_wp
+ 1309.             ALP211 = 9.3976864981e-02_wp
+ 1310.             ALP021 = 1.8487252150e-01_wp
+ 1311.             ALP121 = 4.1307825959e-02_wp
+ 1312.             ALP031 = -5.5927935970e-02_wp
+ 1313.             ALP002 = -5.1410778748e-02_wp
+ 1314.             ALP102 = 5.3278413794e-03_wp
+ 1315.             ALP012 = 6.2099915132e-02_wp
+ 1316.             ALP003 = -9.4924551138e-03_wp
+ 1317.             !
+ 1318.             BET000 = 1.0783203594e+01_wp
+ 1319.             BET100 = -4.4452095908e+01_wp
+ 1320.             BET200 = 7.6048755820e+01_wp
+ 1321.             BET300 = -6.3944280668e+01_wp
+ 1322.             BET400 = 2.6890441098e+01_wp
+ 1323.             BET500 = -4.5221697773_wp
+ 1324.             BET010 = -8.1219372432e-01_wp
+ 1325.             BET110 = 2.0346663041_wp
+ 1326.             BET210 = -2.1232895170_wp
+ 1327.             BET310 = 8.7994140485e-01_wp
+ 1328.             BET410 = -1.1939638360e-01_wp
+ 1329.             BET020 = 7.6574242289e-01_wp
+ 1330.             BET120 = -1.5019813020_wp
+ 1331.             BET220 = 1.0872489522_wp
+ 1332.             BET320 = -2.7233429080e-01_wp
+ 1333.             BET030 = -4.1615152308e-01_wp
+ 1334.             BET130 = 4.9061350869e-01_wp
+ 1335.             BET230 = -1.1847737788e-01_wp
+ 1336.             BET040 = 1.4073062708e-01_wp
+ 1337.             BET140 = -1.3327978879e-01_wp
+ 1338.             BET050 = 5.9929880134e-03_wp
+ 1339.             BET001 = -5.2937873009e-01_wp
+ 1340.             BET101 = 1.2634116779_wp
+ 1341.             BET201 = -1.1547328025_wp
+ 1342.             BET301 = 3.2870876279e-01_wp
+ 1343.             BET011 = -5.5824407214e-02_wp
+ 1344.             BET111 = 1.2451933313e-01_wp
+ 1345.             BET211 = -2.4409539932e-02_wp
+ 1346.             BET021 = 4.3623149752e-02_wp
+ 1347.             BET121 = -4.6767901790e-02_wp
+ 1348.             BET031 = -6.8523260060e-03_wp
+ 1349.             BET002 = -6.1618945251e-02_wp
+ 1350.             BET102 = 6.2255521644e-02_wp
+ 1351.             BET012 = -2.6514181169e-03_wp
+ 1352.             BET003 = -2.3025968587e-04_wp
+ 1353.             !
+ 1354.             PEN000 = -9.8409626043_wp
+ 1355.             PEN100 = 2.1274999107e+01_wp
+ 1356.             PEN200 = -2.5387384109e+01_wp
+ 1357.             PEN300 = 1.5469038167e+01_wp
+ 1358.             PEN400 = -3.3025876549_wp
+ 1359.             PEN010 = 6.6681505563_wp
+ 1360.             PEN110 = 2.2435057288_wp
+ 1361.             PEN210 = -2.5021299030_wp
+ 1362.             PEN310 = 3.2699521832e-01_wp
+ 1363.             PEN020 = -3.3540239802_wp
+ 1364.             PEN120 = -1.7531540640_wp
+ 1365.             PEN220 = 9.3976864981e-01_wp
+ 1366.             PEN030 = 1.2324834767_wp
+ 1367.             PEN130 = 2.7538550639e-01_wp
+ 1368.             PEN040 = -2.7963967985e-01_wp
+ 1369.             PEN001 = -1.3773949450_wp
+ 1370.             PEN101 = 3.3018402659_wp
+ 1371.             PEN201 = -1.6679755496_wp
+ 1372.             PEN011 = -1.3709540999_wp
+ 1373.             PEN111 = 1.4207577012e-01_wp
+ 1374.             PEN021 = 8.2799886843e-01_wp
+ 1375.             PEN002 = 1.7507069098e-02_wp
+ 1376.             PEN102 = 1.3880727538e-02_wp
+ 1377.             PEN012 = -2.8477365341e-01_wp
+ 1378.             !
+ 1379.             APE000 = -1.6670376391e-01_wp
+ 1380.             APE100 = -5.6087643219e-02_wp
+ 1381.             APE200 = 6.2553247576e-02_wp
+ 1382.             APE300 = -8.1748804580e-03_wp
+ 1383.             APE010 = 1.6770119901e-01_wp
+ 1384.             APE110 = 8.7657703198e-02_wp
+ 1385.             APE210 = -4.6988432490e-02_wp
+ 1386.             APE020 = -9.2436260751e-02_wp
+ 1387.             APE120 = -2.0653912979e-02_wp
+ 1388.             APE030 = 2.7963967985e-02_wp
+ 1389.             APE001 = 3.4273852498e-02_wp
+ 1390.             APE101 = -3.5518942529e-03_wp
+ 1391.             APE011 = -4.1399943421e-02_wp
+ 1392.             APE002 = 7.1193413354e-03_wp
+ 1393.             !
+ 1394.             BPE000 = 2.6468936504e-01_wp
+ 1395.             BPE100 = -6.3170583896e-01_wp
+ 1396.             BPE200 = 5.7736640125e-01_wp
+ 1397.             BPE300 = -1.6435438140e-01_wp
+ 1398.             BPE010 = 2.7912203607e-02_wp
+ 1399.             BPE110 = -6.2259666565e-02_wp
+ 1400.             BPE210 = 1.2204769966e-02_wp
+ 1401.             BPE020 = -2.1811574876e-02_wp
+ 1402.             BPE120 = 2.3383950895e-02_wp
+ 1403.             BPE030 = 3.4261630030e-03_wp
+ 1404.             BPE001 = 4.1079296834e-02_wp
+ 1405.             BPE101 = -4.1503681096e-02_wp
+ 1406.             BPE011 = 1.7676120780e-03_wp
+ 1407.             BPE002 = 1.7269476440e-04_wp
+ 1408.             !
+ 1409.          CASE( np_eos80 )                        !==  polynomial EOS-80 formulation  ==!
+ 1410.             !
+ 1411.             IF(lwp) WRITE(numout,*)
+ 1412.             IF(lwp) WRITE(numout,*) '          use of EOS-80 equation of state (pot. temp. and pract. salinity)'
+ 1413.             !
+ 1414.             l_useCT = .FALSE.                         ! model temperature is Potential temperature
+ 1415.             rdeltaS = 20._wp
+ 1416.             r1_S0  = 1._wp/40._wp
+ 1417.             r1_T0  = 1._wp/40._wp
+ 1418.             r1_Z0  = 1.e-4_wp
+ 1419.             !
+ 1420.             EOS000 = 9.5356891948e+02_wp
+ 1421.             EOS100 = 1.7136499189e+02_wp
+ 1422.             EOS200 = -3.7501039454e+02_wp
+ 1423.             EOS300 = 5.1856810420e+02_wp
+ 1424.             EOS400 = -3.7264470465e+02_wp
+ 1425.             EOS500 = 1.4302533998e+02_wp
+ 1426.             EOS600 = -2.2856621162e+01_wp
+ 1427.             EOS010 = 1.0087518651e+01_wp
+ 1428.             EOS110 = -1.3647741861e+01_wp
+ 1429.             EOS210 = 8.8478359933_wp
+ 1430.             EOS310 = -7.2329388377_wp
+ 1431.             EOS410 = 1.4774410611_wp
+ 1432.             EOS510 = 2.0036720553e-01_wp
+ 1433.             EOS020 = -2.5579830599e+01_wp
+ 1434.             EOS120 = 2.4043512327e+01_wp
+ 1435.             EOS220 = -1.6807503990e+01_wp
+ 1436.             EOS320 = 8.3811577084_wp
+ 1437.             EOS420 = -1.9771060192_wp
+ 1438.             EOS030 = 1.6846451198e+01_wp
+ 1439.             EOS130 = -2.1482926901e+01_wp
+ 1440.             EOS230 = 1.0108954054e+01_wp
+ 1441.             EOS330 = -6.2675951440e-01_wp
+ 1442.             EOS040 = -8.0812310102_wp
+ 1443.             EOS140 = 1.0102374985e+01_wp
+ 1444.             EOS240 = -4.8340368631_wp
+ 1445.             EOS050 = 1.2079167803_wp
+ 1446.             EOS150 = 1.1515380987e-01_wp
+ 1447.             EOS060 = -2.4520288837e-01_wp
+ 1448.             EOS001 = 1.0748601068e+01_wp
+ 1449.             EOS101 = -1.7817043500e+01_wp
+ 1450.             EOS201 = 2.2181366768e+01_wp
+ 1451.             EOS301 = -1.6750916338e+01_wp
+ 1452.             EOS401 = 4.1202230403_wp
+ 1453.             EOS011 = -1.5852644587e+01_wp
+ 1454.             EOS111 = -7.6639383522e-01_wp
+ 1455.             EOS211 = 4.1144627302_wp
+ 1456.             EOS311 = -6.6955877448e-01_wp
+ 1457.             EOS021 = 9.9994861860_wp
+ 1458.             EOS121 = -1.9467067787e-01_wp
+ 1459.             EOS221 = -1.2177554330_wp
+ 1460.             EOS031 = -3.4866102017_wp
+ 1461.             EOS131 = 2.2229155620e-01_wp
+ 1462.             EOS041 = 5.9503008642e-01_wp
+ 1463.             EOS002 = 1.0375676547_wp
+ 1464.             EOS102 = -3.4249470629_wp
+ 1465.             EOS202 = 2.0542026429_wp
+ 1466.             EOS012 = 2.1836324814_wp
+ 1467.             EOS112 = -3.4453674320e-01_wp
+ 1468.             EOS022 = -1.2548163097_wp
+ 1469.             EOS003 = 1.8729078427e-02_wp
+ 1470.             EOS103 = -5.7238495240e-02_wp
+ 1471.             EOS013 = 3.8306136687e-01_wp
+ 1472.             !
+ 1473.             ALP000 = -2.5218796628e-01_wp
+ 1474.             ALP100 = 3.4119354654e-01_wp
+ 1475.             ALP200 = -2.2119589983e-01_wp
+ 1476.             ALP300 = 1.8082347094e-01_wp
+ 1477.             ALP400 = -3.6936026529e-02_wp
+ 1478.             ALP500 = -5.0091801383e-03_wp
+ 1479.             ALP010 = 1.2789915300_wp
+ 1480.             ALP110 = -1.2021756164_wp
+ 1481.             ALP210 = 8.4037519952e-01_wp
+ 1482.             ALP310 = -4.1905788542e-01_wp
+ 1483.             ALP410 = 9.8855300959e-02_wp
+ 1484.             ALP020 = -1.2634838399_wp
+ 1485.             ALP120 = 1.6112195176_wp
+ 1486.             ALP220 = -7.5817155402e-01_wp
+ 1487.             ALP320 = 4.7006963580e-02_wp
+ 1488.             ALP030 = 8.0812310102e-01_wp
+ 1489.             ALP130 = -1.0102374985_wp
+ 1490.             ALP230 = 4.8340368631e-01_wp
+ 1491.             ALP040 = -1.5098959754e-01_wp
+ 1492.             ALP140 = -1.4394226233e-02_wp
+ 1493.             ALP050 = 3.6780433255e-02_wp
+ 1494.             ALP001 = 3.9631611467e-01_wp
+ 1495.             ALP101 = 1.9159845880e-02_wp
+ 1496.             ALP201 = -1.0286156825e-01_wp
+ 1497.             ALP301 = 1.6738969362e-02_wp
+ 1498.             ALP011 = -4.9997430930e-01_wp
+ 1499.             ALP111 = 9.7335338937e-03_wp
+ 1500.             ALP211 = 6.0887771651e-02_wp
+ 1501.             ALP021 = 2.6149576513e-01_wp
+ 1502.             ALP121 = -1.6671866715e-02_wp
+ 1503.             ALP031 = -5.9503008642e-02_wp
+ 1504.             ALP002 = -5.4590812035e-02_wp
+ 1505.             ALP102 = 8.6134185799e-03_wp
+ 1506.             ALP012 = 6.2740815484e-02_wp
+ 1507.             ALP003 = -9.5765341718e-03_wp
+ 1508.             !
+ 1509.             BET000 = 2.1420623987_wp
+ 1510.             BET100 = -9.3752598635_wp
+ 1511.             BET200 = 1.9446303907e+01_wp
+ 1512.             BET300 = -1.8632235232e+01_wp
+ 1513.             BET400 = 8.9390837485_wp
+ 1514.             BET500 = -1.7142465871_wp
+ 1515.             BET010 = -1.7059677327e-01_wp
+ 1516.             BET110 = 2.2119589983e-01_wp
+ 1517.             BET210 = -2.7123520642e-01_wp
+ 1518.             BET310 = 7.3872053057e-02_wp
+ 1519.             BET410 = 1.2522950346e-02_wp
+ 1520.             BET020 = 3.0054390409e-01_wp
+ 1521.             BET120 = -4.2018759976e-01_wp
+ 1522.             BET220 = 3.1429341406e-01_wp
+ 1523.             BET320 = -9.8855300959e-02_wp
+ 1524.             BET030 = -2.6853658626e-01_wp
+ 1525.             BET130 = 2.5272385134e-01_wp
+ 1526.             BET230 = -2.3503481790e-02_wp
+ 1527.             BET040 = 1.2627968731e-01_wp
+ 1528.             BET140 = -1.2085092158e-01_wp
+ 1529.             BET050 = 1.4394226233e-03_wp
+ 1530.             BET001 = -2.2271304375e-01_wp
+ 1531.             BET101 = 5.5453416919e-01_wp
+ 1532.             BET201 = -6.2815936268e-01_wp
+ 1533.             BET301 = 2.0601115202e-01_wp
+ 1534.             BET011 = -9.5799229402e-03_wp
+ 1535.             BET111 = 1.0286156825e-01_wp
+ 1536.             BET211 = -2.5108454043e-02_wp
+ 1537.             BET021 = -2.4333834734e-03_wp
+ 1538.             BET121 = -3.0443885826e-02_wp
+ 1539.             BET031 = 2.7786444526e-03_wp
+ 1540.             BET002 = -4.2811838287e-02_wp
+ 1541.             BET102 = 5.1355066072e-02_wp
+ 1542.             BET012 = -4.3067092900e-03_wp
+ 1543.             BET003 = -7.1548119050e-04_wp
+ 1544.             !
+ 1545.             PEN000 = -5.3743005340_wp
+ 1546.             PEN100 = 8.9085217499_wp
+ 1547.             PEN200 = -1.1090683384e+01_wp
+ 1548.             PEN300 = 8.3754581690_wp
+ 1549.             PEN400 = -2.0601115202_wp
+ 1550.             PEN010 = 7.9263222935_wp
+ 1551.             PEN110 = 3.8319691761e-01_wp
+ 1552.             PEN210 = -2.0572313651_wp
+ 1553.             PEN310 = 3.3477938724e-01_wp
+ 1554.             PEN020 = -4.9997430930_wp
+ 1555.             PEN120 = 9.7335338937e-02_wp
+ 1556.             PEN220 = 6.0887771651e-01_wp
+ 1557.             PEN030 = 1.7433051009_wp
+ 1558.             PEN130 = -1.1114577810e-01_wp
+ 1559.             PEN040 = -2.9751504321e-01_wp
+ 1560.             PEN001 = -6.9171176978e-01_wp
+ 1561.             PEN101 = 2.2832980419_wp
+ 1562.             PEN201 = -1.3694684286_wp
+ 1563.             PEN011 = -1.4557549876_wp
+ 1564.             PEN111 = 2.2969116213e-01_wp
+ 1565.             PEN021 = 8.3654420645e-01_wp
+ 1566.             PEN002 = -1.4046808820e-02_wp
+ 1567.             PEN102 = 4.2928871430e-02_wp
+ 1568.             PEN012 = -2.8729602515e-01_wp
+ 1569.             !
+ 1570.             APE000 = -1.9815805734e-01_wp
+ 1571.             APE100 = -9.5799229402e-03_wp
+ 1572.             APE200 = 5.1430784127e-02_wp
+ 1573.             APE300 = -8.3694846809e-03_wp
+ 1574.             APE010 = 2.4998715465e-01_wp
+ 1575.             APE110 = -4.8667669469e-03_wp
+ 1576.             APE210 = -3.0443885826e-02_wp
+ 1577.             APE020 = -1.3074788257e-01_wp
+ 1578.             APE120 = 8.3359333577e-03_wp
+ 1579.             APE030 = 2.9751504321e-02_wp
+ 1580.             APE001 = 3.6393874690e-02_wp
+ 1581.             APE101 = -5.7422790533e-03_wp
+ 1582.             APE011 = -4.1827210323e-02_wp
+ 1583.             APE002 = 7.1824006288e-03_wp
+ 1584.             !
+ 1585.             BPE000 = 1.1135652187e-01_wp
+ 1586.             BPE100 = -2.7726708459e-01_wp
+ 1587.             BPE200 = 3.1407968134e-01_wp
+ 1588.             BPE300 = -1.0300557601e-01_wp
+ 1589.             BPE010 = 4.7899614701e-03_wp
+ 1590.             BPE110 = -5.1430784127e-02_wp
+ 1591.             BPE210 = 1.2554227021e-02_wp
+ 1592.             BPE020 = 1.2166917367e-03_wp
+ 1593.             BPE120 = 1.5221942913e-02_wp
+ 1594.             BPE030 = -1.3893222263e-03_wp
+ 1595.             BPE001 = 2.8541225524e-02_wp
+ 1596.             BPE101 = -3.4236710714e-02_wp
+ 1597.             BPE011 = 2.8711395266e-03_wp
+ 1598.             BPE002 = 5.3661089288e-04_wp
+ 1599.             !
+ 1600.          CASE( np_seos )                        !==  Simplified EOS     ==!
+ 1601.             IF(lwp) THEN
+ 1602.                WRITE(numout,*)
+ 1603.                WRITE(numout,*) '          use of simplified eos:    rhd(dT=T-10,dS=S-35,Z) = '
+ 1604.                WRITE(numout,*) '             [-a0*(1+lambda1/2*dT+mu1*Z)*dT + b0*(1+lambda2/2*dT+mu2*Z)*dS - nu*dT*dS]/rau0'
+ 1605.                WRITE(numout,*)
+ 1606.                WRITE(numout,*) '             thermal exp. coef.    rn_a0      = ', rn_a0
+ 1607.                WRITE(numout,*) '             saline  cont. coef.   rn_b0      = ', rn_b0
+ 1608.                WRITE(numout,*) '             cabbeling coef.       rn_lambda1 = ', rn_lambda1
+ 1609.                WRITE(numout,*) '             cabbeling coef.       rn_lambda2 = ', rn_lambda2
+ 1610.                WRITE(numout,*) '             thermobar. coef.      rn_mu1     = ', rn_mu1
+ 1611.                WRITE(numout,*) '             thermobar. coef.      rn_mu2     = ', rn_mu2
+ 1612.                WRITE(numout,*) '             2nd cabbel. coef.     rn_nu      = ', rn_nu
+ 1613.                WRITE(numout,*) '               Caution: rn_beta0=0 incompatible with ddm parameterization '
+ 1614.             ENDIF
+ 1615.             l_useCT = .TRUE.          ! Use conservative temperature
+ 1616.             !
+ 1617.          CASE DEFAULT                     !==  ERROR in neos  ==!
+ 1618.             WRITE(ctmp1,*) '          bad flag value for neos = ', neos, '. You should never see this error'
+ 1619.             CALL ctl_stop( ctmp1 )
+ 1620.             !
+ 1621.          END SELECT
+ 1622.          !
+ 1623.          rau0_rcp    = rau0 * rcp 
+ 1624.          r1_rau0     = 1._wp / rau0
+ 1625.          r1_rcp      = 1._wp / rcp
+ 1626.          r1_rau0_rcp = 1._wp / rau0_rcp 
+ 1627.          !
+ 1628.          IF(lwp) THEN
+ 1629.             IF( l_useCT )   THEN
+ 1630.                WRITE(numout,*) '             model uses Conservative Temperature'
+ 1631.                WRITE(numout,*) '             Important: model must be initialized with CT and SA fields'
+ 1632.             ELSE
+ 1633.                WRITE(numout,*) '             model does not use Conservative Temperature'
+ 1634.             ENDIF
+ 1635.          ENDIF
+ 1636.          !
+ 1637.          IF(lwp) WRITE(numout,*)
+ 1638.          IF(lwp) WRITE(numout,*) '          volumic mass of reference           rau0  = ', rau0   , ' kg/m^3'
+ 1639.          IF(lwp) WRITE(numout,*) '          1. / rau0                        r1_rau0  = ', r1_rau0, ' m^3/kg'
+ 1640.          IF(lwp) WRITE(numout,*) '          ocean specific heat                 rcp   = ', rcp    , ' J/Kelvin'
+ 1641.          IF(lwp) WRITE(numout,*) '          rau0 * rcp                       rau0_rcp = ', rau0_rcp
+ 1642.          IF(lwp) WRITE(numout,*) '          1. / ( rau0 * rcp )           r1_rau0_rcp = ', r1_rau0_rcp
+ 1643.          !
+ 1644.       END SUBROUTINE eos_init
+ftn-5003 ftn: NOTE File = eosbn2.f90, Line = 1644 
+  Local variable "LN_SEOS" is used but not assigned a value.
+
+ftn-5003 ftn: NOTE File = eosbn2.f90, Line = 1644 
+  Local variable "RN_MU2" is used but not assigned a value.
+
+ftn-5003 ftn: NOTE File = eosbn2.f90, Line = 1644 
+  Local variable "RN_NU" is used but not assigned a value.
+
+ftn-5003 ftn: NOTE File = eosbn2.f90, Line = 1644 
+  Local variable "LN_TEOS10" is used but not assigned a value.
+
+ftn-5003 ftn: NOTE File = eosbn2.f90, Line = 1644 
+  Local variable "RN_A0" is used but not assigned a value.
+
+ftn-5003 ftn: NOTE File = eosbn2.f90, Line = 1644 
+  Local variable "RN_B0" is used but not assigned a value.
+
+ftn-5003 ftn: NOTE File = eosbn2.f90, Line = 1644 
+  Local variable "RN_LAMBDA1" is used but not assigned a value.
+
+ftn-5003 ftn: NOTE File = eosbn2.f90, Line = 1644 
+  Local variable "RN_LAMBDA2" is used but not assigned a value.
+
+ftn-5003 ftn: NOTE File = eosbn2.f90, Line = 1644 
+  Local variable "RN_MU1" is used but not assigned a value.
+
+ftn-5003 ftn: NOTE File = eosbn2.f90, Line = 1644 
+  Local variable "LN_EOS80" is used but not assigned a value.
+
+ 1645.    
+ 1646.       !!======================================================================
+ 1647.    END MODULE eosbn2
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                         E x t e r n a l   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Name  Messages
+----  --------
+ABS(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   EOS_INSITU in EOSBN2 (Line 253, file eosbn2.f90)
+                   EOS_INSITU_POT in EOSBN2 (Line 351, file eosbn2.f90)
+                   EOS_INSITU_2D in EOSBN2 (Line 449, file eosbn2.f90)
+                   RAB_3D in EOSBN2 (Line 540, file eosbn2.f90)
+                   RAB_2D in EOSBN2 (Line 654, file eosbn2.f90)
+                   RAB_0D in EOSBN2 (Line 768, file eosbn2.f90)
+                   EOS_PT_FROM_CT in EOSBN2 (Line 918, file eosbn2.f90)
+                   EOS_FZP_2D in EOSBN2 (Line 971, file eosbn2.f90)
+                   EOS_FZP_0D in EOSBN2 (Line 1020, file eosbn2.f90)
+                   EOS_PEN in EOSBN2 (Line 1085, file eosbn2.f90)
+
+Name  Messages
+----  --------
+AGRIF_CFIXED in DOM_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+AGRIF_ROOT in DOM_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+BN2 in EOSBN2
+      Defined as:  Subroutine (line 67, file eosbn2.f90)
+
+      Interface:   None
+
+      Calls:       PRT_CTL in PRTCTL (Line 878, file eosbn2.f90)
+                   TIMING_START in TIMING (Line 860, file eosbn2.f90)
+                   TIMING_STOP in TIMING (Line 880, file eosbn2.f90)
+
+Name  Messages
+----  --------
+CTL_NAM in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   EOS_INIT in EOSBN2 (Line 1189, file eosbn2.f90)
+                   EOS_INIT in EOSBN2 (Line 1193, file eosbn2.f90)
+
+Name  Messages
+----  --------
+CTL_OPN in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+CTL_STOP in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   EOS_INIT in EOSBN2 (Line 1214, file eosbn2.f90)
+                   EOS_INIT in EOSBN2 (Line 1619, file eosbn2.f90)
+
+Name  Messages
+----  --------
+CTL_WARN in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+DDPDD in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+DOM_OCE
+      Defined as:  No definitions.
+
+      Used By:     EOSBN2  (indirectly)
+
+Name  Messages
+----  --------
+DOM_OCE_ALLOC in DOM_OCE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+EOSBN2
+      Defined as:  Module (line 1, file eosbn2.f90)
+
+        Uses:      PAR_KIND  (indirectly)
+                   PAR_OCE  (indirectly)
+                   PHYCST
+                   IN_OUT_MANAGER
+                   PAR_KIND  (indirectly)
+                   NC4INTERFACE  (indirectly)
+                   PAR_OCE  (indirectly)
+                   LIB_MPP
+                   PAR_OCE  (indirectly)
+                   DOM_OCE  (indirectly)
+                   LIB_FORTRAN
+                   PRTCTL
+                   WRK_NEMO
+                   LBCLNK
+                   PAR_OCE  (indirectly)
+                   LIB_MPP  (indirectly)
+                   TIMING
+
+Name  Messages
+----  --------
+EOS_FZP_0D in EOSBN2
+      Defined as:  Subroutine (line 997, file eosbn2.f90)
+
+      Interface:   None
+
+      Calls:       ABS(Intrinsic) (Line 1020, file eosbn2.f90)
+                   SQRT(Intrinsic) (Line 1020, file eosbn2.f90)
+                   SQRT(Intrinsic) (Line 1029, file eosbn2.f90)
+                   PRESENT(Intrinsic) (Line 1025, file eosbn2.f90)
+                   PRESENT(Intrinsic) (Line 1032, file eosbn2.f90)
+
+Name  Messages
+----  --------
+EOS_FZP_2D in EOSBN2
+      Defined as:  Subroutine (line 944, file eosbn2.f90)
+
+      Interface:   None
+
+      Calls:       ABS(Intrinsic) (Line 971, file eosbn2.f90)
+                   SQRT(Intrinsic) (Line 971, file eosbn2.f90)
+                   SQRT(Intrinsic) (Line 982, file eosbn2.f90)
+                   PRESENT(Intrinsic) (Line 978, file eosbn2.f90)
+                   PRESENT(Intrinsic) (Line 985, file eosbn2.f90)
+
+Name  Messages
+----  --------
+EOS_INIT in EOSBN2
+      Defined as:  Subroutine (line 72, file eosbn2.f90)
+
+      Interface:   None
+
+      Calls:       CTL_NAM in LIB_MPP (Line 1189, file eosbn2.f90)
+                   CTL_NAM in LIB_MPP (Line 1193, file eosbn2.f90)
+                   CTL_STOP in LIB_MPP (Line 1214, file eosbn2.f90)
+                   CTL_STOP in LIB_MPP (Line 1619, file eosbn2.f90)
+
+Name  Messages
+----  --------
+EOS_INSITU in EOSBN2
+      Defined as:  Subroutine (line 197, file eosbn2.f90)
+
+      Interface:   None
+
+      Calls:       PRT_CTL in PRTCTL (Line 306, file eosbn2.f90)
+                   TIMING_START in TIMING (Line 241, file eosbn2.f90)
+                   TIMING_STOP in TIMING (Line 308, file eosbn2.f90)
+                   ABS(Intrinsic) (Line 253, file eosbn2.f90)
+                   SQRT(Intrinsic) (Line 253, file eosbn2.f90)
+
+Name  Messages
+----  --------
+EOS_INSITU_2D in EOSBN2
+      Defined as:  Subroutine (line 415, file eosbn2.f90)
+
+      Interface:   None
+
+      Calls:       MPP_LNK_2D in LIB_MPP (Line 479, file eosbn2.f90)
+                   MPP_LNK_2D in LIB_MPP (Line 499, file eosbn2.f90)
+                   PRT_CTL in PRTCTL (Line 503, file eosbn2.f90)
+                   TIMING_START in TIMING (Line 436, file eosbn2.f90)
+                   TIMING_STOP in TIMING (Line 505, file eosbn2.f90)
+                   ABS(Intrinsic) (Line 449, file eosbn2.f90)
+                   SQRT(Intrinsic) (Line 449, file eosbn2.f90)
+
+Name  Messages
+----  --------
+EOS_INSITU_POT in EOSBN2
+      Defined as:  Subroutine (line 313, file eosbn2.f90)
+
+      Interface:   None
+
+      Calls:       PRT_CTL in PRTCTL (Line 408, file eosbn2.f90)
+                   TIMING_START in TIMING (Line 339, file eosbn2.f90)
+                   TIMING_STOP in TIMING (Line 410, file eosbn2.f90)
+                   ABS(Intrinsic) (Line 351, file eosbn2.f90)
+                   SQRT(Intrinsic) (Line 351, file eosbn2.f90)
+
+Name  Messages
+----  --------
+EOS_PEN in EOSBN2
+      Defined as:  Subroutine (line 71, file eosbn2.f90)
+
+      Interface:   None
+
+      Calls:       TIMING_START in TIMING (Line 1073, file eosbn2.f90)
+                   TIMING_STOP in TIMING (Line 1167, file eosbn2.f90)
+                   ABS(Intrinsic) (Line 1085, file eosbn2.f90)
+                   SQRT(Intrinsic) (Line 1085, file eosbn2.f90)
+
+Name  Messages
+----  --------
+EOS_PT_FROM_CT in EOSBN2
+      Defined as:  Function (line 69, file eosbn2.f90)
+
+      Interface:   None
+
+      Calls:       TIMING_START in TIMING (Line 908, file eosbn2.f90)
+                   TIMING_STOP in TIMING (Line 939, file eosbn2.f90)
+                   ABS(Intrinsic) (Line 918, file eosbn2.f90)
+                   SQRT(Intrinsic) (Line 918, file eosbn2.f90)
+
+Name  Messages
+----  --------
+GET_NF90_SYMBOL in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GET_UNIT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_MAX_2D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_MAX_2D_A in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_MAX_3D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_MAX_3D_A in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_MIN_2D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_MIN_2D_A in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_MIN_3D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_MIN_3D_A in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_SUM_1D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_SUM_2D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_SUM_2D_A in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_SUM_3D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_SUM_3D_A in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_SUM_FULL_2D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+GLOB_SUM_FULL_3D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+IN_OUT_MANAGER
+      Defined as:  No definitions.
+
+      Used By:     EOSBN2
+
+Name  Messages
+----  --------
+LBCLNK
+      Defined as:  No definitions.
+
+      Used By:     EOSBN2
+
+Name  Messages
+----  --------
+LIB_FORTRAN
+      Defined as:  No definitions.
+
+      Used By:     EOSBN2
+
+Name  Messages
+----  --------
+LIB_MPP
+      Defined as:  No definitions.
+
+      Used By:     EOSBN2
+                   EOSBN2  (indirectly)
+
+Name  Messages
+----  --------
+MPPBCAST_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPGATHER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMAX_REAL_MULTIPLE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPMIN_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPRECV in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSCATTER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSEND in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSTOP in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_A_REALDD in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_INT in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_REAL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSUM_REALDD in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPPSYNC in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_COMM_FREE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_ICE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_NORTH in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_INI_ZNL in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_E in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LBC_NORTH_ICB in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D in LIB_MPP
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   EOS_INSITU_2D in EOSBN2 (Line 479, file eosbn2.f90)
+                   EOS_INSITU_2D in EOSBN2 (Line 499, file eosbn2.f90)
+                   RAB_2D in EOSBN2 (Line 702, file eosbn2.f90)
+                   RAB_2D in EOSBN2 (Line 703, file eosbn2.f90)
+                   RAB_2D in EOSBN2 (Line 723, file eosbn2.f90)
+                   RAB_2D in EOSBN2 (Line 724, file eosbn2.f90)
+
+Name  Messages
+----  --------
+MPP_LNK_2D_9 in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_E in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_ICB in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_2D_MULTIPLE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_3D_GATHER in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_BDY_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_BDY_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_SUM_2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_LNK_SUM_3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MAXLOC2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MAXLOC3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MINLOC2D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MPP_MINLOC3D in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+MYNODE in LIB_MPP
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+NC4INTERFACE
+      Defined as:  No definitions.
+
+      Used By:     EOSBN2  (indirectly)
+
+Name  Messages
+----  --------
+PAR_KIND
+      Defined as:  No definitions.
+
+      Used By:     EOSBN2  (indirectly)
+                   EOSBN2  (indirectly)
+
+Name  Messages
+----  --------
+PAR_OCE
+      Defined as:  No definitions.
+
+      Used By:     EOSBN2  (indirectly)
+                   EOSBN2  (indirectly)
+                   EOSBN2  (indirectly)
+                   EOSBN2  (indirectly)
+
+Name  Messages
+----  --------
+PHYCST
+      Defined as:  No definitions.
+
+      Used By:     EOSBN2
+
+Name  Messages
+----  --------
+PHY_CST in PHYCST
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+PRESENT(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   EOS_FZP_2D in EOSBN2 (Line 978, file eosbn2.f90)
+                   EOS_FZP_2D in EOSBN2 (Line 985, file eosbn2.f90)
+                   EOS_FZP_0D in EOSBN2 (Line 1025, file eosbn2.f90)
+                   EOS_FZP_0D in EOSBN2 (Line 1032, file eosbn2.f90)
+
+Name  Messages
+----  --------
+PRTCTL
+      Defined as:  No definitions.
+
+      Used By:     EOSBN2
+
+Name  Messages
+----  --------
+PRT_CTL in PRTCTL
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   EOS_INSITU in EOSBN2 (Line 306, file eosbn2.f90)
+                   EOS_INSITU_POT in EOSBN2 (Line 408, file eosbn2.f90)
+                   EOS_INSITU_2D in EOSBN2 (Line 503, file eosbn2.f90)
+                   RAB_3D in EOSBN2 (Line 616, file eosbn2.f90)
+                   RAB_2D in EOSBN2 (Line 733, file eosbn2.f90)
+                   BN2 in EOSBN2 (Line 878, file eosbn2.f90)
+
+Name  Messages
+----  --------
+PRT_CTL_INFO in PRTCTL
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+PRT_CTL_INIT in PRTCTL
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+RAB_0D in EOSBN2
+      Defined as:  Subroutine (line 741, file eosbn2.f90)
+
+      Interface:   None
+
+      Calls:       TIMING_START in TIMING (Line 757, file eosbn2.f90)
+                   TIMING_STOP in TIMING (Line 833, file eosbn2.f90)
+                   ABS(Intrinsic) (Line 768, file eosbn2.f90)
+                   SQRT(Intrinsic) (Line 768, file eosbn2.f90)
+
+Name  Messages
+----  --------
+RAB_2D in EOSBN2
+      Defined as:  Subroutine (line 624, file eosbn2.f90)
+
+      Interface:   None
+
+      Calls:       MPP_LNK_2D in LIB_MPP (Line 702, file eosbn2.f90)
+                   MPP_LNK_2D in LIB_MPP (Line 703, file eosbn2.f90)
+                   MPP_LNK_2D in LIB_MPP (Line 723, file eosbn2.f90)
+                   MPP_LNK_2D in LIB_MPP (Line 724, file eosbn2.f90)
+                   PRT_CTL in PRTCTL (Line 733, file eosbn2.f90)
+                   TIMING_START in TIMING (Line 641, file eosbn2.f90)
+                   TIMING_STOP in TIMING (Line 736, file eosbn2.f90)
+                   ABS(Intrinsic) (Line 654, file eosbn2.f90)
+                   SQRT(Intrinsic) (Line 654, file eosbn2.f90)
+
+Name  Messages
+----  --------
+RAB_3D in EOSBN2
+      Defined as:  Subroutine (line 510, file eosbn2.f90)
+
+      Interface:   None
+
+      Calls:       PRT_CTL in PRTCTL (Line 616, file eosbn2.f90)
+                   TIMING_START in TIMING (Line 528, file eosbn2.f90)
+                   TIMING_STOP in TIMING (Line 619, file eosbn2.f90)
+                   ABS(Intrinsic) (Line 540, file eosbn2.f90)
+                   SQRT(Intrinsic) (Line 540, file eosbn2.f90)
+
+Name  Messages
+----  --------
+SET_NF90_DEF_VAR_CHUNKING in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SET_NF90_DEF_VAR_DEFLATE in NC4INTERFACE
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIGN(Intrinsic)
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIGN_ARRAY_1D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIGN_ARRAY_1D_A in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIGN_ARRAY_1D_B in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIGN_ARRAY_2D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIGN_ARRAY_2D_A in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIGN_ARRAY_2D_B in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIGN_ARRAY_3D in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIGN_ARRAY_3D_A in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIGN_ARRAY_3D_B in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SIGN_SCALAR in LIB_FORTRAN
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+SQRT(Intrinsic)
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   EOS_INSITU in EOSBN2 (Line 253, file eosbn2.f90)
+                   EOS_INSITU_POT in EOSBN2 (Line 351, file eosbn2.f90)
+                   EOS_INSITU_2D in EOSBN2 (Line 449, file eosbn2.f90)
+                   RAB_3D in EOSBN2 (Line 540, file eosbn2.f90)
+                   RAB_2D in EOSBN2 (Line 654, file eosbn2.f90)
+                   RAB_0D in EOSBN2 (Line 768, file eosbn2.f90)
+                   EOS_PT_FROM_CT in EOSBN2 (Line 918, file eosbn2.f90)
+                   EOS_FZP_2D in EOSBN2 (Line 971, file eosbn2.f90)
+                   EOS_FZP_2D in EOSBN2 (Line 982, file eosbn2.f90)
+                   EOS_FZP_0D in EOSBN2 (Line 1020, file eosbn2.f90)
+                   EOS_FZP_0D in EOSBN2 (Line 1029, file eosbn2.f90)
+                   EOS_PEN in EOSBN2 (Line 1085, file eosbn2.f90)
+
+Name  Messages
+----  --------
+SUB_DOM in PRTCTL
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING
+      Defined as:  No definitions.
+
+      Used By:     EOSBN2
+
+Name  Messages
+----  --------
+TIMING_FINALIZE in TIMING
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING_INIT in TIMING
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING_RESET in TIMING
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+TIMING_START in TIMING
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   EOS_INSITU in EOSBN2 (Line 241, file eosbn2.f90)
+                   EOS_INSITU_POT in EOSBN2 (Line 339, file eosbn2.f90)
+                   EOS_INSITU_2D in EOSBN2 (Line 436, file eosbn2.f90)
+                   RAB_3D in EOSBN2 (Line 528, file eosbn2.f90)
+                   RAB_2D in EOSBN2 (Line 641, file eosbn2.f90)
+                   RAB_0D in EOSBN2 (Line 757, file eosbn2.f90)
+                   BN2 in EOSBN2 (Line 860, file eosbn2.f90)
+                   EOS_PT_FROM_CT in EOSBN2 (Line 908, file eosbn2.f90)
+                   EOS_PEN in EOSBN2 (Line 1073, file eosbn2.f90)
+
+Name  Messages
+----  --------
+TIMING_STOP in TIMING
+      Defined as:  No definitions.
+
+      Interface:   None
+
+      Called By:   EOS_INSITU in EOSBN2 (Line 308, file eosbn2.f90)
+                   EOS_INSITU_POT in EOSBN2 (Line 410, file eosbn2.f90)
+                   EOS_INSITU_2D in EOSBN2 (Line 505, file eosbn2.f90)
+                   RAB_3D in EOSBN2 (Line 619, file eosbn2.f90)
+                   RAB_2D in EOSBN2 (Line 736, file eosbn2.f90)
+                   RAB_0D in EOSBN2 (Line 833, file eosbn2.f90)
+                   BN2 in EOSBN2 (Line 880, file eosbn2.f90)
+                   EOS_PT_FROM_CT in EOSBN2 (Line 939, file eosbn2.f90)
+                   EOS_PEN in EOSBN2 (Line 1167, file eosbn2.f90)
+
+Name  Messages
+----  --------
+WRK_ALLOC_1DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_ALLOC_1DR in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_ALLOC_2DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_ALLOC_2DR in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_ALLOC_3DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_ALLOC_3DR in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_ALLOC_4DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_ALLOC_4DR in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_DEALLOC_1DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_DEALLOC_1DR in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_DEALLOC_2DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_DEALLOC_2DR in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_DEALLOC_3DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_DEALLOC_3DR in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_DEALLOC_4DI in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_DEALLOC_4DR in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_LIST in WRK_NEMO
+      Defined as:  No definitions.
+
+                   No calls.  It is not called and does not use any procedure.
+
+      Interface:   None
+
+Name  Messages
+----  --------
+WRK_NEMO
+      Defined as:  No definitions.
+
+      Used By:     EOSBN2
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
