@@ -10,4 +10,10 @@ The code includes the following UKMO branches:
 ---
 
 ## Compiling the DOMAINcfg tool
-The domain configuration file is generated via the NEMOv4 DOMAINcfg tool. In order to compile the F90 DOMAINcfg tool
+The domain configuration file is generated via the NEMOv4 DOMAINcfg tool. In the UKMO supercomputer (Monsoon) the F90 DOMAINcfg tool is compiled as:
+
+1. `cd NEMO_4.0-HEAD_test_MEs/tools`
+
+2. `./maketools -m XC40_METO_debug -n DOMAINcfg` where _XC40_METO_debug_ refers to `NEMO_4.0-HEAD_test_MEs/arch/UKMO/arch-XC40_METO_debug.fcm`
+
+In order to compile the DOMAINcfg tool with a machine which is not listed in `NEMO_4.0-HEAD_test_MEs/arch/` an adhoc arch file configuration spcific for the new machine should be created.  
