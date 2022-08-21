@@ -1,10 +1,9 @@
 # BALTIC-MEs
-Project in collaboration with SMHI to test a Multi-Envelope s-coordinate system in the Baltic sea.
+Collaboration project between the Swedish Meteorological and Hydrological Institute (SMHI) and the UK Met Office Hadley Centre to develope and test a Multi-Envelope s-coordinate system in the Baltic sea.
 
-## Quick-start
+This repository is still under construction. It has begun to be populated so that version tracking and branching can begin.
 
-```shell
-git clone https://github.com/oceandie/BALTIC-MEs.git
-cd BALTIC-MEs
-conda env create -f pyogcm.yml
-conda activate pyogcm
+---
+
+Directories:
+
