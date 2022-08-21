@@ -11,15 +11,15 @@ This repository is still under construction. It has begun to be populated so tha
 BALTIC-MEs
  `-- src/                            <-- source code
     |-- f90/                         <-- Fortran 90 code (mainly NEMO)
-    |   `-- NEMO_4.0-HEAD_test_MEs/  <-- [NEMO_4.0-HEAD_test_MEs](https://code.metoffice.gov.uk/svn/nemo/NEMO/branches/UKMO/NEMO_4.0-HEAD_test_MEs) UKMO repository rev 15806
+    |   `-- NEMO_4.0-HEAD_test_MEs/  <-- NEMO_4.0-HEAD_test_MEs UKMO branch rev 15806
     |       |-- arch/
     |       |-- cfgs/
     |       |-- ext/
     |       |-- mk/
     |       |-- src/
     |       |-- tests/
-    |       `-- tools/ [tools_r4.0-HEAD_dev_MEs](https://code.metoffice.gov.uk/svn/nemo/NEMO/branches/UKMO/tools_r4.0-HEAD_dev_MEs) UKMO repository rev 15807
-    `-- python/                      <-- Python code
+    |       `-- tools/               <-- tools_r4.0-HEAD_dev_MEs UKMO branch rev 15807
+    `-- python/                      <-- Python3 code
         |-- envelopes/               <-- code to generate envelopes
         |   `-- templates_inp_files/ <-- template inlut files to generate AMM15, zco or sco envelopes
         `-- loc_area/                <-- code to generate localisation area
