@@ -1,5 +1,5 @@
 # BALTIC-MEs
-Collaboration project between the [Swedish Meteorological and Hydrological Institute](https://www.smhi.se/en/q/Stockholm/2673730) and the [UK Met Office Hadley Centre](https://www.metoffice.gov.uk/weather/climate/met-office-hadley-centre/index) to develop and test a Multi-Envelope s-coordinate system ([Bruciaferri et al. 2018](https://link.springer.com/article/10.1007/s10236-018-1189-x)) in the Baltic sea.
+Collaboration project between the Swedish Meteorological and Hydrological Institute ([SMHI](https://www.smhi.se/en/q/Stockholm/2673730)) and the UK Met Office Hadley Centre ([UKMO](https://www.metoffice.gov.uk/weather/climate/met-office-hadley-centre/index)) to develop and test a Multi-Envelope s-coordinate system ([Bruciaferri et al. 2018](https://link.springer.com/article/10.1007/s10236-018-1189-x)) in the Baltic sea.
 
 This repository is still under construction. It has begun to be populated so that version tracking and branching can begin.
 
@@ -9,19 +9,18 @@ This repository is still under construction. It has begun to be populated so tha
 
 ```
 BALTIC-MEs
- `-- src
-    |-- f90
-    |   `-- NEMO_4.0-HEAD_test_MEs
-    |       |-- arch
-    |       |-- cfgs
-    |       |-- ext
-    |       |-- mk
-    |       |-- src
-    |       |-- tests
-    |       `-- tools
-    `-- python
-        |-- envelopes
-        |   `-- templates_inp_files
-        `-- loc_area
+ `-- src/                            <-- source code
+    |-- f90/                         <-- Fortran 90 code (mainly NEMO)
+    |   `-- NEMO_4.0-HEAD_test_MEs/  <-- [NEMO_4.0-HEAD_test_MEs](https://code.metoffice.gov.uk/svn/nemo/NEMO/branches/UKMO/NEMO_4.0-HEAD_test_MEs) UKMO repository rev 15806
+    |       |-- arch/
+    |       |-- cfgs/
+    |       |-- ext/
+    |       |-- mk/
+    |       |-- src/
+    |       |-- tests/
+    |       `-- tools/ [tools_r4.0-HEAD_dev_MEs](https://code.metoffice.gov.uk/svn/nemo/NEMO/branches/UKMO/tools_r4.0-HEAD_dev_MEs) UKMO repository rev 15807
+    `-- python/                      <-- Python code
+        |-- envelopes/               <-- code to generate envelopes
+        |   `-- templates_inp_files/ <-- template inlut files to generate AMM15, zco or sco envelopes
+        `-- loc_area/                <-- code to generate localisation area
 ```
-
