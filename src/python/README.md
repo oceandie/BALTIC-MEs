@@ -1,13 +1,4 @@
-## Quick-start
-
-```shell
-git clone https://github.com/oceandie/BALTIC-MEs.git
-cd BALTIC-MEs
-conda env create -f pyogcm.yml
-conda activate pyogcm
-```
-
-## Generating envelopes
+# Generating envelopes
 `cd envelopes/`
 
 1. #### Standard z-coordinates
