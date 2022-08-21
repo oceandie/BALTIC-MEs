@@ -1,5 +1,5 @@
 # BALTIC-MEs
-Collaboration project between the Swedish Meteorological and Hydrological Institute (SMHI) and the UK Met Office Hadley Centre to develope and test a Multi-Envelope s-coordinate system in the Baltic sea.
+Collaboration project between the [Swedish Meteorological and Hydrological Institute](https://www.smhi.se/en/q/Stockholm/2673730) and the [UK Met Office Hadley Centre](https://www.metoffice.gov.uk/weather/climate/met-office-hadley-centre/index) to develop and test a Multi-Envelope s-coordinate system ([Bruciaferri et al. 2018](https://link.springer.com/article/10.1007/s10236-018-1189-x)) in the Baltic sea.
 
 This repository is still under construction. It has begun to be populated so that version tracking and branching can begin.
 
