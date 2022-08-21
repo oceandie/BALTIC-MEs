@@ -3,7 +3,14 @@ Collaboration project between the Swedish Meteorological and Hydrological Instit
 
 This repository is still under construction. It has begun to be populated so that version tracking and branching can begin.
 
----
+## Quick-start
+
+```shell
+git clone https://github.com/oceandie/BALTIC-MEs.git
+cd BALTIC-MEs
+conda env create -f pyogcm.yml
+conda activate pyogcm
+```
 
 ## Directories structure:
 
