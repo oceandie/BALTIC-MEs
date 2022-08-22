@@ -499,8 +499,8 @@ CONTAINS
          CALL iom_rstput( 0, 0, inum, 'stiffness', z2d )        ! Max. grid stiffness ratio
          CALL dom_stiff_3D( z3d )
          CALL iom_rstput( 0, 0, inum, 'stiff3D', z3d )          ! 3D stiffness ratio
-         CALL saw_tooth( z2d )
-         CALL iom_rstput( 0, 0, inum, 'saw_tooth', z2d )        ! Saw_tooth diagnostic
+         !CALL saw_tooth( z2d )
+         !CALL iom_rstput( 0, 0, inum, 'saw_tooth', z2d )        ! Saw_tooth diagnostic
       ENDIF
       !
       !                                ! ============================
