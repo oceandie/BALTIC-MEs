@@ -88,7 +88,7 @@ echo "Masking settings: ${MASK}"
 echo "Output directory: ${outdir}"
 
 if ! ${BATCH} ; then
-   python /home/d03/dbruciaf/bin/rebuild.py ${file} ${MASK} ${outdir}
+   python ~/Projects/NEMO/BALTIC-MEs/src/utils/rebuild.py ${file} ${MASK} ${outdir}
 else
    CMDFILE=${SCRATCH}/pyrebuild_tmp_$( date +%Y%m%d%H%M%S )
    cp /home/d02/frpk/bin/pyrebuild_qsub_template ${CMDFILE}
