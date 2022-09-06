@@ -6,15 +6,15 @@ import netCDF4 as nc4
 import gsw as gsw
 from scipy import interpolate
 
-Tfile  = '/data/users/dbruciaf/mod_dev/dbruciaf-gulf18/vgrid/restart_hpge/sf12-r30_sm5_r8-H20/20140101_restart_T-S_hpge.nc'
-Sfile  = '/data/users/dbruciaf/mod_dev/dbruciaf-gulf18/vgrid/restart_hpge/sf12-r30_sm5_r8-H20/20140101_restart_T-S_hpge.nc'
-Tname  = 'tn'
-Sname  = 'sn'
-inpmsh = '/data/users/dbruciaf/mod_dev/files4bdy_gulf18/gulf18.mesh_mask.sf12-r30_sm5_r8-H20.nc'
-outmsh = '/data/users/dbruciaf/mod_dev/files4bdy_gulf18/gulf18.mesh_mask.MEs_2env_0.3_0.1_opt.nc'
+Tfile  = './data/ts.nc'
+Sfile  = './data/ts.nc'
+Tname  = 'toce'
+Sname  = 'soce'
+inpmsh = './data/mm_inp.nc'
+outmsh = './data/mm_out.nc'
 
-i1D = 570
-j1D = 87
+i1D = 438
+j1D = 267
 
 # -----------------------------------------------------------------
 
@@ -42,8 +42,10 @@ S1D = pra_sal[:,j1D,i1D]
 dep1D = gdeptI[:,j1D,i1D]
 wet1D = mbkt[j1D,i1D]
 
-T1D[wet1D:] = T1D[wet1D] # getting rid of nans at depth
-S1D[wet1D:] = S1D[wet1D] # getting rid of nans at depth
+T1D[(wet1D-1)::] = T1D[wet1D-1] # getting rid of nans at depth
+S1D[(wet1D-1)::] = S1D[wet1D-1] # getting rid of nans at depth
+
+print(T1D, S1D, dep1D, wet1D)
 
 # Interpolating the 1D profile in the out domain
 Tout = np.zeros(shape=gdeptO.shape)
