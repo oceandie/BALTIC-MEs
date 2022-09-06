@@ -3,7 +3,7 @@ cn_exp='test_o',
 cn_ocerst_in='restart',
 cn_ocerst_indir='.',
 cn_ocerst_out='restart',
-cn_ocerst_outdir='dummy',
+cn_ocerst_outdir='.',
 ln_cfmeta=.true.,
 ln_clobber=.true.,
 ln_iscpl=.false.,
@@ -107,7 +107,7 @@ nn_lsm=3,
 &namsbc_flx
 /
 &namsbc_blk
-cn_dir='dummy',
+cn_dir='.',
 ln_cd_l12=.false.,
 ln_cd_l15=.false.,
 ln_coare_3p0=.false.,
