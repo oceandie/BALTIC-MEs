@@ -1,0 +1,139 @@
+#! /bin/ksh
+
+# wrapper for rebuild.py
+#set -ax
+
+usage ()
+{
+   echo
+   echo "  Python Rebuild"
+   echo "  ************"
+   echo
+   echo "  usage: ${0##*/} [-h -l -m -o -t -z] filebase"
+   echo
+   echo "  flags:    -h                 display usage information"
+   echo "            -l                 submit to compute node"
+   echo "            -m num             amount of memory in Gb"
+   echo "            -o dir             output directory (\$PWD if not specified)"  
+   echo "            -t num             amount of walltime in minutes"
+   echo "            -z                 apply masking (False if not specified)"
+   exit 0
+}
+
+BATCH=false
+
+while getopts m:o:t:lhz opt
+do
+  case ${opt} in
+      h) 
+         usage
+      ;;
+      l) 
+         BATCH=true
+         BATCH_CMD="qsub" 	
+         echo "Submitting job to compute node"
+      ;;
+      m) 
+         MEM=${OPTARG} 
+      ;;
+      o)
+         OUTD=${OPTARG}
+      ;;
+      t)
+         WTIME=${OPTARG}
+      ;;
+      z)
+         MASK=True
+      ;;
+      *) echo "Invalid option"
+         usage
+      ;;
+  esac
+done
+shift $(expr ${OPTIND} - 1)
+
+file=$1
+
+[[ ${MEM} == '' ]] && MEM=15
+[[ ${WTIME} == '' ]] && let WTIME=5*60 || let WTIME2=${WTIME}*60
+[[ ${WTIME2} == '' ]] && WTIME2=WTIME 
+[[ ${OUTD} == '' ]] && outdir=${PWD} || outdir=${OUTD}
+[[ ${MASK} == '' ]] && MASK=False
+
+if ${BATCH} ; then
+   echo "Memory requested: ${MEM}Gb"
+   echo "Walltime requested: ${WTIME2} secs"
+fi
+
+[[ -z ${file} ]] && usage
+
+#if [[ -z ${file} ]] ; then
+#   echo 'Usage: pyrebuild filename_to_rebuild'
+#   exit 0
+#fi
+
+#if [[ -z ${outdir} ]] ; then
+#   outdir=${PWD}
+#fi
+#
+#if [[ ${MASK} != 'MASK' && ${MASK} != 'none' ]] ; then
+# if [[ -n ${MASK} ]] ; then
+#    outdir=${MASK}
+# fi
+# MASK='none'
+#fi
+
+echo "Filestem to rebuild: ${file}"
+echo "Masking settings: ${MASK}"
+echo "Output directory: ${outdir}"
+
+if ! ${BATCH} ; then
+   python /home/d03/dbruciaf/bin/rebuild.py ${file} ${MASK} ${outdir}
+else
+   CMDFILE=${SCRATCH}/pyrebuild_tmp_$( date +%Y%m%d%H%M%S )
+   cp /home/d02/frpk/bin/pyrebuild_qsub_template ${CMDFILE}
+   JOBIDFILE=${SCRATCH}/pyrebuild_jid_$( date +%Y%m%d%H%M%S )
+   STOUT=${SCRATCH}/pyrebuild_$( date +%Y%m%d%H%M%S )_job.out
+   STERR=${SCRATCH}/pyrebuild_$( date +%Y%m%d%H%M%S )_job.err
+   PYRC=${SCRATCH}/pyrebuild_$( date +%Y%m%d%H%M%S )_rc
+
+   echo '#!/bin/bash --login' > ${CMDFILE}
+   echo '#PBS -q shared' >> ${CMDFILE}
+   echo "#PBS -l select=1:ncpus=1:ompthreads=1:mem=${MEM}Gb:arch=linux:vntype=cray_serial" >> ${CMDFILE}
+   echo "#PBS -l walltime=${WTIME2}" >> ${CMDFILE}
+   echo "#PBS -o ${STOUT}" >> ${CMDFILE}
+   echo "#PBS -e ${STERR}" >> ${CMDFILE}
+   echo '' >> ${CMDFILE}
+   echo 'set -ax' >> ${CMDFILE}
+   echo 'ulimit -s unlimited' >> ${CMDFILE}
+   echo 'module load python' >> ${CMDFILE}
+   echo "cd ${PWD}" >> ${CMDFILE}
+   echo "python /home/d02/frpk/bin/rebuild.py ${file} ${MASK} ${outdir}" >> ${CMDFILE}
+   echo "echo \$? > ${PYRC}" >> ${CMDFILE}
+
+   ${BATCH_CMD} ${CMDFILE} 1> ${JOBIDFILE}
+
+   echo "Job submitted: $( cat ${JOBIDFILE} )"
+
+   while [[ ! -e ${PYRC} ]] ; do
+      sleep 2
+   done
+   #echo "Job started at: $( date )"
+   sleep 3
+   if [[ $( cat ${PYRC} ) != 0 ]] ; then
+      echo ""
+      echo "******pyrebuild failed*******"
+      echo ""
+      echo "STDOUT:"
+      cat ${STOUT}
+      echo ""
+      echo "STDERR:"
+      cat ${STERR}
+   else
+      sleep 3
+      [[ -e ${STOUT} ]] && echo "Job succeeded in: $( grep 'Elapsed Time' ${STOUT} | cut -d '(' -f2 | cut -d',' -f1 )"
+      echo "Pyrebuild complete."
+      echo "Output file is: ${outdir}/${file}.nc"
+   fi
+   rm -f ${CMDFILE} ${JOBIDFILE} ${PYRC} ${STOUT} ${STERR}
+fi
