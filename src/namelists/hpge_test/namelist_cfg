@@ -3,22 +3,22 @@ cn_exp='test_o',
 cn_ocerst_in='restart',
 cn_ocerst_indir='.',
 cn_ocerst_out='restart',
-cn_ocerst_outdir='/home/d03/dbruciaf/cylc-run/test_namelist/share/data/History_Data/NEMOhist/',
+cn_ocerst_outdir='dummy',
 ln_cfmeta=.true.,
 ln_clobber=.true.,
 ln_iscpl=.false.,
-ln_mskland=.true.,
-ln_rst_eos=.true.,
+ln_mskland=.false.,
+! ln_rst_eos=.true.,  !???
 ln_rst_list=.false.,
 ln_rstart=.false.,
-ln_rstdate=.true.,
+! ln_rstdate=.true., !???
 ln_xios_read=.false.,
 nn_chunksz=0,
 nn_date0=19760101,
 nn_euler=1,
 nn_istate=1,
 nn_it000=1,
-nn_itend=4464,
+nn_itend=14400,
 nn_leapy=0,
 nn_rstctl=0,
 nn_stock=100000,
@@ -28,7 +28,7 @@ nn_wxios=0,
 /
 &namcfg
 cn_domcfg='domain_cfg',
-ln_closea=.true.,
+ln_closea=.false.,
 ln_read_cfg=.true.,
 ln_use_jattr=.false.,
 ln_write_cfg=.false.,
@@ -37,9 +37,9 @@ ln_write_cfg=.false.,
 ln_crs=.false.,
 ln_linssh=.false.,
 ln_meshmask=.false.,
-rn_atfp=0.02,
+rn_atfp=0.1,
 rn_isfhmin=1.00,
-rn_rdt=600.0,
+rn_rdt=180.0,
 /
 &namtsd
 cn_dir='./',
@@ -96,7 +96,7 @@ ln_mixcpl=.false.,
 ln_rnf=.false.,
 ln_ssr=.false.,
 ln_traqsr=.false.,
-ln_usr=true.,
+ln_usr=.true.,
 ln_wave=.false.,
 nn_components=0,
 nn_fsbc=1,
@@ -107,7 +107,7 @@ nn_lsm=3,
 &namsbc_flx
 /
 &namsbc_blk
-cn_dir='/projects/ocean/hadgem3/forcing/ocean/CORE2/',
+cn_dir='dummy',
 ln_cd_l12=.false.,
 ln_cd_l15=.false.,
 ln_coare_3p0=.false.,
@@ -233,7 +233,7 @@ rn_speed_limit=0.4,
 sn_icb='calving',-12,'soicbclv',.true.,.true.,'yearly','','','',
 /
 &namlbc
-ln_shlat2d=.false.,
+! ln_shlat2d=.false.,  !???
 ln_vorlat=.false.,
 rn_shlat=0.0,
 /
@@ -288,11 +288,11 @@ ln_non_lin=.false.,
 &namdrg_top
 /
 &namdrg_bot
-ln_boost=.true.,
+ln_boost=.false.,
 rn_boost=50.0,
 rn_cd0=3.0e-3,
 rn_cdmax=0.1,
-rn_z0=3.0e-3,
+rn_z0=1.0e-3,
 /
 &nambbc
 cn_dir='./',
@@ -309,9 +309,9 @@ rn_ahtbbl=1000.0,
 rn_gambbl=10.0,
 /
 &nameos
-ln_eos80=.false.,
+ln_eos80=.true.,
 ln_seos=.false.,
-ln_teos10=.true.,
+ln_teos10=.false.,
 rn_a0=1.6550e-1,
 rn_b0=0.,
 rn_lambda1=0.,
@@ -334,15 +334,15 @@ nn_fct_v=4,
 ln_mle=.false.,
 /
 &namtra_ldf
-ln_botmix_triad=.true.,
+ln_botmix_triad=.false.,
 ln_traldf_blp=.false.,
 ln_traldf_hor=.false.,
 ln_traldf_iso=.false.,
-ln_traldf_lap=.true.,
+ln_traldf_lap=.false.,
 ln_traldf_lev=.false.,
 ln_traldf_msc=.false.,
-ln_traldf_off=.false.,
-ln_traldf_triad=.true.,
+ln_traldf_off=.true.,
+ln_traldf_triad=.false.,
 nn_aht_ijk_t=20,
 rn_slpmax=0.01,
 rn_sw_triad=0,
@@ -371,9 +371,9 @@ rn_zdef_max=0.9,
 &namdyn_adv
 ln_dynadv_cen2=.false.,
 ln_dynadv_off=.false.,
-ln_dynadv_ubs=.false.,
-ln_dynadv_vec=.true.,
-nn_dynkeg=1,
+ln_dynadv_ubs=.true.,
+ln_dynadv_vec=.false.,
+nn_dynkeg=0,
 /
 &namdyn_vor
 ln_dynvor_een=.true.,
@@ -396,43 +396,43 @@ ln_hpg_zps=.false.,
 &namdyn_spg
 ln_bt_auto=.true.,
 ln_bt_av=.true.,
-ln_bt_fw=.true.,
+ln_bt_fw=.false.,
 ln_dynspg_exp=.false.,
 ln_dynspg_ts=.true.,
 nn_baro=30,
 nn_bt_flt=1,
-rn_bt_cmax=0.8,
+rn_bt_cmax=0.5,
 /
 &namdyn_ldf
-ln_dynldf_blp=.true.,
+ln_dynldf_blp=.false.,
 ln_dynldf_hor=.false.,
 ln_dynldf_iso=.false.,
 ln_dynldf_lap=.false.,
-ln_dynldf_lev=.true.,
-ln_dynldf_off=.false.,
+ln_dynldf_lev=.false.,
+ln_dynldf_off=.true.,
 nn_ahm_ijk_t=20,
 rn_uv=0.0838,
 /
 &namzdf
-ln_zad_aimp=.true.,
-ln_zdfcst=.true.,
+ln_zad_aimp=.false.,
+ln_zdfcst=.false.,
 ln_zdfddm=.false.,
 ln_zdfevd=.true.,
-ln_zdfgls=.false.,
+ln_zdfgls=.true.,
 ln_zdfiwm=.false.,
 ln_zdfnpc=.false.,
 ln_zdfosm=.false.,
 ln_zdfric=.false.,
 ln_zdfswm=.false.,
 ln_zdftke=.false.,
-ln_zdftmx=.false.,
+! ln_zdftmx=.false., !???
 nn_avb=0,
-nn_evdm=1,
-nn_havtb=1,
-rn_avm0=1.2e-4,
-rn_avt0=1.2e-5,
+nn_evdm=0,
+nn_havtb=0,
+rn_avm0=1.0e-6,
+rn_avt0=1.0e-7,
 rn_avts=1.0e-4,
-rn_evd=10.0,
+rn_evd=100.0,
 rn_hsbfr=1.6,
 /
 &namzdf_ric
@@ -458,6 +458,24 @@ rn_mxl0=0.04,
 rn_mxlice=10.0,
 /
 &namzdf_gls
+rn_emin       = 0.5e-6,
+rn_epsmin     = 1.e-9,
+ln_length_lim = .true.,
+rn_clim_galp  = 0.17,
+!
+ln_sigpsi     = .true.,
+rn_crban      = 100.,
+rn_charn      = 70000.,
+rn_hsro       =  0.02,
+!
+rn_hsri       =  0.03,
+rn_frac_hs    =   1.3,
+nn_z0_met     =     2,
+nn_z0_ice     =   1,
+nn_bc_surf    =     1,
+nn_bc_bot     =     1,
+nn_stab_func  =     2,
+nn_clos       =     1,
 /
 &namzdf_mldzint
 nn_mld_diag=2,
@@ -471,17 +489,9 @@ ln_mevar=.true.,
 ln_tsdiff=.true.,
 nn_zpyc=1,
 /
-&namzdf_tmx
-ln_tmx_itf=.false.,
-rn_htmx=500.0,
-rn_me=0.2,
-rn_n2min=1.0e-8,
-rn_tfe=0.333,
-rn_tfe_itf=1.0,
-/
 &nammpp
-jpni=28,
-jpnj=17,
+jpni=-1,
+jpnj=-1,
 ln_nnogather=.true.,
 /
 &namctl
@@ -553,9 +563,6 @@ tname(2)='K1',
 nn_dct=15,
 nn_dctwri=15,
 nn_secdebug=112,
-/
-&nam_diatmb
-ln_diatmb=.false.,
 /
 &nam_dia25h
 ln_dia25h=.false.,

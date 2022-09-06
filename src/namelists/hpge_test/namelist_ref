@@ -66,7 +66,7 @@
    nn_chunksz  =       0   !  chunksize (bytes) for NetCDF file (works only with iom_nf90 routines)
    ln_xios_read = .FALSE.  !  use XIOS to read restart file (only for a single file restart)
    nn_wxios = 0      !  use XIOS to write restart file 0 - no, 1 - single file output, 2 - multiple file output
-   ln_rst_eos = .TRUE.     ! check if the equation of state used to produce the restart is consistent with model
+!   ln_rst_eos = .TRUE.     ! check if the equation of state used to produce the restart is consistent with model
 /
 !-----------------------------------------------------------------------
 &namdom        !   time and space domain
@@ -850,7 +850,7 @@
       rn_Le        = 200.e+3        !  lateral diffusive length   [m]   (nn_aei_ijk_t= 0, 10)
       !
       ln_ldfeiv_dia =.false.   ! diagnose eiv stream function and velocities
-      nn_ldfeiv_shape = 0           !  shape of bounding coefficient    (nn_aei_ijk_t= 21 only)
+!      nn_ldfeiv_shape = 0           !  shape of bounding coefficient    (nn_aei_ijk_t= 21 only)
 /
 !-----------------------------------------------------------------------
 &namtra_dmp    !   tracer: T & S newtonian damping                      (default: OFF)
