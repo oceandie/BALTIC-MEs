@@ -21,7 +21,7 @@ MODULE usrdef_istate
    !
    USE in_out_manager ! I/O manager
    USE lib_mpp        ! MPP library
-   
+
    IMPLICIT NONE
    PRIVATE
 
@@ -29,15 +29,15 @@ MODULE usrdef_istate
 
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: usrdef_istate.F90 10069 2018-08-28 14:12:24Z nicolasmartin $ 
+   !! $Id: usrdef_istate.F90 10069 2018-08-28 14:12:24Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
 CONTAINS
-  
+
    SUBROUTINE usr_def_istate( pdept, ptmask, pts, pu, pv, pssh )
       !!----------------------------------------------------------------------
       !!                   ***  ROUTINE usr_def_istate  ***
-      !! 
+      !!
       !! ** Purpose :   Initialization of the dynamics and tracers
       !!                Here GYRE configuration example : (double gyre with rotated domain)
       !!
@@ -47,11 +47,12 @@ CONTAINS
       REAL(wp), DIMENSION(jpi,jpj,jpk)     , INTENT(in   ) ::   pdept   ! depth of t-point               [m]
       REAL(wp), DIMENSION(jpi,jpj,jpk)     , INTENT(in   ) ::   ptmask  ! t-point ocean mask             [m]
       REAL(wp), DIMENSION(jpi,jpj,jpk,jpts), INTENT(  out) ::   pts     ! T & S fields      [Celsius ; g/kg]
-      REAL(wp), DIMENSION(jpi,jpj,jpk)     , INTENT(  out) ::   pu      ! i-component of the velocity  [m/s] 
-      REAL(wp), DIMENSION(jpi,jpj,jpk)     , INTENT(  out) ::   pv      ! j-component of the velocity  [m/s] 
+      REAL(wp), DIMENSION(jpi,jpj,jpk)     , INTENT(  out) ::   pu      ! i-component of the velocity  [m/s]
+      REAL(wp), DIMENSION(jpi,jpj,jpk)     , INTENT(  out) ::   pv      ! j-component of the velocity  [m/s]
       REAL(wp), DIMENSION(jpi,jpj)         , INTENT(  out) ::   pssh    ! sea-surface height
       !
       REAL(wp), DIMENSION(42)  ::   zdep, zsal, ztem
+      REAL(wp), DIMENSION(56)  ::   zdep_baltic, zsal_baltic, ztem_baltic
       REAL(wp) :: a0, a1, a2, b0, b1, b2
       INTEGER :: ji, jj, jk  ! dummy loop indices
       !!----------------------------------------------------------------------
@@ -64,7 +65,7 @@ CONTAINS
       pv  (:,:,:) = 0._wp
       pssh(:,:)   = 0._wp
       !
-      
+
       zdep(:) = (/ &
                    &    5.02,   15.08,   25.16,   35.28,   45.45,   55.69, &
                    &   66.04,   76.55,   87.27,   98.31,  109.81,  121.95, &
@@ -76,8 +77,8 @@ CONTAINS
                    & /)
 
       SELECT CASE(nn_tsd_type)
-      
-         CASE(1) ! T/S July on-shelf 
+
+         CASE(1) ! T/S July on-shelf
             ztem(:) = (/ &
                          & 13.8059, 13.1661, 12.0471, 10.7265,  9.5585,  8.7273, &
                          &  8.2527,  7.9696,  7.7605,  7.5965,  7.5038,  7.5018, &
@@ -99,7 +100,7 @@ CONTAINS
                          & /)
 
          CASE(2) ! T/S July off-shelf
-      
+
             ztem(:) = (/ &
                          & 13.0669, 12.8587, 12.4760, 11.9986, 11.5363, 11.1627, &
                          & 10.8898, 10.6753, 10.4927, 10.3334, 10.2182, 10.1457, &
@@ -167,16 +168,57 @@ CONTAINS
            ! a0 = 13.0
            ! a1 = 0.00507078656
            ! a2 = 2.37539619
-           ! b0 = -1.1 
-           ! b1 = 0.01 
+           ! b0 = -1.1
+           ! b1 = 0.01
            ! b2 = 34.85
          CASE(6) ! Analytic T in the tropical Atlantic ocean
             rn_sal_sf = 35
-            a0 = 0.2 
-            a1 = 6.0 
-            a2 = 20. 
+            a0 = 0.2
+            a1 = 6.0
+            a2 = 20.
             b0 = 2500.
             b1 = 250.
+
+         CASE(7) ! T/S Baltic winter
+            zdep_baltic(:) = (/ &
+                 &1.50,4.51,7.53,10.58,13.65,16.74, &
+                 &19.88,23.05,26.28,29.58,32.96,36.45, &
+                 &40.07,43.84,47.80,52.01,56.50,61.33, &
+                 &66.57,72.30,78.61,85.57,93.28,101.83, &
+                 &111.30,121.76,133.25,145.80,159.42,174.07, &
+                 &189.71,200.12,204.50,222.65,241.45,260.83, &
+                 &280.69,300.96,321.58,342.49,363.63,384.96, &
+                 &406.45,428.07,449.80,471.61,493.48,515.41, &
+                 &537.39,559.40,581.44,603.50,625.58,647.68, &
+                 &669.78,691.90 &
+                 & /)
+
+
+            ztem_baltic(:) = (/ &
+                 &4.0895,4.0900,4.0909,4.0919,4.0932,4.0973, &
+                 &4.1063,4.1165,4.1397,4.1638,4.1890,4.2116, &
+                 &4.2631,4.4186,4.6870,4.8512,4.7812,4.7343, &
+                 &4.7688,4.8415,4.9740,5.0732,5.1241,5.1475, &
+                 &5.1615,5.1595,5.1343,5.1004,5.0751,5.0685, &
+                 &5.0605,5.0585,5.0585,5.0585,5.0585,5.0585, &
+                 &5.0585,5.0585,5.0585,5.0585,5.0585,5.0585, &
+                 &5.0585,5.0585,5.0585,5.0585,5.0585,5.0585, &
+                 &5.0585,5.0585,5.0585,5.0585,5.0585,5.0585, &
+                 &5.0585,5.0585 &
+                 & /)
+
+            zsal_baltic(:) = (/ &
+                 &7.6793,7.6794,7.6795,7.6796,7.6798,7.6809, &
+                 &7.6869,7.6953,7.7163,7.7312,7.7496,7.7701, &
+                 &7.7980,7.8757,8.0669,8.5575,9.2415,9.7848, &
+                 &10.1789,10.4869,10.7044,10.9014,11.0667,11.2228, &
+                 &11.3549,11.5024,11.5983,11.6787,11.7141,11.7217, &
+                 &11.7300,11.7326,11.7326,11.7326,11.7326,11.7326, &
+                 &11.7326,11.7326,11.7326,11.7326,11.7326,11.7326, &
+                 &11.7326,11.7326,11.7326,11.7326,11.7326,11.7326, &
+                 &11.7326,11.7326,11.7326,11.7326,11.7326,11.7326, &
+                 &11.7326,11.7326 &
+                 & /)
       END SELECT
 
       IF (nn_tsd_type < 5) THEN  ! Use spline smoothing
@@ -187,6 +229,7 @@ CONTAINS
                pts(ji,jj,:,jp_sal) = spline3(zdep,zsal,pdept(ji,jj,:)) !* ptmask(ji,jj,:)
             END DO
          END DO
+         
 
       ELSE IF (nn_tsd_type == 5) THEN ! Siddorn & Furner 2013 analytical function
 
@@ -195,7 +238,7 @@ CONTAINS
                DO ji = 1, jpi
                   pts(ji,jj,jk,jp_sal) = rn_sal_sf !* ptmask(ji,jj,jk)
                   pts(ji,jj,jk,jp_tem) = ( rn_c0_sf * ( 1-TANH(((pdept(ji,jj,jk)-rn_mld_sf)/20)*3.1415927/180) ) &
-                                         + rn_c1_sf * ((rn_maxdep_sf- pdept(ji,jj,jk)) / rn_maxdep_sf) ) !* ptmask(ji,jj,jk) 
+                                         + rn_c1_sf * ((rn_maxdep_sf- pdept(ji,jj,jk)) / rn_maxdep_sf) ) !* ptmask(ji,jj,jk)
                END DO
             END DO
          END DO
@@ -207,10 +250,20 @@ CONTAINS
                DO ji = 1, jpi
                   pts(ji,jj,jk,jp_sal) = rn_sal_sf !* ptmask(ji,jj,jk)
                   pts(ji,jj,jk,jp_tem) = a0 + a1*EXP(-pdept(ji,jj,jk)/b0) &
-                                            + a2*EXP(-pdept(ji,jj,jk)/b1) !* ptmask(ji,jj,jk) 
+                                            + a2*EXP(-pdept(ji,jj,jk)/b1) !* ptmask(ji,jj,jk)
                END DO
             END DO
          END DO
+
+      ELSE IF (nn_tsd_type == 7) THEN  ! Use spline smoothing ! Baltic case
+         ! horizontally uniform T & S profiles
+         DO jj = 1, jpj
+            DO ji = 1, jpi
+               pts(ji,jj,:,jp_tem) = spline3(zdep_baltic,ztem_baltic,pdept(ji,jj,:)) !* ptmask(ji,jj,:)
+               pts(ji,jj,:,jp_sal) = spline3(zdep_baltic,zsal_baltic,pdept(ji,jj,:)) !* ptmask(ji,jj,:)
+            END DO
+         END DO
+
 
       END IF
 

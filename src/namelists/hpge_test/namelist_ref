@@ -53,11 +53,11 @@
    ln_iscpl    = .false.   !  cavity evolution forcing or coupling to ice sheet model
    nn_istate   =       0   !  output the initial state (1) or not (0)
    ln_rst_list = .false.   !  output restarts at list of times using nn_stocklist (T) or at set frequency with nn_stock (F)
-   nn_stock    =       0   !  used only if ln_rst_list = F: output restart freqeuncy (modulo referenced to 1)
+   nn_stock    =       -1   !  used only if ln_rst_list = F: output restart freqeuncy (modulo referenced to 1)
       !                          !    =  0 force to write restart files only at the end of the run
       !                          !    = -1 do not do any restart
    nn_stocklist = 0,0,0,0,0,0,0,0,0,0 ! List of timesteps when a restart file is to be written
-   nn_write    =       0   !  used only if key_iomput is not defined: output frequency (modulo referenced to nn_it000)
+   nn_write    =       -1   !  used only if key_iomput is not defined: output frequency (modulo referenced to nn_it000)
       !                          !    =  0 force to write output files only at the end of the run
       !                          !    = -1 do not do any output file
    ln_mskland  = .false.   !  mask land points in NetCDF outputs
@@ -66,7 +66,7 @@
    nn_chunksz  =       0   !  chunksize (bytes) for NetCDF file (works only with iom_nf90 routines)
    ln_xios_read = .FALSE.  !  use XIOS to read restart file (only for a single file restart)
    nn_wxios = 0      !  use XIOS to write restart file 0 - no, 1 - single file output, 2 - multiple file output
-   ln_rst_eos = .TRUE.     ! check if the equation of state used to produce the restart is consistent with model
+!   ln_rst_eos = .TRUE.     ! check if the equation of state used to produce the restart is consistent with model
 /
 !-----------------------------------------------------------------------
 &namdom        !   time and space domain
@@ -850,7 +850,7 @@
       rn_Le        = 200.e+3        !  lateral diffusive length   [m]   (nn_aei_ijk_t= 0, 10)
       !
       ln_ldfeiv_dia =.false.   ! diagnose eiv stream function and velocities
-      nn_ldfeiv_shape = 0           !  shape of bounding coefficient    (nn_aei_ijk_t= 21 only)
+!      nn_ldfeiv_shape = 0           !  shape of bounding coefficient    (nn_aei_ijk_t= 21 only)
 /
 !-----------------------------------------------------------------------
 &namtra_dmp    !   tracer: T & S newtonian damping                      (default: OFF)
