@@ -17,7 +17,6 @@ import glob
 import numpy as np
 from matplotlib import pyplot as plt
 import xarray as xr
-import xarray.ufuncs as xu
 from dask.diagnostics import ProgressBar
 
 # ==============================================================================
@@ -26,17 +25,17 @@ from dask.diagnostics import ProgressBar
 
 # Folder path containing HPGE spurious currents velocity files 
 #HPGEdir = '/scratch/dbruciaf/GS_HPGE/r020-r015-r015'
-HPGEdir = '/scratch/dbruciaf/GS_HPGE/u-cg602_hpge_000-015-020_v1_orca025_djc'
+HPGEdir = '/nobackup/smhid20/users/sm_erimu/NEMO/hpg_test/test_2envs_v3_opt_v2'
 #HPGEdir = '/scratch/dbruciaf/GS_HPGE/u-co226_hpge_000-015-020_orca12_djc'
 
 # List of indexes of the last T-level of each vertical subdomains 
 # (Fortran indexening convention)
-num_lev = [74]
+num_lev = [43, 56]
 #num_lev = [7,47,66,74]
 
 # Name of the zonal and meridional velocity variables
-Uvar = 'uo'
-Vvar = 'vo'
+Uvar = 'uoce_inst'
+Vvar = 'voce_inst'
 # Name of the variable to chunk with dask and size of chunks
 chunk_var = 'time_counter'
 chunk_size = 1
@@ -44,8 +43,8 @@ chunk_size = 1
 # ==============================================================================
 # LOOP
 
-Ufiles = sorted(glob.glob(HPGEdir+'/*grid-U.nc'))
-Vfiles = sorted(glob.glob(HPGEdir+'/*grid-V.nc'))
+Ufiles = sorted(glob.glob(HPGEdir+'/*grid_U_*.nc'))
+Vfiles = sorted(glob.glob(HPGEdir+'/*grid_V_*.nc'))
 
 for F in range(len(Ufiles)):
 
@@ -80,23 +79,23 @@ for F in range(len(Ufiles)):
     if len(num_lev) > 1:
        maxhpge_1 = hpge.isel(k=slice(None, num_lev[0])).max(dim='k').max(dim='t')
        maxhpge_2 = hpge.isel(k=slice(num_lev[0], num_lev[1])).max(dim='k').max(dim='t')
-       maxhpge_3 = hpge.isel(k=slice(num_lev[1], num_lev[2])).max(dim='k').max(dim='t')
-       maxhpge_4 = hpge.isel(k=slice(num_lev[2], num_lev[3])).max(dim='k').max(dim='t')
-       max_hpge1 = xu.maximum(max_hpge1, maxhpge_1.data)
-       max_hpge2 = xu.maximum(max_hpge2, maxhpge_2.data)
-       max_hpge3 = xu.maximum(max_hpge3, maxhpge_3.data)
-       max_hpge4 = xu.maximum(max_hpge4, maxhpge_4.data)
+       # maxhpge_3 = hpge.isel(k=slice(num_lev[1], num_lev[2])).max(dim='k').max(dim='t')
+       # maxhpge_4 = hpge.isel(k=slice(num_lev[2], num_lev[3])).max(dim='k').max(dim='t')
+       max_hpge1 = np.maximum(max_hpge1, maxhpge_1.data)
+       max_hpge2 = np.maximum(max_hpge2, maxhpge_2.data)
+       # max_hpge3 = np.maximum(max_hpge3, maxhpge_3.data)
+       # max_hpge4 = np.maximum(max_hpge4, maxhpge_4.data)
     else:
        maxhpge_1 = hpge.isel(k=slice(None, num_lev[0])).max(dim='k').max(dim='t')
-       max_hpge1 = xu.maximum(max_hpge1, maxhpge_1.data)
+       max_hpge1 = np.maximum(max_hpge1, maxhpge_1.data)
 
 # Saving 
 ds_hpge = xr.Dataset()
 if len(num_lev) > 1:
    ds_hpge["max_hpge_1"] = xr.DataArray(max_hpge1, dims=('y','x'))
    ds_hpge["max_hpge_2"] = xr.DataArray(max_hpge2, dims=('y','x'))
-   ds_hpge["max_hpge_3"] = xr.DataArray(max_hpge3, dims=('y','x'))
-   ds_hpge["max_hpge_4"] = xr.DataArray(max_hpge4, dims=('y','x'))
+   # ds_hpge["max_hpge_3"] = xr.DataArray(max_hpge3, dims=('y','x'))
+   # ds_hpge["max_hpge_4"] = xr.DataArray(max_hpge4, dims=('y','x'))
 else:
    ds_hpge["max_hpge_1"] = xr.DataArray(max_hpge1, dims=('y','x'))
 
