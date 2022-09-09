@@ -32,7 +32,7 @@ def compute_masks(ds_domain, merge=False):
     """
 
     # Extract variables
-    k = ds_domain["z_c"] + 1
+    k = ds_domain["z"] + 1
     top_level = ds_domain["top_level"]
     bottom_level = ds_domain["bottom_level"]
 
@@ -46,16 +46,16 @@ def compute_masks(ds_domain, merge=False):
     tmask = xr.where(np.logical_and(bottom_level >= k, top_level <= k), 1, tmask)
     tmask = tmask.rename("tmask")
 
-    tmask = tmask.transpose("z_c","y_c","x_c")
+    tmask = tmask.transpose("z","y","x")
 
     # Need to shift and replace last row/colum with tmask
     # umask(i, j, k) = tmask(i, j, k) ∗ tmask(i + 1, j, k)
-    umask = tmask.rolling(x_c=2).prod().shift(x_c=-1)
+    umask = tmask.rolling(x=2).prod().shift(x=-1)
     umask = umask.where(umask.notnull(), tmask)
     umask = umask.rename("umask")
 
     # vmask(i, j, k) = tmask(i, j, k) ∗ tmask(i, j + 1, k)
-    vmask = tmask.rolling(y_c=2).prod().shift(y_c=-1)
+    vmask = tmask.rolling(y=2).prod().shift(y=-1)
     vmask = vmask.where(vmask.notnull(), tmask)
     vmask = vmask.rename("vmask")
 

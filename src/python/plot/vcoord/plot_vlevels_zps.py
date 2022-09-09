@@ -12,29 +12,52 @@ from utils import compute_masks
 # ========================================================================
 # INPUT PARAMETERS
 
-DOMCFG_zps = ''
+DOMCFG_zps = '/nobackup/smhid20/users/sm_erimu/NEMO/generate_domcfg/nordic_ref/domain_cfg.nc'
+latlonfile = '/nobackup/smhid20/users/sm_erimu/NEMO/generate_domcfg/analysis/lonslats.nc'
 
 # 2. ANALYSIS
 
-sec_lon1  = [-17.617,-3.975,9.747]    # AMM15 south boundary
-sec_lat1  = [44.065,45.195,44.461]    # AMM15 south boundary
+sec_lon1 = [13.124825, 13.680375, 14.235925, 14.791475, 15.347025, 15.902575,
+            16.458125, 17.013675, 17.569225, 18.124775, 18.569215, 18.84699 ,
+            19.29143 , 19.680315, 19.902535, 20.013645]
 
-sec_I_indx_1b_L  = [sec_lon1]
-sec_J_indx_1b_L  = [sec_lat1]
+sec_lon2 = [8.902645, 8.9582  , 9.06931 , 9.124865, 9.18042 ]
+
+sec_lat1 = [54.891598, 55.058262, 55.258258, 55.39159 , 55.458255, 55.291591,
+            55.291591, 55.291591, 55.358257, 55.458255, 55.691585, 56.024913,
+            56.358241, 56.691569, 57.024897, 57.358225]
+
+sec_lat2 = [58.424874, 58.091546, 57.758218, 57.42489 , 57.091562]
+
+ds = xr.open_dataset(latlonfile)
+sec_lat3 = ds.gphit.values.squeeze().tolist()
+sec_lon3 = ds.glamt.values.squeeze().tolist()
+
+print(sec_lat2)
+print(sec_lon2)
+print(sec_lat3)
+print(sec_lon3)
+
+# quit()
+
+sec_I_indx_1b_L  = [sec_lon1, sec_lon2, sec_lon3]
+sec_J_indx_1b_L  = [sec_lat1, sec_lat2, sec_lat3]
 
 coord_type_1b_L  = "dist"
 rbat2_fill_1b_L  = "false"
 xlim_1b_L        = "maxmin"
-ylim_1b_L        = [0., 1000.] #1000.] #3500.] #5900.]
+ylim_1b_L        = [0., 260.] #1000.] #3500.] #5900.]
 vlevel_1b_L      = 'Z_ps'
 xgrid_1b_L       = "false"
 
 # ========================================================================
 # Loading domain geometry
-ds_dom  = open_domain_cfg(files=[DOMCFG_zps])
-for i in ['bathymetry','bathy_meter']:
-    for dim in ['x','y']:
-        ds_dom[i] = ds_dom[i].rename({dim: dim+"_c"})
+# ds_dom  = open_domain_cfg(files=[DOMCFG_zps])
+ds_dom = xr.open_dataset(DOMCFG_zps).squeeze()
+
+# for i in ['bathymetry','bathy_meter']:
+#     for dim in ['x','y']:
+#         ds_dom[i] = ds_dom[i].rename({dim: dim+"_c"})
 
 # Computing masks
 ds_dom = compute_masks(ds_dom, merge=True)
@@ -44,7 +67,8 @@ tlat2 = ds_dom["gphit"].values
 e3t_3 = ds_dom["e3t_0"].values
 e3w_3 = ds_dom["e3w_0"].values
 tmsk3 = ds_dom["tmask"].values
-bathy = ds_dom["bathymetry"].values
+bathy = []
+#bathy = ds_dom["bathymetry"].values
 
 nk = e3t_3.shape[0]
 nj = e3t_3.shape[1]
@@ -73,7 +97,7 @@ timeres_dm = ""
 timestep   = []
 PlotType   = ""
 var4       = []
-#hbatt      = []
+hbatt      = []
 mbat_ln    = "false"
 mbat_fill  = "true"
 varlim     = "no"

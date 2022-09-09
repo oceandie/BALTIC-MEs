@@ -336,7 +336,7 @@ def mpl_sec_bathy(rbat, rbat_fill, zenv, x2, tdep2, wdep2, tmsk2, mbat_fill, \
              codes     = np.ones(nverts, int) * path.Path.LINETO
              codes[0]  = path.Path.MOVETO
              polyg     = path.Path(vertexes, codes)
-             mpatch    = patches.PathPatch(polyg, facecolor='black', edgecolor='black', alpha=1.,zorder=1)
+             mpatch    = patches.PathPatch(polyg, facecolor='grey', edgecolor='grey', alpha=1.,zorder=1)
 
     # 5. Z-ENV VERTEXES
 
@@ -716,28 +716,28 @@ def mpl_lev(exp_name, fig_type, sec_i, sec_j, tlon3, tlat3, tdep3, wdep3, tmsk3,
             #==============================================
             # INSET MAP
 
-            if proj != []:
-               lon_sec = np.asarray(lon_sec)
-               lat_sec = np.asarray(lat_sec)
-               lon0 = np.nanmin(lon_sec)
-               lon1 = np.nanmax(lon_sec)
-               lat0 = np.nanmin(lat_sec)
-               lat1 = np.nanmax(lat_sec)
-               if np.absolute(lon0-lon1) < 1. or np.absolute(lat0-lat1) < 1.:
-                  stp = 5.
-               else:
-                  stp = 2.
-               lon0 += -stp
-               lon1 +=  stp
-               lat0 += -stp
-               lat1 +=  stp
-               map_lims = [lon0, lon1, lat0, lat1]
-               a = plt.axes([pos1.x0+0.005, pos1.y0+0.01, .2, .2], projection=proj)
-               a.coastlines()
-               a.add_feature(feature.LAND, color='gray',edgecolor='gray',zorder=1)
-               MAP = plt.plot(lon_sec, lat_sec, c="red", transform=transform)
-               plt.setp(MAP, 'linewidth', 2.5)
-               a.set_extent(map_lims)
+            # if proj != []:
+            #    lon_sec = np.asarray(lon_sec)
+            #    lat_sec = np.asarray(lat_sec)
+            #    lon0 = np.nanmin(lon_sec)
+            #    lon1 = np.nanmax(lon_sec)
+            #    lat0 = np.nanmin(lat_sec)
+            #    lat1 = np.nanmax(lat_sec)
+            #    if np.absolute(lon0-lon1) < 1. or np.absolute(lat0-lat1) < 1.:
+            #       stp = 5.
+            #    else:
+            #       stp = 2.
+            #    lon0 += -stp
+            #    lon1 +=  stp
+            #    lat0 += -stp
+            #    lat1 +=  stp
+            #    map_lims = [lon0, lon1, lat0, lat1]
+            #    a = plt.axes([pos1.x0+0.005, pos1.y0+0.01, .2, .2], projection=proj)
+            #    a.coastlines()
+            #    a.add_feature(feature.LAND, color='gray',edgecolor='gray',zorder=1)
+            #    MAP = plt.plot(lon_sec, lat_sec, c="red", transform=transform)
+            #    plt.setp(MAP, 'linewidth', 2.5)
+            #    a.set_extent(map_lims)
 
             #==============================================
             # SAVING FIGURE
