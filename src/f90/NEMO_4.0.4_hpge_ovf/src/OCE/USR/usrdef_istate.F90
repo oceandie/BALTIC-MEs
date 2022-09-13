@@ -26,7 +26,7 @@ MODULE usrdef_istate
    PRIVATE
 
    PUBLIC   usr_def_istate   ! called in istate.F90
-
+   
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
    !! $Id: usrdef_istate.F90 10069 2018-08-28 14:12:24Z nicolasmartin $
