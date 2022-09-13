@@ -25,7 +25,7 @@ from dask.diagnostics import ProgressBar
 
 # Folder path containing HPGE spurious currents velocity files 
 #HPGEdir = '/scratch/dbruciaf/GS_HPGE/r020-r015-r015'
-HPGEdir = '/nobackup/smhid20/users/sm_erimu/NEMO/hpg_test/test_2envs_v3_opt_v2'
+HPGEdir = '/nobackup/smhid20/users/sm_erimu/NEMO/hpg_test/dummy'
 #HPGEdir = '/scratch/dbruciaf/GS_HPGE/u-co226_hpge_000-015-020_orca12_djc'
 
 # List of indexes of the last T-level of each vertical subdomains 
