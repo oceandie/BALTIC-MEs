@@ -21,7 +21,7 @@ ROOTDIR=$PWD
 
 mkdir -p $testdir
 
-nemo=/nobackup/smhid20/users/sm_erimu/NEMO/BALTIC-MEs/src/f90/NEMO_4.0.4_hpge_ovf/cfgs/MESTEST/BLD/bin/nemo.exe
+nemo=/nobackup/smhid20/users/sm_erimu/NEMO/BALTIC-MEs/src/f90/NEMO_4.0.4_hpge_ovf/cfgs/HPGTEST/BLD/bin/nemo.exe
 xios=/nobackup/smhid20/users/sm_jongr/NEMO/MODELS/xios-2.5_trunk/bin/xios_server.exe
 
 ln -sfv $nemo $testdir/nemo.exe
