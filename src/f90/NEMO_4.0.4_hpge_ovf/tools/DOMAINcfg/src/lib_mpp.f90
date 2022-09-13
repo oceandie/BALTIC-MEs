@@ -75,7 +75,7 @@ MODULE lib_mpp
    PUBLIC   mpp_lnk_3d, mpp_lnk_3d_gather, mpp_lnk_2d, mpp_lnk_2d_e
    PUBLIC   mpp_lnk_2d_9 , mpp_lnk_2d_multiple 
    PUBLIC   mpp_lnk_sum_3d, mpp_lnk_sum_2d
-   PUBLIC   mppscatter, mppgather
+   PUBLIC   mppscatter, mppgather, mppbcast_a_real
    PUBLIC   mpp_ini_ice, mpp_ini_znl
    PUBLIC   mppsize
    PUBLIC   mppsend, mpprecv                          ! needed by TAM and ICB routines
@@ -1844,6 +1844,29 @@ CONTAINS
          &                            mpi_double_precision, kp  , mpi_comm_opa, ierror )
       !
    END SUBROUTINE mppscatter
+
+
+   SUBROUTINE mppbcast_a_real( kvals, kno, kroot )
+      !!----------------------------------------------------------------------
+      !!                  ***  routine mppbcast_a_real  ***
+      !!
+      !! ** Purpose : Send array kvals to all processors
+      !!
+      !! ** Method  : MPI broadcast
+      !!
+      !!-----------------------------------------------------------------------
+      INTEGER                 , INTENT(in   ) :: kno     ! Number of elements in array
+      INTEGER                 , INTENT(in   ) :: kroot   ! Processor to send data
+      REAL(wp), DIMENSION(kno), INTENT(inout) :: kvals   ! Array to send on kroot, receive for non-kroot
+      !!
+      INTEGER                   ::   ierr    ! temporary integer
+      INTEGER                   ::   localcomm
+      !!-----------------------------------------------------------------------
+      !
+      localcomm = mpi_comm_opa
+      CALL mpi_bcast( kvals, kno, mpi_double_precision, kroot, localcomm, ierr )
+      !
+   END SUBROUTINE mppbcast_a_real
 
 
    SUBROUTINE mppmax_a_int( ktab, kdim, kcom )

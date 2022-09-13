@@ -33,8 +33,37 @@
 !-----------------------------------------------------------------------
 &namzgr        !   vertical coordinate
 !-----------------------------------------------------------------------
-   ln_zps      = .true.    !  z-coordinate with partial steps
+   ln_mes      = .true.    !  Multi-Envelope s-coordinate
    ln_linssh   = .true.    !  linear free surface
+   ln_loc_zgr  = .true.    !  Local coordinate system
+/
+!-----------------------------------------------------------------------
+&namzgr_mes    !   MEs-coordinate
+!-----------------------------------------------------------------------
+   ln_envl     =   .TRUE. , .TRUE. , .TRUE. , .TRUE., .FALSE.  ! (T/F) If the envelope is used
+   nn_strt     =     1    ,   1    ,    1   ,   1    ,   1     ! Stretch. funct.: Madec 1996 (0) or
+                                                               ! Song & Haidvogel 1994 (1) or        
+                                                               ! Siddorn & Furner 2012 (2)
+   nn_slev     =     9    ,   31   ,   20   ,   15   ,    0    ! number of s-lev between env(n-1)
+                                                               ! and env(n)
+   rn_e_hc     =     0.0  ,    0.0 ,   0.0  ,   0.0  ,   0.0   ! critical depth for transition to    
+                                                               ! stretch. coord.
+   rn_e_th     =     1.20 ,    1.5 ,   2.4  ,   0.0  ,   0.0   ! surf. control param.:               
+                                                               ! SH94 or MD96: 0<=th<=20
+                                                               ! SF12: thickness surf. cell
+   rn_e_bb     =     0.7 ,     0.5 ,   0.85 ,   0.0  ,   0.0   ! bot. control param.:
+                                                               ! SH94 or MD96: 0<=bb<=1
+                                                               ! SF12: offset for calculating Zb
+   rn_e_al     =     0.0  ,    0.0 ,   0.0  ,   0.0  ,   0.0   ! alpha stretching param with SF12
+   rn_e_ba     =     0.0  ,    0.0 ,   0.0  ,   0.0  ,   0.0   ! SF12 bathymetry scaling factor for
+                                                               ! calculating Zb
+   rn_bot_min  = 10.0       ! minimum depth of the ocean bottom (>0) (m)
+   rn_bot_max  = 5900.0     ! maximum depth of the ocean bottom (= ocean depth) (>0) (m)
+
+   ln_pst_mes   = .false.
+   ln_pst_l2g   = .false.
+   rn_e3pst_min = 20.
+   rn_e3pst_rat = 0.1
 /
 !-----------------------------------------------------------------------
 &namdom        !   space and time domain (bathymetry, mesh, timestep)

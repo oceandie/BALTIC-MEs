@@ -44,6 +44,7 @@ MODULE domzgr
    USE lib_mpp           ! distributed memory computing library
    USE wrk_nemo          ! Memory allocation
    USE timing            ! Timing
+   USE zgrmes            ! MES
 
    IMPLICIT NONE
    PRIVATE
@@ -111,7 +112,7 @@ CONTAINS
       INTEGER ::   ioptio, ibat   ! local integer
       INTEGER ::   ios
       !
-      NAMELIST/namzgr/ ln_zco, ln_zps, ln_sco, ln_isfcav, ln_linssh
+      NAMELIST/namzgr/ ln_zco, ln_zps, ln_sco, ln_mes, ln_isfcav, ln_linssh, ln_loc_zgr
       !!----------------------------------------------------------------------
       !
       IF( nn_timing == 1 )   CALL timing_start('dom_zgr')
@@ -133,16 +134,19 @@ CONTAINS
          WRITE(numout,*) '      z-coordinate - full steps      ln_zco    = ', ln_zco
          WRITE(numout,*) '      z-coordinate - partial steps   ln_zps    = ', ln_zps
          WRITE(numout,*) '      s- or hybrid z-s-coordinate    ln_sco    = ', ln_sco
+         WRITE(numout,*) '      MES-coordinate                 ln_mes    = ', ln_mes
          WRITE(numout,*) '      ice shelf cavities             ln_isfcav = ', ln_isfcav
          WRITE(numout,*) '      linear free surface            ln_linssh = ', ln_linssh
       ENDIF
 
       IF( ln_linssh .AND. lwp) WRITE(numout,*) '   linear free surface: the vertical mesh does not change in time'
+      IF( ln_loc_zgr.AND. lwp) WRITE(numout,*) '   the chosen vert. coord. system is implemented LOCALLY'
 
       ioptio = 0                       ! Check Vertical coordinate options
       IF( ln_zco      )   ioptio = ioptio + 1
       IF( ln_zps      )   ioptio = ioptio + 1
       IF( ln_sco      )   ioptio = ioptio + 1
+      IF( ln_mes      )   ioptio = ioptio + 1
       IF( ioptio /= 1 )   CALL ctl_stop( ' none or several vertical coordinate options used' )
       !
       ioptio = 0
@@ -157,6 +161,7 @@ CONTAINS
       IF( ln_zco      )   CALL zgr_zco          ! z-coordinate
       IF( ln_zps      )   CALL zgr_zps          ! Partial step z-coordinate
       IF( ln_sco      )   CALL zgr_sco          ! s-coordinate or hybrid z-s coordinate
+      IF( ln_mes      )   CALL zgr_mes          ! MES-coordinate
       !
       ! final adjustment of mbathy & check 
       ! -----------------------------------
@@ -612,7 +617,7 @@ CONTAINS
       !
       IF( nn_closea == 0 )   CALL clo_bat( bathy, mbathy )    !==  NO closed seas or lakes  ==!
       !                       
-      IF ( .not. ln_sco ) THEN                                !==  set a minimum depth  ==!
+      IF ( (.not. ln_sco) .AND. (.not. ln_mes) ) THEN          !==  set a minimum depth  ==!
          IF( rn_hmin < 0._wp ) THEN    ;   ik = - INT( rn_hmin )                                      ! from a nb of level
          ELSE                          ;   ik = MINLOC( gdepw_1d, mask = gdepw_1d > rn_hmin, dim = 1 )  ! from a depth
          ENDIF
@@ -1985,8 +1990,8 @@ CONTAINS
                   ijp1 = MIN( jj+1, jpj )
                   iim1 = MAX( ji-1, 1 )
                   ijm1 = MAX( jj-1, 1 )
-!!gm BUG fix see ticket #1617
-                  IF( ( + bathy(iim1,ijm1) + bathy(ji,ijp1) + bathy(iip1,ijp1)              &
+!!DB to reproduce R&D suite
+                  IF( ( + bathy(iim1,ijp1) + bathy(ji,ijp1) + bathy(iip1,ijp1)              &
                      &  + bathy(iim1,jj  )                  + bathy(iip1,jj  )              &
                      &  + bathy(iim1,ijm1) + bathy(ji,ijm1) + bathy(iip1,ijp1)  ) > 0._wp ) &
                      &    zenv(ji,jj) = rn_sbot_min

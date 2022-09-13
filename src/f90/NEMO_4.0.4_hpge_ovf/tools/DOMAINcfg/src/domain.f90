@@ -132,7 +132,8 @@ CONTAINS
          !
       ENDIF
       !
-      CALL cfg_write         ! create the configuration file
+      IF( nmsh /= 0 ) CALL dom_wri ! DB create mesh_mask
+      CALL cfg_write               ! create the configuration file
       !
       IF( nn_timing == 1 )   CALL timing_stop('dom_init')
       !
@@ -383,11 +384,14 @@ CONTAINS
       !!                              NB: also contains ORCA family information (if cp_cfg = "ORCA")
       !!                              and depths (ln_e3_dep=F) 
       !!----------------------------------------------------------------------
-      INTEGER           ::   ji, jj, jk   ! dummy loop indices
-      INTEGER           ::   izco, izps, isco, icav
-      INTEGER           ::   inum     ! temprary units for 'domain_cfg.nc' file
-      CHARACTER(len=21) ::   clnam    ! filename (mesh and mask informations)
-      REAL(wp), DIMENSION(jpi,jpj) ::   z2d   ! workspace
+      INTEGER                          ::   ji, jj, jk             ! dummy loop indices
+      INTEGER                          ::   izco, izps, isco, icav
+      INTEGER                          ::   inum                   ! temporary units for 
+                                                                   ! 'domain_cfg.nc' file
+      CHARACTER(len=21)                ::   clnam                  ! filename (mesh and 
+                                                                   ! mask informations)
+      REAL(wp), DIMENSION(jpi,jpj)     ::   z2d                    ! workspace
+      REAL(wp), DIMENSION(jpi,jpj,jpk) ::   z3d                    ! workspace
       !!----------------------------------------------------------------------
       !
       IF(lwp) WRITE(numout,*)
@@ -420,9 +424,9 @@ CONTAINS
       CALL iom_rstput( 0, 0, inum, 'jperio', REAL( jperio, wp), ktype = jp_i4 )
       !
       !                                   ! type of vertical coordinate
-      IF( ln_zco    ) THEN   ;   izco = 1   ;   ELSE   ;   izco = 0   ;   ENDIF
-      IF( ln_zps    ) THEN   ;   izps = 1   ;   ELSE   ;   izps = 0   ;   ENDIF
-      IF( ln_sco    ) THEN   ;   isco = 1   ;   ELSE   ;   isco = 0   ;   ENDIF
+      IF( ln_zco             ) THEN   ;   izco = 1   ;   ELSE   ;   izco = 0   ;   ENDIF
+      IF( ln_zps             ) THEN   ;   izps = 1   ;   ELSE   ;   izps = 0   ;   ENDIF
+      IF( ln_sco .OR. ln_mes ) THEN   ;   isco = 1   ;   ELSE   ;   isco = 0   ;   ENDIF
       CALL iom_rstput( 0, 0, inum, 'ln_zco'   , REAL( izco, wp), ktype = jp_i4 )
       CALL iom_rstput( 0, 0, inum, 'ln_zps'   , REAL( izps, wp), ktype = jp_i4 )
       CALL iom_rstput( 0, 0, inum, 'ln_sco'   , REAL( isco, wp), ktype = jp_i4 )
@@ -469,12 +473,13 @@ CONTAINS
       CALL iom_rstput( 0, 0, inum, 'e3uw_0'  , e3uw_0  , ktype = jp_r8 )
       CALL iom_rstput( 0, 0, inum, 'e3vw_0'  , e3vw_0  , ktype = jp_r8 )
       !
-      IF(.NOT.ln_e3_dep ) THEN                                             !  depth (t- & w-points)
+      ! DB we force to write always gdep*
+      !IF(.NOT.ln_e3_dep ) THEN                                             !  depth (t- & w-points)
          CALL iom_rstput( 0, 0, inum, 'gdept_1d', gdept_1d, ktype = jp_r8 )   ! required only with  
          CALL iom_rstput( 0, 0, inum, 'gdepw_1d', gdepw_1d, ktype = jp_r8 )   ! the old e3. definition
          CALL iom_rstput( 0, 0, inum, 'gdept_0' , gdept_0 , ktype = jp_r8 )
          CALL iom_rstput( 0, 0, inum, 'gdepw_0' , gdepw_0 , ktype = jp_r8 )
-      ENDIF
+      !ENDIF
       !                                         
       !                             !==  ocean top and bottom level  ==!
       !
@@ -485,12 +490,17 @@ CONTAINS
             z2d (ji,jj) = SUM ( e3t_0(ji,jj, 1:mbkt(ji,jj) ) ) * ssmask(ji,jj) 
          END DO
       END DO
-      CALL iom_rstput( 0, 0, inum, 'bathy_meter'   , z2d , ktype = jp_r4 )
-
+      CALL iom_rstput( 0, 0, inum, 'bathy_meter', z2d  , ktype = jp_r4 )
       !
-      IF( ln_sco ) THEN             ! s-coordinate: store grid stiffness ratio  (Not required anyway)
+      CALL iom_rstput( 0, 0, inum, 'bathymetry' , bathy, ktype = jp_r4 )
+      !
+      IF( ln_sco .OR. ln_mes ) THEN             ! s-coordinate: store grid stiffness ratio  (Not required anyway)
          CALL dom_stiff( z2d )
-         CALL iom_rstput( 0, 0, inum, 'stiffness', z2d )        !    ! Max. grid stiffness ratio
+         CALL iom_rstput( 0, 0, inum, 'stiffness', z2d )        ! Max. grid stiffness ratio
+         CALL dom_stiff_3D( z3d )
+         CALL iom_rstput( 0, 0, inum, 'stiff3D', z3d )          ! 3D stiffness ratio
+         !CALL saw_tooth( z2d )
+         !CALL iom_rstput( 0, 0, inum, 'saw_tooth', z2d )        ! Saw_tooth diagnostic
       ENDIF
       !
       !                                ! ============================

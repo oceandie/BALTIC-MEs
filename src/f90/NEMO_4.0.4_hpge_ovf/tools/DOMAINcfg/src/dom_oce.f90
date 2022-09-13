@@ -174,8 +174,11 @@ MODULE dom_oce
    LOGICAL, PUBLIC ::   ln_zco       !: z-coordinate - full step
    LOGICAL, PUBLIC ::   ln_zps       !: z-coordinate - partial step
    LOGICAL, PUBLIC ::   ln_sco       !: s-coordinate or hybrid z-s coordinate
+   LOGICAL, PUBLIC ::   ln_mes       !: Multi Enveloped s-coordinate (MEs)
    LOGICAL, PUBLIC ::   ln_isfcav    !: presence of ISF 
    LOGICAL, PUBLIC ::   ln_linssh    !: variable grid flag
+   LOGICAL, PUBLIC ::   ln_loc_zgr   !: To localise (.TRUE.) or not (.FALSE.) the 
+                                     !  chosen vertical coordinate system
 
    !                                                        !  ref.   ! before  !   now   ! after  !
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::     e3t_0 ,   e3t_b ,   e3t_n ,  e3t_a   !: t- vert. scale factor [m]
@@ -242,6 +245,13 @@ MODULE dom_oce
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:), TARGET :: wmask, wumask, wvmask        !: land/ocean mask at WT-, WU- and WV-pts
 
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:) ::   tpol, fpol          !: north fold mask (jperio= 3 or 4)
+
+   ! LOCAL VERTICAL COORDINATE SYSTEM 
+   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) :: l2g_msk ! mask for identifying areas using
+                                                                  ! -) the local coord. system (=2),
+                                                                  ! -) transitioning from local to global (=1),
+                                                                  ! -) using global coord. system (=0)
+                                                                  ! If ln_loc_zgr=.FALSE. then l2g_msk(:,:)=2
 
    !!----------------------------------------------------------------------
    !! calendar variables
@@ -363,9 +373,10 @@ CONTAINS
          &      hift  (jpi,jpj) , hifu  (jpi,jpj) , STAT=ierr(8) )
 
       ALLOCATE( mbathy(jpi,jpj) , bathy  (jpi,jpj) ,                                       &
-         &     tmask_i(jpi,jpj) , tmask_h(jpi,jpj) ,                                       & 
-         &     ssmask (jpi,jpj) , ssumask(jpi,jpj) , ssvmask(jpi,jpj) , ssfmask(jpi,jpj) , &
-         &     mbkt   (jpi,jpj) , mbku   (jpi,jpj) , mbkv   (jpi,jpj) , STAT=ierr(9) )
+         &      tmask_i(jpi,jpj) , tmask_h(jpi,jpj) ,                                      &
+         &      ssmask (jpi,jpj) , ssumask(jpi,jpj) , ssvmask(jpi,jpj) , ssfmask(jpi,jpj), &
+         &      mbkt   (jpi,jpj) , mbku   (jpi,jpj) , mbkv   (jpi,jpj) ,                   &
+         &      l2g_msk(jpi,jpj) , STAT=ierr(9) )
 
 ! (ISF) Allocation of basic array   
       ALLOCATE( misfdep(jpi,jpj) , risfdep(jpi,jpj),     &

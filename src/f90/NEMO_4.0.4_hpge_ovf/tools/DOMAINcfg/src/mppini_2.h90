@@ -71,7 +71,7 @@
       REAL(wp) ::   zidom , zjdom          ! temporary scalars
 
       ! read namelist for ln_zco
-      NAMELIST/namzgr/ ln_zco, ln_zps, ln_sco, ln_isfcav, ln_linssh
+      NAMELIST/namzgr/ ln_zco, ln_zps, ln_sco, ln_mes, ln_isfcav, ln_linssh
 
       !!----------------------------------------------------------------------
       !!  OPA 9.0 , LOCEAN-IPSL (2005) 

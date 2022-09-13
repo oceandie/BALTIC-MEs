@@ -28,7 +28,9 @@ MODULE domwri
 
    PUBLIC   dom_wri              ! routine called by inidom.F90
    PUBLIC   dom_wri_coordinate   ! routine called by domhgr.F90
-   PUBLIC   dom_stiff            ! routine called by inidom.F90
+   PUBLIC   dom_stiff            ! routine called by domain.F90
+   PUBLIC   dom_stiff_3d         ! routine called by domain.F90
+   !PUBLIC   saw_tooth            ! routine called by domain.F90
 
    !!----------------------------------------------------------------------
    !! NEMO/OPA 3.7 , NEMO Consortium (2014)
@@ -272,6 +274,9 @@ CONTAINS
          CALL iom_rstput( 0, 0, inum4, 'gsi3w', gsi3w )
          CALL iom_rstput( 0, 0, inum4, 'esigt', esigt )
          CALL iom_rstput( 0, 0, inum4, 'esigw', esigw )
+      ENDIF
+
+      IF( ln_sco .OR. ln_mes ) THEN                             ! s- / MEs-coordinate
          !
          CALL iom_rstput( 0, 0, inum4, 'e3t_0', e3t_0 )         !    ! scale factors
          CALL iom_rstput( 0, 0, inum4, 'e3u_0', e3u_0 )
@@ -475,6 +480,126 @@ CONTAINS
       ENDIF
       !
    END SUBROUTINE dom_stiff
+
+
+   SUBROUTINE dom_stiff_3D( px1 )
+      !!----------------------------------------------------------------------
+      !!                  ***  ROUTINE dom_stiff  ***
+      !!                     
+      !! ** Purpose :   Diagnose maximum grid stiffness/hydrostatic consistency
+      !!
+      !! ** Method  :   Compute Haney (1991) hydrostatic condition ratio
+      !!                Save the maximum in the vertical direction
+      !!                (this number is only relevant in s-coordinates)
+      !!
+      !!                Haney, 1991, J. Phys. Oceanogr., 21, 610-619.
+      !!----------------------------------------------------------------------
+      REAL(wp), DIMENSION(:,:,:), INTENT(out), OPTIONAL ::   px1   ! stiffness
+      !
+      INTEGER  ::   ji, jj, jk
+      REAL(wp) ::   zrxmax
+      REAL(wp), DIMENSION(4) ::   zr1
+      REAL(wp), DIMENSION(jpi,jpj,jpk) ::   zx1
+      !!----------------------------------------------------------------------
+      zx1(:,:,:) = 0._wp
+      zrxmax     = 0._wp
+      zr1(:)     = 0._wp
+      !
+      DO ji = 2, jpim1
+         DO jj = 2, jpjm1
+            DO jk = 1, jpkm1
+!!gm   remark: dk(gdepw) = e3t   ===>>>  possible simplification of the following calculation ....
+!!             especially since it is gde3w which is used to compute the pressure gradient
+!!             furthermore, I think gdept_0 should be used below instead of w-point in the numerator
+!!             so that the ratio is computed at the same point (i.e. uw and vw) ....
+               zr1(1) = ABS(  ( gdepw_0(ji  ,jj,jk  )-gdepw_0(ji-1,jj,jk  )               &
+                    &           +gdepw_0(ji  ,jj,jk+1)-gdepw_0(ji-1,jj,jk+1) )            &
+                    &       / ( gdepw_0(ji  ,jj,jk  )+gdepw_0(ji-1,jj,jk  )               &
+                    &          -gdepw_0(ji  ,jj,jk+1)-gdepw_0(ji-1,jj,jk+1) + rsmall )  ) * umask(ji-1,jj,jk)
+               zr1(2) = ABS(  ( gdepw_0(ji+1,jj,jk  )-gdepw_0(ji  ,jj,jk  )               &
+                    &          +gdepw_0(ji+1,jj,jk+1)-gdepw_0(ji  ,jj,jk+1) )             &
+                    &       / ( gdepw_0(ji+1,jj,jk  )+gdepw_0(ji  ,jj,jk  )               &
+                    &          -gdepw_0(ji+1,jj,jk+1)-gdepw_0(ji  ,jj,jk+1) + rsmall )  ) * umask(ji  ,jj,jk)
+               zr1(3) = ABS(  ( gdepw_0(ji,jj+1,jk  )-gdepw_0(ji,jj  ,jk  )               &
+                    &          +gdepw_0(ji,jj+1,jk+1)-gdepw_0(ji,jj  ,jk+1) )             &
+                    &       / ( gdepw_0(ji,jj+1,jk  )+gdepw_0(ji,jj  ,jk  )               &
+                    &          -gdepw_0(ji,jj+1,jk+1)-gdepw_0(ji,jj  ,jk+1) + rsmall )  ) * vmask(ji,jj  ,jk)
+               zr1(4) = ABS(  ( gdepw_0(ji,jj  ,jk  )-gdepw_0(ji,jj-1,jk  )               &
+                    &          +gdepw_0(ji,jj  ,jk+1)-gdepw_0(ji,jj-1,jk+1) )             &
+                    &       / ( gdepw_0(ji,jj  ,jk  )+gdepw_0(ji,jj-1,jk  )               &
+                    &          -gdepw_0(ji,jj  ,jk+1)-gdepw_0(ji,jj-1,jk+1) + rsmall )  ) * vmask(ji,jj-1,jk)
+               zrxmax = MAXVAL( zr1(1:4) )
+               zx1(ji,jj,jk) = zrxmax
+            END DO
+         END DO
+      END DO
+      CALL lbc_lnk( zx1, 'T', 1. )
+      !
+      IF( PRESENT( px1 ) )    px1 = zx1
+      !
+   END SUBROUTINE dom_stiff_3D
+
+   !SUBROUTINE saw_tooth( px1 )
+   !   !!----------------------------------------------------------------------
+   !   !!                  ***  ROUTINE dom_stiff  ***
+   !   !!                     
+   !   !! ** Purpose :   Diagnose the occurrence of 'saw-tooth' patterns
+   !   !!
+   !   !! ** Method  :   For each grid points, compute the absolute difference
+   !   !!                of number of wet points with the four neighbour points
+   !   !!                and save the maximum.
+   !   !!                This diagnostic is relevant only in the case of 
+   !   !!                hybrid coordinates, e.g. MEs or SZ.
+   !   !!----------------------------------------------------------------------
+   !   REAL(wp), DIMENSION(:,:), INTENT(out), OPTIONAL ::   px1   ! saw-tooth metric
+   !   !
+   !   INTEGER                                         ::   ji, jj, kk, km1, kp1
+   !   REAL(wp)                                        ::   dm1, dp1
+   !   REAL(wp), DIMENSION(4)                          ::   zr1
+   !   REAL(wp), DIMENSION(jpi,jpj)                    ::   zx1
+   !   !!----------------------------------------------------------------------
+   !   zx1(:,:) = 0._wp
+   !   !
+   !   !
+   !   DO ji = 2, jpim1
+   !      DO jj = 2, jpjm1
+   !         ! Avoiding coastal points
+   !         IF ( ( + ssmask(ji-1,jj+1) + ssmask(ji,jj+1) + ssmask(ji+1,jj+1)             &
+   !            &   + ssmask(ji-1,jj  )                   + ssmask(ji+1,jj  )             &
+   !            &   + ssmask(ji-1,jj-1) + ssmask(ji,jj+1) + ssmask(ji+1,jj-1) ) == 8._wp ) THEN
+   !            !
+   !            zr1(:) = 0._wp   
+   !            kk = mbkt(ji,jj)
+   !            !
+   !            ! i-direction
+   !            km1 = mbkt(ji-1,jj) 
+   !            kp1 = mbkt(ji+1,jj)
+   !            dm1 = gdept_0(ji-1, jj, km1) - gdept_0(ji, jj, kk)
+   !            dp1 = gdept_0(ji+1, jj, kp1) - gdept_0(ji, jj, kk)
+   !            IF ( (dp1 * dm1) > 0. ) THEN
+   !               zr1(1) = ABS( kk - km1 ) * umask(ji-1, jj)
+   !               zr1(2) = ABS( kk - kp1 ) * umask(ji  , jj)
+   !            END IF
+   !            ! j-direction
+   !            km1 = mbkt(ji,jj-1)
+   !            kp1 = mbkt(ji,jj+1)
+   !            dm1 = gdept_0(ji, jj-1, km1) - gdept_0(ji, jj, kk)
+   !            dp1 = gdept_0(ji, jj+1, kp1) - gdept_0(ji, jj, kk)
+   !            IF ( (dp1 * dm1) > 0. ) THEN
+   !               zr1(3) = ABS( kk - km1 ) * vmask(ji, jj-1)
+   !               zr1(4) = ABS( kk - kp1 ) * vmask(ji, jj  )
+   !            END IF
+   !            zx1(ji,jj) = REAL( MAXVAL(zr1(1:4)), wp )
+   !            !
+   !         END IF
+   !      END DO
+   !   END DO
+   !   IF( ln_loc_zgr .AND. ln_mes ) WHERE (l2g_msk(:,:) == 0.0)  zx1(:,:) = 0.0 
+   !   CALL lbc_lnk( zx1, 'T', 1. )
+   !   !
+   !   IF( PRESENT( px1 ) )    px1 = zx1
+   !   !
+   !END SUBROUTINE saw_tooth
 
    !!======================================================================
 END MODULE domwri
