@@ -11,7 +11,7 @@ set -e
 if [[ $# -ne 2 ]]; then
     echo "usage: ./run_hpgtest.sh <testname> <domcfg>"
     echo "exiting"
-    exit
+    exit 1
 fi
 
 testdir=$1
@@ -27,7 +27,7 @@ xios=/nobackup/smhid20/users/sm_jongr/NEMO/MODELS/xios-2.5_trunk/bin/xios_server
 ln -sfv $nemo $testdir/nemo.exe
 ln -sfv $xios $testdir/xios_server.exe
 
-cp -rv $files_dir/submit_hpgtest.sh $testdir/.
+cp -v $files_dir/submit_hpgtest.sh $testdir/.
 cp -v $files_dir/*.xml $testdir/.
 cp -v $files_dir/namelist_* $testdir/.
 
@@ -35,5 +35,3 @@ ln -sfv $domcfg $testdir/domain_cfg.nc
 
 cd $testdir
 sbatch submit_hpgtest.sh
-
-cd $ROOTDIR
