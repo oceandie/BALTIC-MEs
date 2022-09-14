@@ -31,3 +31,5 @@ BALTIC-MEs
         |   `-- templates_inp_files/ <-- template inlut files to generate AMM15, zco or sco envelopes
         `-- loc_area/                <-- code to generate localisation area
 ```
+## Workflow
+[link](doc/workflow.md)
