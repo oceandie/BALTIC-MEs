@@ -205,34 +205,37 @@ for env in range(num_env):
        # 2. Local smoothing with Martinho & Batteen 2006                   
        for m in range(len(e_loc_rmx[env])):
 
-           r0x = e_loc_rmx[env][m]
-           hal = e_loc_hal[env][m]
-           msg = ("   Local smoothing of areas of the raw" +\
-                  " envelope where HPGE > " + str(e_loc_vmx[env][m]) + " m/s\n"+\
-                  "   Envelope  : " + str(env) + "\n"+\
-                  "   Local rmax: " + str(r0x) + "\n"+\
-                  "   Local halo: " + str(hal) + " cells")
-           msg_info(msg)
+           msk_smth = msk_pge.where(msk_pge==(m+1))
+           if np.nansum(msk_smth) > 0.:
 
-           msk_smth = msk_pge.where(msk_pge==(m+1)) 
+              r0x = e_loc_rmx[env][m]
+              hal = e_loc_hal[env][m]
+              msg = ("   Local smoothing of areas of the raw" +\
+                     " envelope where HPGE > " + str(e_loc_vmx[env][m]) + " m/s\n"+\
+                     "   Envelope  : " + str(env) + "\n"+\
+                     "   Local rmax: " + str(r0x) + "\n"+\
+                     "   Local halo: " + str(hal) + " cells")
+              msg_info(msg)
 
-           msg = '   Total number of points where we target rmax is ' + str(r0x) + ': ' + str(np.nansum(msk_smth)) 
-           msg_info(msg,)
+              #msk_smth = msk_pge.where(msk_pge==(m+1)) 
 
-           msk_smth.plot.pcolormesh(add_colorbar=True, add_labels=True, \
-                                   cbar_kwargs=dict(pad=0.15, shrink=1, \
-                                   label='RMAX-HPGE smoothing mask'))
-           plt.show()
+              msg = '   Total number of points where we target rmax is ' + str(r0x) + ': ' + str(np.nansum(msk_smth)) 
+              msg_info(msg,)
 
-           # smoothing with Martinho & Batteen 2006 
-           hbatt_smt = smooth_MB06(env_tmp, r0x)
+              msk_smth.plot.pcolormesh(add_colorbar=True, add_labels=True, \
+                                       cbar_kwargs=dict(pad=0.15, shrink=1, \
+                                       label='RMAX-HPGE smoothing mask'))
+              plt.show()
 
-           # applying smoothing only where HPGE are large
-           WRK = hbatt_smt.data
-           TMP = env_tmp.data
-           WRK[np.isnan(msk_smth)] = TMP[np.isnan(msk_smth)]
-           hbatt_smt.data = WRK
-           env_tmp = hbatt_smt.copy()
+              # smoothing with Martinho & Batteen 2006 
+              hbatt_smt = smooth_MB06(env_tmp, r0x)
+
+              # applying smoothing only where HPGE are large
+              WRK = hbatt_smt.data
+              TMP = env_tmp.data
+              WRK[np.isnan(msk_smth)] = TMP[np.isnan(msk_smth)]
+              hbatt_smt.data = WRK
+              env_tmp = hbatt_smt.copy()
 
        ds_env["msk_pge"+str(env+1)] = msk_pge
 
