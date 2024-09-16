@@ -1,21 +1,20 @@
 * Compilation
-** Compiling =NEMO_4.0.4_hpge= <<sec:compilenemo>>
+** Compiling =NEMO_4.0.4_hpge= on =Freja= <<sec:compilenemo>>
 
+   On an interactive node
    #+BEGIN_SRC bash
-   interactive --exclusive
-   module purge;
-   module load buildenv-intel/2018a-eb;
-   module load HDF5/1.8.19-nsc1-intel-2018a-eb;
-   module load netCDF/4.4.1.1-HDF5-1.8.19-nsc1-intel-2018a-eb;
+     module purge
+     module load buildenv-intel/2023a-eb
+     module load netCDF-HDF5/4.9.2-1.12.2-hpc1
 
-   cd <REPO_DIR>/src/f90/NEMO_4.0.4_hpge_ovf/;
-   ./makenemo -m 'bi7' -r HPGTEST -n 'HPGTEST' -j 16
+     cd <REPO_DIR>/src/f90/NEMO_4.0.4_hpge_ovf/;
+     ./makenemo -m 'freja' -r HPGTEST -n 'HPGTEST' -j 16
    #+END_SRC
-
+   
 ** Compiling MEs adapted DOMAINcfg tool
    #+BEGIN_SRC shell
-   cd <REPO_DIR>/src/f90/NEMO_4.0.4_hpge_ovf/tools
-   ./maketools -m 'bi7' -n DOMAINcfg
+     cd <REPO_DIR>/src/f90/NEMO_4.0.4_hpge_ovf/tools
+     ./maketools -m 'freja' -n DOMAINcfg
    #+END_SRC
 
 * Generate envelopes <<sec:genenv>>
@@ -24,10 +23,10 @@
   - add an existing =bathy_meter.nc= and corresponding =domain_cfg.nc= or =coordinates.nc=
   - create =<inputname>.inp= and set it up
   - link to =<REPO_DIR>/src/python/envelopes/generate_envelopes.py=
-  - conda activate =pyogcm=
   - ~python generate_envelopes.py <inputname>.inp~
+    probably have to fix missing packages
 
-   The result is a new bathymetry file: =bathy_meter.<inputname>.nc=
+  The result is a new bathymetry file: =bathy_meter.<inputname>.nc=
 
 * Create a =domain_cfg.nc=
   With the new bathymetry file we create a =domain_cfg.nc=, where
@@ -35,8 +34,12 @@
 
    1. Copy contents of =<REPO_DIR>/src/scripts/create_domaincfg/= to some =<DOMAIN_BLD>= dir.
    2. Edit =<DOMAIN_BLD>/files/namelist_cfg= to suit your needs (see [[sec:example1]]).
-   3. Start an interactive node (~interactive --exclusive~). If it
-      complains about memory start a fat node (~-C fat~).
+   3. On an interactive node,
+      #+BEGIN_SRC
+      module purge
+      module load buildenv-intel/2023a-eb
+      module load netCDF-HDF5/4.9.2-1.12.2-hpc1
+      #+END_SRC
    4. Run ~./create_domaincfg.sh <outputdir> <bathymetry>~
       this should take less than 2 minutes.
 
@@ -73,7 +76,7 @@
    rn_e3pst_min = 20.
    rn_e3pst_rat = 0.1
 /
-#+END_SRC 
+#+END_SRC
 
 ** visualize =domain_cfg.nc=
     in ~<REPO_DIR>/src/python/plot/vcoord/~
