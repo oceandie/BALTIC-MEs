@@ -31,10 +31,12 @@ ln -sfv $xios $testdir/xios_server.exe
 
 cp -v $files_dir/submit_hpgtest.sh $testdir/.
 cp -v $files_dir/cpu_mapping_freja.conf $testdir/.
+cp -v $files_dir/submit_hpgtest_light.sh $testdir/.
+cp -v $files_dir/cpu_mapping_freja_light.conf $testdir/.
 cp -v $files_dir/*.xml $testdir/.
 cp -v $files_dir/namelist_* $testdir/.
 
 ln -sfv $domcfg $testdir/domain_cfg.nc
 
 cd $testdir
-sbatch submit_hpgtest.sh
+sbatch submit_hpgtest_light.sh
