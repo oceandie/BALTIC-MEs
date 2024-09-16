@@ -1,50 +1,66 @@
 
 # Table of Contents
 
-1.  [Compilation](#org8ef37b3)
-    1.  [Compiling `NEMO_4.0.4_hpge` ](#org4258a9a)
-    2.  [Compiling MEs adapted DOMAINcfg tool](#org23c8385)
-2.  [Generate envelopes ](#org2a03cd0)
-3.  [Create a `domain_cfg.nc`](#org3f5a749)
-    1.  [`namelist_ref::namzgr_mes` for the DOMAINcfg tool ](#org2ff60cf)
-    2.  [visualize `domain_cfg.nc`](#org7c47817)
-4.  [HPG error testing](#org2223ba0)
-    1.  [(optional) add an initial TS depth-profile](#orgb26468c)
-    2.  [run HPGE test](#org2644c85)
-    3.  [Create `maximum_hpge.nc`](#org20d0ae9)
-    4.  [HPGE iteration](#org81071ba)
+1.  [Compilation](#org475e907)
+    1.  [Compiling `NEMO_4.0.4_hpge` on `Freja` ](#org8b728b2)
+    2.  [Compiling MEs adapted DOMAINcfg tool](#org249f263)
+    3.  [NEMO 4.2.2](#orgbcc126d)
+2.  [Generate envelopes ](#org5afff71)
+3.  [Create a `domain_cfg.nc`](#org3d3ee33)
+    1.  [`namelist_ref::namzgr_mes` for the DOMAINcfg tool ](#org74cc129)
+    2.  [visualize `domain_cfg.nc`](#orgf7d08cc)
+4.  [HPG error testing](#org271b0d7)
+    1.  [(optional) add an initial TS depth-profile (same procedure for 4.2.2)](#orgbcedcea)
+    2.  [run HPGE test](#orgea56e2f)
+    3.  [Create `maximum_hpge.nc`](#org91d193a)
+    4.  [HPGE iteration](#org54dd254)
 
 
-<a id="org8ef37b3"></a>
+<a id="org475e907"></a>
 
 # Compilation
 
 
-<a id="org4258a9a"></a>
+<a id="org8b728b2"></a>
 
-## Compiling `NEMO_4.0.4_hpge` <a id="org4f93cc4"></a>
+## Compiling `NEMO_4.0.4_hpge` on `Freja` <a id="orge9a077c"></a>
 
-    interactive --exclusive
-    module purge;
-    module load buildenv-intel/2018a-eb;
-    module load HDF5/1.8.19-nsc1-intel-2018a-eb;
-    module load netCDF/4.4.1.1-HDF5-1.8.19-nsc1-intel-2018a-eb;
+On an interactive node
+
+    module purge
+    module load buildenv-intel/2023a-eb
+    module load netCDF-HDF5/4.9.2-1.12.2-hpc1
     
     cd <REPO_DIR>/src/f90/NEMO_4.0.4_hpge_ovf/;
-    ./makenemo -m 'bi7' -r HPGTEST -n 'HPGTEST' -j 16
+    ./makenemo -m 'freja' -r HPGTEST -n 'HPGTEST' -j 16
 
 
-<a id="org23c8385"></a>
+<a id="org249f263"></a>
 
 ## Compiling MEs adapted DOMAINcfg tool
 
     cd <REPO_DIR>/src/f90/NEMO_4.0.4_hpge_ovf/tools
-    ./maketools -m 'bi7' -n DOMAINcfg
+    ./maketools -m 'freja' -n DOMAINcfg
 
 
-<a id="org2a03cd0"></a>
+<a id="orgbcc126d"></a>
 
-# Generate envelopes <a id="orgec4f57b"></a>
+## NEMO 4.2.2
+
+In the fouo nemo4 repo there's a branch available called `hpg_test_422_fixes`
+Build it as follows:
+
+    module purge;
+    module load buildenv-intel/2023a-eb;
+    module load netCDF-HDF5/4.9.2-1.12.2-hpc1;
+    ./makenemo -m 'freja' -r NORDIC -n 'NORDIC_HPGTEST_FREJA_422_fixes' -j 16
+
+And use the executable in `nemo4/cfgs/NORDIC_HPGTEST_FREJA_422_fixes/BLD/bin/nemo.exe` for the hpg tests
+
+
+<a id="org5afff71"></a>
+
+# Generate envelopes <a id="org6a9c21a"></a>
 
 To generate envelopes:
 
@@ -52,13 +68,13 @@ To generate envelopes:
 -   add an existing `bathy_meter.nc` and corresponding `domain_cfg.nc` or `coordinates.nc`
 -   create `<inputname>.inp` and set it up
 -   link to `<REPO_DIR>/src/python/envelopes/generate_envelopes.py`
--   conda activate `pyogcm`
 -   `python generate_envelopes.py <inputname>.inp`
-    
-    The result is a new bathymetry file: `bathy_meter.<inputname>.nc`
+    probably have to fix missing packages
+
+The result is a new bathymetry file: `bathy_meter.<inputname>.nc`
 
 
-<a id="org3f5a749"></a>
+<a id="org3d3ee33"></a>
 
 # Create a `domain_cfg.nc`
 
@@ -66,16 +82,19 @@ With the new bathymetry file we create a `domain_cfg.nc`, where
 additional settings should be given in the `namelist_cfg`.
 
 1.  Copy contents of `<REPO_DIR>/src/scripts/create_domaincfg/` to some `<DOMAIN_BLD>` dir.
-2.  Edit `<DOMAIN_BLD>/files/namelist_cfg` to suit your needs (see [3.1](#org46840e1)).
-3.  Start an interactive node (`interactive --exclusive`). If it
-    complains about memory start a fat node (`-C fat`).
+2.  Edit `<DOMAIN_BLD>/files/namelist_cfg` to suit your needs (see [3.1](#org634de86)).
+3.  On an interactive node,
+    
+        module purge
+        module load buildenv-intel/2023a-eb
+        module load netCDF-HDF5/4.9.2-1.12.2-hpc1
 4.  Run `./create_domaincfg.sh <outputdir> <bathymetry>`
     this should take less than 2 minutes.
 
 
-<a id="org2ff60cf"></a>
+<a id="org74cc129"></a>
 
-## `namelist_ref::namzgr_mes` for the DOMAINcfg tool <a id="org46840e1"></a>
+## `namelist_ref::namzgr_mes` for the DOMAINcfg tool <a id="org634de86"></a>
 
 In this example for NEMO-NORDIC we use two envelopes with 43 and 13 layers respectively.
 
@@ -109,7 +128,7 @@ In this example for NEMO-NORDIC we use two envelopes with 43 and 13 layers respe
     /
 
 
-<a id="org7c47817"></a>
+<a id="orgf7d08cc"></a>
 
 ## visualize `domain_cfg.nc`
 
@@ -117,22 +136,22 @@ in `<REPO_DIR>/src/python/plot/vcoord/`
 edit and run `plot_vlevels_MEs.py` or `plot_vlevels_zps.py`
 
 
-<a id="org2223ba0"></a>
+<a id="org271b0d7"></a>
 
 # HPG error testing
 
 
-<a id="orgb26468c"></a>
+<a id="orgbcedcea"></a>
 
-## (optional) add an initial TS depth-profile
+## (optional) add an initial TS depth-profile (same procedure for 4.2.2)
 
 1.  add an initial TS depth-profile to
     `<REPO_DIR>/src/f90/NEMO_4.0.4_hpge_ovf/src/OCE/USR/usrdef_istate.F90`
     if necessary.
-2.  recompile `NEMO_4.0.4_hpge` ([1.1](#org4f93cc4))
+2.  recompile `NEMO_4.0.4_hpge` ([1.1](#orge9a077c))
 
 
-<a id="org2644c85"></a>
+<a id="orgea56e2f"></a>
 
 ## run HPGE test
 
@@ -142,7 +161,7 @@ edit and run `plot_vlevels_MEs.py` or `plot_vlevels_zps.py`
     `./run_hpgetest.sh <testname> <domcfg>`
 
 
-<a id="org20d0ae9"></a>
+<a id="org91d193a"></a>
 
 ## Create `maximum_hpge.nc`
 
@@ -150,11 +169,11 @@ edit and run `plot_vlevels_MEs.py` or `plot_vlevels_zps.py`
 -   (optional) visualize in the test dir: `ncview maximum_hpge.nc`
 
 
-<a id="org81071ba"></a>
+<a id="org54dd254"></a>
 
 ## HPGE iteration
 
-Not happy with the HPGE? Go back to [2](#orgec4f57b) and use
+Not happy with the HPGE? Go back to [2](#org6a9c21a) and use
  `maximum_hpge.nc` to create a new bathymetry with HPGE aware local
  smoothing (see example `.inp` files). Note that several
  `maximum_hpge.nc` input fields can be used.
