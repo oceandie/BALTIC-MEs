@@ -17,6 +17,17 @@
      ./maketools -m 'freja' -n DOMAINcfg
    #+END_SRC
 
+** NEMO 4.2.2
+   In the fouo nemo4 repo there's a branch available called =hpg_test_422_fixes=
+   Build it as follows:
+   #+BEGIN_SRC   
+   module purge;
+   module load buildenv-intel/2023a-eb;
+   module load netCDF-HDF5/4.9.2-1.12.2-hpc1;
+   ./makenemo -m 'freja' -r NORDIC -n 'NORDIC_HPGTEST_FREJA_422_fixes' -j 16
+   #+END_SRC
+   And use the executable in =nemo4/cfgs/NORDIC_HPGTEST_FREJA_422_fixes/BLD/bin/nemo.exe= for the hpg tests 
+
 * Generate envelopes <<sec:genenv>>
   To generate envelopes:
   - create some dir, for instance here ~<REPO_DIR>/src/python/envelopes/<some_dir>~
