@@ -10,7 +10,7 @@
      cd <REPO_DIR>/src/f90/NEMO_4.0.4_hpge_ovf/;
      ./makenemo -m 'freja' -r HPGTEST -n 'HPGTEST' -j 16
    #+END_SRC
-   
+
 ** Compiling MEs adapted DOMAINcfg tool
    #+BEGIN_SRC shell
      cd <REPO_DIR>/src/f90/NEMO_4.0.4_hpge_ovf/tools
@@ -20,13 +20,13 @@
 ** NEMO 4.2.2
    In the fouo nemo4 repo there's a branch available called =hpg_test_422_fixes=
    Build it as follows:
-   #+BEGIN_SRC   
+   #+BEGIN_SRC
    module purge;
    module load buildenv-intel/2023a-eb;
    module load netCDF-HDF5/4.9.2-1.12.2-hpc1;
    ./makenemo -m 'freja' -r NORDIC -n 'NORDIC_HPGTEST_FREJA_422_fixes' -j 16
    #+END_SRC
-   And use the executable in =nemo4/cfgs/NORDIC_HPGTEST_FREJA_422_fixes/BLD/bin/nemo.exe= for the hpg tests 
+   And use the executable in =nemo4/cfgs/NORDIC_HPGTEST_FREJA_422_fixes/BLD/bin/nemo.exe= for the hpg tests
 
 * Generate envelopes <<sec:genenv>>
   To generate envelopes:
@@ -54,11 +54,11 @@
    4. Run ~./create_domaincfg.sh <outputdir> <bathymetry>~
       this should take less than 2 minutes.
 
-** =namelist_ref::namzgr_mes= for the DOMAINcfg tool <<sec:example1>> 
+** =namelist_ref::namzgr_mes= for the DOMAINcfg tool <<sec:example1>>
 
     In this example for NEMO-NORDIC we use two envelopes with 43 and 13 layers respectively.
 
-#+BEGIN_SRC 
+#+BEGIN_SRC
 !-----------------------------------------------------------------------
 &namzgr_mes    !   MEs-coordinate
 !-----------------------------------------------------------------------
@@ -94,7 +94,7 @@
     edit and run =plot_vlevels_MEs.py= or =plot_vlevels_zps.py=
 
 * HPG error testing
-** (optional) add an initial TS depth-profile
+** (optional) add an initial TS depth-profile (same procedure for 4.2.2)
    1. add an initial TS depth-profile to
        =<REPO_DIR>/src/f90/NEMO_4.0.4_hpge_ovf/src/OCE/USR/usrdef_istate.F90=
        if necessary.
@@ -109,11 +109,11 @@
 ** Create =maximum_hpge.nc=
    - edit and run =create_2D_hpge_field.py= (in =<REPO_DIR>/src/python/envelopes=)
    - (optional) visualize in the test dir: =ncview maximum_hpge.nc=
-     
+
 ** HPGE iteration
    Not happy with the HPGE? Go back to [[sec:genenv]] and use
     =maximum_hpge.nc= to create a new bathymetry with HPGE aware local
     smoothing (see example =.inp= files). Note that several
     =maximum_hpge.nc= input fields can be used.
-    
+
    Otherwise you're done and you can start running experiments.
