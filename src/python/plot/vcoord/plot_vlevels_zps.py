@@ -112,3 +112,5 @@ mpl_sec_loop('NORDIC ZPS mesh', '.png', var_strng, unit_strng, date, timeres_dm,
               xlim_1b_L, ylim_1b_L, varlim, check, check_val, xgrid_1b_L)
 
 
+os.system('mkdir -p zps_figs')
+os.system('mv *.png zps_figs/.')
