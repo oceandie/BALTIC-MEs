@@ -15,6 +15,7 @@ from utils import compute_masks
 # DOMCFG_zps = '/nobackup/smhid20/users/sm_erimu/NEMO/generate_domcfg/nordic_ref/domain_cfg.nc'
 DOMCFG_zps = '/nobackup/smhid20/users/sm_ppemb/NEMO/tools_nordic/dom_cfg/gen_dom_cfg/dom_cfgs_EMODnet/domain_cfg.v1.0.nc'
 latlonfile = '/nobackup/smhid20/users/sm_erimu/NEMO/generate_domcfg/analysis/lonslats.nc'
+dest_dir = '~/Projects/BALTIC-MEs/generate_domcfg/' + 'zps_figs'
 
 # 2. ANALYSIS
 
@@ -112,5 +113,7 @@ mpl_sec_loop('NORDIC ZPS mesh', '.png', var_strng, unit_strng, date, timeres_dm,
               xlim_1b_L, ylim_1b_L, varlim, check, check_val, xgrid_1b_L)
 
 
-os.system('mkdir -p zps_figs')
-os.system('mv *.png zps_figs/.')
+os.system(f'mkdir -p {dest_dir}')
+cmd = f'mv *.png {dest_dir}/.'
+print(cmd)
+os.system(cmd)
