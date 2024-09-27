@@ -97,18 +97,17 @@ e_tap_equ = False
 # List of lists of velocity files to use for HPGE aware local smoothing.
 # Use an empty list if you don't want to apply local smoothing to a particular envelope.
 e_loc_vel = [
-          ['/nobackup/smhid20/users/sm_erimu/BALTIC-MEs/hpg_test/emodnet_domcfgs_2envs_v0/maximum_hpge.nc',
-           '/nobackup/smhid20/users/sm_erimu/BALTIC-MEs/hpg_test/emodnet_domcfgs_2envs_v1/maximum_hpge.nc'],
+          ['/nobackup/smhid20/users/sm_erimu/BALTIC-MEs/hpg_test/emodnet_domcfgs_2envs_v0/maximum_hpge.nc'],
           [], [], [] , [] ]
 
-e_loc_var = [ ['max_hpge_1', 'max_hpge_1'], [], [], [], [] ]
-e_loc_vmx = [ [0.015, 0.01], [0.], [0.], [0.], [0.] ]
+e_loc_var = [ ['max_hpge_1'], [], [], [], [] ]
+e_loc_vmx = [ [0.01], [0.], [0.], [0.], [0.] ]
 
 # List of max slope parameters rx0 for local smoothing.
-e_loc_rmx = [ [0.07, 0.05], [0.], [0.] ]
+e_loc_rmx = [ [0.07], [0.], [0.] ]
 
 # List of halo for applying the local smoothing.
-e_loc_hal = [ [0, 0], [0], [0] ]
+e_loc_hal = [ [0], [0], [0] ]
 
 # 2. GLOBAL SMOOTHING
 

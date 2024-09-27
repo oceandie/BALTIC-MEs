@@ -39,6 +39,12 @@
 
   The result is a new bathymetry file: =bathy_meter.<inputname>.nc=
 
+** Notes
+   Envelope generation with =generate_envelopes.py= and an input =.inp= file:
+   - Stick to the format given in example inp files.
+   - Do not change the variable types (float/int).
+   - Use only a single value for the threshold, even though the list allows several.
+
 * Create a =domain_cfg.nc=
   With the new bathymetry file we create a =domain_cfg.nc=, where
   additional settings should be given in the =namelist_cfg=.
