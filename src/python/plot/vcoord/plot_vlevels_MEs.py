@@ -12,9 +12,14 @@ from utils import compute_masks
 # ========================================================================
 # INPUT PARAMETERS
 
-DOMCFG_MEs = '/nobackup/smhid20/users/sm_erimu/NEMO/generate_domcfg/nordic_ref/domain_cfg.nc'
-BATHY_MEs = '/nobackup/smhid20/users/sm_erimu/NEMO/generate_domcfg/nordic_ref/bathy_meter.nc'
+# DOMCFG_MEs = '/nobackup/smhid20/users/sm_erimu/NEMO/generate_domcfg/nordic_ref/domain_cfg.nc'
+# BATHY_MEs = '/nobackup/smhid20/users/sm_erimu/NEMO/generate_domcfg/nordic_ref/bathy_meter.nc'
 
+# DOMCFG_MEs = '~/Projects/BALTIC-MEs/generate_domcfg/nordic_emodnet_2envs_v0/domain_cfg.nc'
+# BATHY_MEs = '~/Projects/BALTIC-MEs/generate_domcfg/nordic_emodnet_2envs_v0/bathy_meter.nc'
+DOMCFG_MEs = '~/Projects/BALTIC-MEs/generate_domcfg/nordic_emodnet_2envs_lsv2/domain_cfg.nc'
+BATHY_MEs = '~/Projects/BALTIC-MEs/generate_domcfg/nordic_emodnet_2envs_lsv2/bathy_meter.nc'
+dest_dir = os.path.dirname(DOMCFG_MEs) + '/figs'
 latlonfile = '/nobackup/smhid20/users/sm_erimu/NEMO/generate_domcfg/analysis/lonslats.nc'
 
 # 2. ANALYSIS
@@ -119,7 +124,12 @@ check      = 'true'
 check_val  = 'false'
 
 
-mpl_sec_loop('NORDIC mesh', '.png', var_strng, unit_strng, date, timeres_dm, timestep, PlotType,
+mpl_sec_loop('NORDIC MEs mesh', '.png', var_strng, unit_strng, date, timeres_dm, timestep, PlotType,
               sec_I_indx_1b_L, sec_J_indx_1b_L, tlon3, tlat3, tdep3, wdep3, tmsk3, var4, proj,
               coord_type_1b_L, vlevel_1b_L, bathy, hbatt, rbat2_fill_1b_L, mbat_ln, mbat_fill,
               xlim_1b_L, ylim_1b_L, varlim, check, check_val, xgrid_1b_L, msk_mes=msk_mes)
+
+os.system(f'mkdir -p {dest_dir}')
+cmd = f'mv *.png {dest_dir}/.'
+print(cmd)
+os.system(cmd)
