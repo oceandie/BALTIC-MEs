@@ -259,7 +259,6 @@ def compute_masks(ds_domain, merge=False):
     ds_mask: xr.Dataset
         dataset with masks
     """
-
     # Extract variables
     k = ds_domain["z"] + 1
     top_level = ds_domain["top_level"]
@@ -291,7 +290,7 @@ def compute_masks(ds_domain, merge=False):
     # Return
     masks = xr.merge([tmask, umask, vmask])
     if merge:
-        return xr.merge([ds_domain, masks])
+        return xr.merge([ds_domain.drop('z'), masks])
     else:
         return masks
 

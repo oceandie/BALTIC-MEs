@@ -19,6 +19,7 @@ from matplotlib import pyplot as plt
 import matplotlib.gridspec as gridspec
 import xarray as xr
 from dask.diagnostics import ProgressBar
+import matplotlib.pyplot as plt
 
 from lib import compute_masks
 
@@ -27,15 +28,15 @@ from lib import compute_masks
 # ==============================================================================
 
 # Folder path containing HPGE spurious currents velocity files 
-MAINdir = '/scratch/dbruciaf/GOSI10p1.0-hpge/'
-HPGElst = 'r12_r16-r075-r040-r035_it2-r030'
-DOMCFG  = '/data/users/dbruciaf/GOSI10_input_files/MEs_novf/025/test/domain_cfg_MEs_novf_4env_2930_r12_r16-r075-r040-r035_it2-r030.nc'
+MAINdir = '/home/sm_erimu/Projects/BALTIC-MEs/hpg_test/emodnet_domcfgs_2envs_ls_1cm_v2'
+HPGElst = ''
+DOMCFG  = '/home/sm_erimu/Projects/BALTIC-MEs/hpg_test/emodnet_domcfgs_2envs_ls_1cm_v2/domain_cfg.nc'
 
 label = 'MEs'
 
 # Name of the zonal and meridional velocity variables
-Uvar = 'uo'
-Vvar = 'vo'
+Uvar = 'uoce_inst'
+Vvar = 'voce_inst'
 # Name of the variable to chunk with dask and size of chunks
 chunk_var = 'time_counter'
 chunk_size = 1
@@ -59,17 +60,17 @@ e1t = e1t.where(ds_dom.tmask==1)
 e2t = e2t.where(ds_dom.tmask==1)
 e3t = e3t.where(ds_dom.tmask==1)
 
-e1t = e1t.where(msk==1)
-e2t = e2t.where(msk==1)
-e3t = e3t.where(msk==1)
+e1t = e1t.where(ds_dom.tmask==1)
+e2t = e2t.where(ds_dom.tmask==1)
+e3t = e3t.where(ds_dom.tmask==1)
 
 cel_vol = e1t * e2t * e3t
 dom_vol = cel_vol.sum(skipna=True)
 
 HPGEdir = MAINdir + HPGElst
 
-Ufiles = sorted(glob.glob(HPGEdir+'/*grid-U*.nc'))
-Vfiles = sorted(glob.glob(HPGEdir+'/*grid-V*.nc'))
+Ufiles = sorted(glob.glob(HPGEdir+'/*grid_U*.nc'))
+Vfiles = sorted(glob.glob(HPGEdir+'/*grid_V*.nc'))
 
 v_max_tot = []
 v_99p_tot = []
@@ -118,3 +119,13 @@ delayed_obj = ds.to_netcdf(join(HPGEdir,out_file), compute=False)
 with ProgressBar():
      results = delayed_obj.compute()
 
+plt.close('all')
+plt.figure(figsize=(5,11))
+plt.subplot(3,1,1)
+ds.max_u_tot.plot()
+plt.subplot(3,1,2)
+ds.u_99p_tot.plot()
+plt.subplot(3,1,3)
+ds.avg_u_tot.plot()
+plt.tight_layout()
+plt.savefig('hpge_timeseries.png')
