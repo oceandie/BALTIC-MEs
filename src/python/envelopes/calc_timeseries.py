@@ -28,9 +28,9 @@ from lib import compute_masks
 # ==============================================================================
 
 # Folder path containing HPGE spurious currents velocity files 
-MAINdir = '/home/sm_erimu/Projects/BALTIC-MEs/hpg_test/emodnet_domcfgs_2envs_ls_1cm_v2'
+MAINdir = '/home/sm_erimu/Projects/BALTIC-MEs/hpg_test/emodnet_domcfgs_2envs_ls_1cm_v2_long'
 HPGElst = ''
-DOMCFG  = '/home/sm_erimu/Projects/BALTIC-MEs/hpg_test/emodnet_domcfgs_2envs_ls_1cm_v2/domain_cfg.nc'
+DOMCFG  = '/home/sm_erimu/Projects/BALTIC-MEs/hpg_test/emodnet_domcfgs_2envs_ls_1cm_v2_long/domain_cfg.nc'
 
 label = 'MEs'
 
@@ -103,7 +103,7 @@ for F in range(len(Ufiles)):
 # Saving 
 
 ds = xr.Dataset()
-
+breakpoint()
 ds["max_u_tot"] = xr.DataArray(np.asarray(v_max_tot), dims=('t'))
 ds["u_99p_tot"] = xr.DataArray(np.asarray(v_99p_tot), dims=('t'))
 ds["avg_u_tot"] = xr.DataArray(np.asarray(v_avg_tot), dims=('t'))
