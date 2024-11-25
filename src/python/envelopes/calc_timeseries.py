@@ -47,7 +47,6 @@ cols = ["limegreen"]
 # ==============================================================================
 # Loading domain geometry
 ds_dom = xr.open_dataset(DOMCFG).squeeze()
-ds_dom = ds_dom.rename({"nav_lev":"z"})
 
 # Computing land-sea masks
 ds_dom = compute_masks(ds_dom, merge=True)

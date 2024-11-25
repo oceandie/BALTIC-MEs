@@ -155,7 +155,7 @@ for env in range(num_env):
           hbatt  = np.nanmax(hbatt) * ztaper + hbatt * (1. - ztaper)   
 
     hbatt.plot()
-    plt.show()
+#    plt.show()
     # =============================================================
     # 2. SMOOTHING the envelope
   
@@ -197,7 +197,7 @@ for env in range(num_env):
        msk_pge.plot.pcolormesh(add_colorbar=True, add_labels=True, \
                                    cbar_kwargs=dict(pad=0.15, shrink=1, \
                                    label='TOTAL HPGE smoothing mask'))
-       plt.show()
+#       plt.show()
 
        msg = '   Total number of points with HPGE > ' + str(e_loc_vmx[env][m]) + ' m/s: ' + str(np.nansum(msk_pge.where(msk_pge>0.)))
        msg_info(msg,)
@@ -225,7 +225,7 @@ for env in range(num_env):
               msk_smth.plot.pcolormesh(add_colorbar=True, add_labels=True, \
                                        cbar_kwargs=dict(pad=0.15, shrink=1, \
                                        label='RMAX-HPGE smoothing mask'))
-              plt.show()
+#              plt.show()
 
               # smoothing with Martinho & Batteen 2006 
               hbatt_smt = smooth_MB06(env_tmp, r0x)
@@ -268,7 +268,7 @@ for env in range(num_env):
     rmax0_smt.plot.pcolormesh(add_colorbar=True, add_labels=True, \
                               cbar_kwargs=dict(pad=0.15, shrink=1, \
                               label='Slope parameter'))
-    plt.show()
+#    plt.show()
     rmax_smt = np.amax(rmax0_smt).data
     msg = '   Slope parameter of smoothed envelope: rmax = ' + str(rmax_smt)
     msg_info(msg)
