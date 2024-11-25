@@ -24,8 +24,8 @@ from dask.diagnostics import ProgressBar
 # ==============================================================================
 
 # Folder path containing HPGE spurious currents velocity files
-HPGEdir = '/nobackup/smhid20/users/sm_erimu/BALTIC-MEs/hpg_test/emodnet_domcfgs_2envs_ls_1cm_v2_long'
-HPGEdir = '/nobackup/smhid20/users/sm_erimu/BALTIC-MEs/hpg_test/emodnet_domcfgs_2envs_v2'
+#HPGEdir = '/nobackup/smhid20/users/sm_erimu/BALTIC-MEs/hpg_test/emodnet_domcfgs_2envs_r005-007_ls_1cm'
+HPGEdir = '/nobackup/smhid20/users/sm_erimu/BALTIC-MEs/hpg_test/emodnet_domcfgs_2envs_r007-007_ls_1cm_v3_newtool'
 
 def create_maximum_hpge(add_more=False):
 
