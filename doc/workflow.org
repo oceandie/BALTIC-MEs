@@ -11,12 +11,6 @@
      ./makenemo -m 'freja' -r HPGTEST -n 'HPGTEST' -j 16
    #+END_SRC
 
-** Compiling MEs adapted DOMAINcfg tool
-   #+BEGIN_SRC shell
-     cd <REPO_DIR>/src/f90/NEMO_4.0.4_hpge_ovf/tools
-     ./maketools -m 'freja' -n DOMAINcfg
-   #+END_SRC
-
 ** NEMO 4.2.2
    In the fouo nemo4 repo there's a branch available called =hpg_test_422_fixes=
    Build it as follows:
@@ -27,6 +21,13 @@
    ./makenemo -m 'freja' -r NORDIC -n 'NORDIC_HPGTEST_FREJA_422_fixes' -j 16
    #+END_SRC
    And use the executable in =nemo4/cfgs/NORDIC_HPGTEST_FREJA_422_fixes/BLD/bin/nemo.exe= for the hpg tests
+   
+** Compiling DOMAINcfg tool
+   NEMO 4.2.x domaintool comes with MEs support(?).
+   #+BEGIN_SRC shell
+     cd <NEMO_4.2.2_REPO_DIR>/tools
+     ./maketools -m 'freja' -n DOMAINcfg
+   #+END_SRC
 
 
 * Generate envelopes <<sec:genenv>>
