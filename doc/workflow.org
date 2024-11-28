@@ -23,9 +23,12 @@
    And use the executable in =nemo4/cfgs/NORDIC_HPGTEST_FREJA_422_fixes/BLD/bin/nemo.exe= for the hpg tests
    
 ** Compiling DOMAINcfg tool
-   NEMO 4.2.x domaintool comes with MEs support(?).
+   NEMO 4.2.x domaintool comes with MEs support. From the repo
+   https://forge.nemo-ocean.eu/nemo/nemo.git we use the branch
+   =423-adding-more-flexibility-to-me-gvcs=
    #+BEGIN_SRC shell
      cd <NEMO_4.2.2_REPO_DIR>/tools
+     git checkout 423-adding-more-flexibility-to-me-gvcs
      ./maketools -m 'freja' -n DOMAINcfg
    #+END_SRC
 
@@ -52,19 +55,26 @@
   With the new bathymetry file we create a =domain_cfg.nc=, where
   additional settings should be given in the =namelist_cfg=.
   
-   0. Create a =coordinates.nc= from a =mesh_mask.nc=. It looks like this is only
-      for horizontal coordinates so it can be done once using the original ZPS
-      domain:
-      =ncks -v glamt,glamu,glamv,glamf,gphit,gphiu,gphiv,gphif,e1t,e1u,e1v,e1f,e2t,e2u,e2v,e2f,ff_t,ff_f,nav_lon,nav_lat mesh_mask.nc coordinates.nc=
+   0. Create a =coordinates.nc= from a =mesh_mask.nc=. This is only
+      for horizontal coordinates so it can be done once using the
+      mesh_mask corresponding to the original ZPS domain:
+      #+BEGIN_SRC      
+      ncks -v glamt,glamu,glamv,glamf,gphit,gphiu,gphiv,gphif,e1t,e1u,e1v,e1f,e2t,e2u,e2v,e2f,ff_t,ff_f,nav_lon,nav_lat mesh_mask.nc coordinates.nc=
+      #+END_SRC
       
    1. Copy contents of =<REPO_DIR>/src/scripts/create_domaincfg/= to some =<DOMAIN_BLD>= dir.
-   2. Edit =<DOMAIN_BLD>/files/namelist_cfg= to suit your needs.
+      
+   2. Edit =<DOMAIN_BLD>/files/namelist_cfg= to suit your needs. The
+      default setup in the repo is for 2 envelopes with 43 and 13
+      levels respectively.
+      
    3. On an interactive node,
       #+BEGIN_SRC
       module purge
       module load buildenv-intel/2023a-eb
       module load netCDF-HDF5/4.9.2-1.12.2-hpc1
       #+END_SRC
+      
    4. Run ~./create_domaincfg.sh <outputdir> <bathymetry>~
       this should take less than 2 minutes.
 

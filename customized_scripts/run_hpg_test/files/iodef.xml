@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<simulation>
+
+<!-- ============================================================================================ -->
+<!-- XIOS context                                                                                 -->
+<!-- ============================================================================================ -->
+
+  <context id="xios" >
+
+      <variable_definition>
+         <!-- We must have buffer_size > jpi*jpj*jpk*8 (with jpi and jpj the subdomain size) -->
+         <variable id="buffer_size"               type="int">2000000</variable>
+         <variable id="buffer_server_factor_size" type="int">2</variable>
+         <variable id="info_level"                type="int">10</variable>
+         <variable id="using_server"              type="bool">true</variable>
+         <variable id="using_server2"             type="bool">false</variable>
+         <variable id="ratio_server2"             type="int">50</variable>
+         <variable id="using_oasis"               type="bool">false</variable>
+         <variable id="oasis_codes_id"            type="string">oceanx</variable>
+         <variable id="print_file"                type="bool">false</variable>
+      </variable_definition>
+  </context>
+
+<!-- ============================================================================================ -->
+<!-- NEMO  CONTEXT add and suppress the components you need                                       -->
+<!-- ============================================================================================ -->
+
+  <context id="nemo" src="./context_nemo.xml"/>       <!--  NEMO       -->
+
+</simulation>
