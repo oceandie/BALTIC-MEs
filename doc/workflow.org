@@ -62,7 +62,9 @@
       ncks -v glamt,glamu,glamv,glamf,gphit,gphiu,gphiv,gphif,e1t,e1u,e1v,e1f,e2t,e2u,e2v,e2f,ff_t,ff_f,nav_lon,nav_lat mesh_mask.nc coordinates.nc=
       #+END_SRC
       
-   1. Copy contents of =<REPO_DIR>/src/scripts/create_domaincfg/= to some =<DOMAIN_BLD>= dir.
+   1. Copy contents of =<REPO_DIR>/src/scripts/create_domaincfg/= to
+      some =<DOMAIN_BLD>= dir. To see what I have been running look in
+      =<REPO_DIR>/customized_scripts/create_domaincfg=.
       
    2. Edit =<DOMAIN_BLD>/files/namelist_cfg= to suit your needs. The
       default setup in the repo is for 2 envelopes with 43 and 13
@@ -91,7 +93,10 @@
    2. recompile =NEMO_4.0.4_hpge= ([[sec:compilenemo]])
 
 ** run HPGE test
-   1. copy contents of =<REPO_DIR>/src/scripts/run_hpgtest/= to preferred rundir
+   1. Copy contents of =<REPO_DIR>/src/scripts/run_hpgtest/= to
+      preferred rundir. To see what I have been running look in
+      =<REPO_DIR>/customized_scripts/run_hpg_test=.
+      
    2. select initial TS depth-profile in =test_template/namelist_cfg= (=namtsd::nn_tsd_type=)
    3. create rundir with hpge setup and submit
       =./run_hpgetest.sh <testname> <domcfg>=
