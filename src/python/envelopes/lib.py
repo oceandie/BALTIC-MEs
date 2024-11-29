@@ -259,9 +259,8 @@ def compute_masks(ds_domain, merge=False):
     ds_mask: xr.Dataset
         dataset with masks
     """
-
     # Extract variables
-    k = ds_domain["z"] + 1
+    k = ds_domain.z + 1
     top_level = ds_domain["top_level"]
     bottom_level = ds_domain["bottom_level"]
 

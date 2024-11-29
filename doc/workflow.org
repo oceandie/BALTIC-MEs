@@ -11,12 +11,6 @@
      ./makenemo -m 'freja' -r HPGTEST -n 'HPGTEST' -j 16
    #+END_SRC
 
-** Compiling MEs adapted DOMAINcfg tool
-   #+BEGIN_SRC shell
-     cd <REPO_DIR>/src/f90/NEMO_4.0.4_hpge_ovf/tools
-     ./maketools -m 'freja' -n DOMAINcfg
-   #+END_SRC
-
 ** NEMO 4.2.2
    In the fouo nemo4 repo there's a branch available called =hpg_test_422_fixes=
    Build it as follows:
@@ -27,6 +21,17 @@
    ./makenemo -m 'freja' -r NORDIC -n 'NORDIC_HPGTEST_FREJA_422_fixes' -j 16
    #+END_SRC
    And use the executable in =nemo4/cfgs/NORDIC_HPGTEST_FREJA_422_fixes/BLD/bin/nemo.exe= for the hpg tests
+   
+** Compiling DOMAINcfg tool
+   NEMO 4.2.x domaintool comes with MEs support. From the repo
+   https://forge.nemo-ocean.eu/nemo/nemo.git we use the branch
+   =423-adding-more-flexibility-to-me-gvcs=
+   #+BEGIN_SRC shell
+     cd <NEMO_4.2.2_REPO_DIR>/tools
+     git checkout 423-adding-more-flexibility-to-me-gvcs
+     ./maketools -m 'freja' -n DOMAINcfg
+   #+END_SRC
+
 
 * Generate envelopes <<sec:genenv>>
   To generate envelopes:
@@ -39,55 +44,42 @@
 
   The result is a new bathymetry file: =bathy_meter.<inputname>.nc=
 
-* Create a =domain_cfg.nc=
+** Notes
+   Envelope generation with =generate_envelopes.py= and an input =.inp= file:
+   - Stick to the format given in example inp files.
+   - Do not change the variable types (float/int).
+   - Use only a single value for the threshold, even though the list allows several.
+
+* Create a =domain_cfg.nc=  
+  
   With the new bathymetry file we create a =domain_cfg.nc=, where
   additional settings should be given in the =namelist_cfg=.
-
-   1. Copy contents of =<REPO_DIR>/src/scripts/create_domaincfg/= to some =<DOMAIN_BLD>= dir.
-   2. Edit =<DOMAIN_BLD>/files/namelist_cfg= to suit your needs (see [[sec:example1]]).
+  
+   0. Create a =coordinates.nc= from a =mesh_mask.nc=. This is only
+      for horizontal coordinates so it can be done once using the
+      mesh_mask corresponding to the original ZPS domain:
+      #+BEGIN_SRC      
+      ncks -v glamt,glamu,glamv,glamf,gphit,gphiu,gphiv,gphif,e1t,e1u,e1v,e1f,e2t,e2u,e2v,e2f,ff_t,ff_f,nav_lon,nav_lat mesh_mask.nc coordinates.nc=
+      #+END_SRC
+      
+   1. Copy contents of =<REPO_DIR>/src/scripts/create_domaincfg/= to
+      some =<DOMAIN_BLD>= dir. To see what I have been running look in
+      =<REPO_DIR>/customized_scripts/create_domaincfg=.
+      
+   2. Edit =<DOMAIN_BLD>/files/namelist_cfg= to suit your needs. The
+      default setup in the repo is for 2 envelopes with 43 and 13
+      levels respectively.
+      
    3. On an interactive node,
       #+BEGIN_SRC
       module purge
       module load buildenv-intel/2023a-eb
       module load netCDF-HDF5/4.9.2-1.12.2-hpc1
       #+END_SRC
+      
    4. Run ~./create_domaincfg.sh <outputdir> <bathymetry>~
       this should take less than 2 minutes.
 
-** =namelist_ref::namzgr_mes= for the DOMAINcfg tool <<sec:example1>>
-
-    In this example for NEMO-NORDIC we use two envelopes with 43 and 13 layers respectively.
-
-#+BEGIN_SRC
-!-----------------------------------------------------------------------
-&namzgr_mes    !   MEs-coordinate
-!-----------------------------------------------------------------------
-   ln_envl     =   .TRUE. , .TRUE. , .FALSE. , .FALSE., .FALSE.  ! (T/F) If the envelope is used
-   nn_strt     =     2    ,   1    ,    1   ,   1    ,   1     ! Stretch. funct.: Madec 1996 (0) or
-                                                               ! Song & Haidvogel 1994 (1) or
-                                                               ! Siddorn & Furner 2012 (2)
-   nn_slev     =     43    ,   13   ,   20   ,   15   ,    0   ! number of s-lev between env(n-1)
-                                                               ! and env(n)
-   rn_e_hc     =     25.0  ,   0.0 ,   0.0  ,   0.0  ,   0.0   ! critical depth for transition to
-                                                               ! stretch. coord.
-   rn_e_th     =     1.5  ,    2.5 ,   2.4  ,   0.0  ,   0.0   ! surf. control param.:
-                                                               ! SH94 or MD96: 0<=th<=20
-                                                               ! SF12: thickness surf. cell
-   rn_e_bb     =     -0.3 ,    0.5 ,   0.85 ,   0.0  ,   0.0   ! bot. control param.:
-                                                               ! SH94 or MD96: 0<=bb<=1
-                                                               ! SF12: offset for calculating Zb
-   rn_e_al     =     2.0  ,     0.0 ,   0.0  ,   0.0  ,   0.0   ! alpha stretching param with SF12
-   rn_e_ba     =     0.024  ,    0.0 ,   0.0  ,   0.0  ,   0.0   ! SF12 bathymetry scaling factor for
-                                                               ! calculating Zb
-   rn_bot_min  = 9.0       ! minimum depth of the ocean bottom (>0) (m)
-   rn_bot_max  = 700.0     ! maximum depth of the ocean bottom (= ocean depth) (>0) (m)
-
-   ln_pst_mes   = .false.
-   ln_pst_l2g   = .false.
-   rn_e3pst_min = 20.
-   rn_e3pst_rat = 0.1
-/
-#+END_SRC
 
 ** visualize =domain_cfg.nc=
     in ~<REPO_DIR>/src/python/plot/vcoord/~
@@ -101,7 +93,10 @@
    2. recompile =NEMO_4.0.4_hpge= ([[sec:compilenemo]])
 
 ** run HPGE test
-   1. copy contents of =<REPO_DIR>/src/scripts/run_hpgtest/= to preferred rundir
+   1. Copy contents of =<REPO_DIR>/src/scripts/run_hpgtest/= to
+      preferred rundir. To see what I have been running look in
+      =<REPO_DIR>/customized_scripts/run_hpg_test=.
+      
    2. select initial TS depth-profile in =test_template/namelist_cfg= (=namtsd::nn_tsd_type=)
    3. create rundir with hpge setup and submit
       =./run_hpgetest.sh <testname> <domcfg>=
