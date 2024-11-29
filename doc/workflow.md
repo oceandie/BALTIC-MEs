@@ -1,29 +1,30 @@
 
 # Table of Contents
 
-1.  [Compilation](#org475e907)
-    1.  [Compiling `NEMO_4.0.4_hpge` on `Freja` ](#org8b728b2)
-    2.  [Compiling MEs adapted DOMAINcfg tool](#org249f263)
-    3.  [NEMO 4.2.2](#orgbcc126d)
-2.  [Generate envelopes ](#org5afff71)
-3.  [Create a `domain_cfg.nc`](#org3d3ee33)
-    1.  [`namelist_ref::namzgr_mes` for the DOMAINcfg tool ](#org74cc129)
-    2.  [visualize `domain_cfg.nc`](#orgf7d08cc)
-4.  [HPG error testing](#org271b0d7)
-    1.  [(optional) add an initial TS depth-profile (same procedure for 4.2.2)](#orgbcedcea)
-    2.  [run HPGE test](#orgea56e2f)
-    3.  [Create `maximum_hpge.nc`](#org91d193a)
-    4.  [HPGE iteration](#org54dd254)
+1.  [Compilation](#org5518935)
+    1.  [Compiling `NEMO_4.0.4_hpge` on `Freja` ](#orgaf42b67)
+    2.  [Compiling MEs adapted DOMAINcfg tool](#orgbacd898)
+    3.  [NEMO 4.2.2](#org7d1a38d)
+2.  [Generate envelopes ](#org99f65e4)
+    1.  [Notes](#org97b901c)
+3.  [Create a `domain_cfg.nc`](#org1424c6a)
+    1.  [`namelist_ref::namzgr_mes` for the DOMAINcfg tool ](#org6a98d0c)
+    2.  [visualize `domain_cfg.nc`](#orgb3addd0)
+4.  [HPG error testing](#orgc7908d2)
+    1.  [(optional) add an initial TS depth-profile (same procedure for 4.2.2)](#org8a39ee5)
+    2.  [run HPGE test](#org27bce9b)
+    3.  [Create `maximum_hpge.nc`](#org884f0ca)
+    4.  [HPGE iteration](#org245f5b4)
 
 
-<a id="org475e907"></a>
+<a id="org5518935"></a>
 
 # Compilation
 
 
-<a id="org8b728b2"></a>
+<a id="orgaf42b67"></a>
 
-## Compiling `NEMO_4.0.4_hpge` on `Freja` <a id="orge9a077c"></a>
+## Compiling `NEMO_4.0.4_hpge` on `Freja` <a id="orgc578959"></a>
 
 On an interactive node
 
@@ -35,7 +36,7 @@ On an interactive node
     ./makenemo -m 'freja' -r HPGTEST -n 'HPGTEST' -j 16
 
 
-<a id="org249f263"></a>
+<a id="orgbacd898"></a>
 
 ## Compiling MEs adapted DOMAINcfg tool
 
@@ -43,7 +44,7 @@ On an interactive node
     ./maketools -m 'freja' -n DOMAINcfg
 
 
-<a id="orgbcc126d"></a>
+<a id="org7d1a38d"></a>
 
 ## NEMO 4.2.2
 
@@ -58,9 +59,9 @@ Build it as follows:
 And use the executable in `nemo4/cfgs/NORDIC_HPGTEST_FREJA_422_fixes/BLD/bin/nemo.exe` for the hpg tests
 
 
-<a id="org5afff71"></a>
+<a id="org99f65e4"></a>
 
-# Generate envelopes <a id="org6a9c21a"></a>
+# Generate envelopes <a id="org1ba855d"></a>
 
 To generate envelopes:
 
@@ -74,7 +75,18 @@ To generate envelopes:
 The result is a new bathymetry file: `bathy_meter.<inputname>.nc`
 
 
-<a id="org3d3ee33"></a>
+<a id="org97b901c"></a>
+
+## Notes
+
+Envelope generation with `generate_envelopes.py` and an input `.inp` file:
+
+-   Stick to the format given in example inp files.
+-   Do not change the variable types (float/int).
+-   Use only a single value for the threshold, even though the list allows several.
+
+
+<a id="org1424c6a"></a>
 
 # Create a `domain_cfg.nc`
 
@@ -82,7 +94,7 @@ With the new bathymetry file we create a `domain_cfg.nc`, where
 additional settings should be given in the `namelist_cfg`.
 
 1.  Copy contents of `<REPO_DIR>/src/scripts/create_domaincfg/` to some `<DOMAIN_BLD>` dir.
-2.  Edit `<DOMAIN_BLD>/files/namelist_cfg` to suit your needs (see [3.1](#org634de86)).
+2.  Edit `<DOMAIN_BLD>/files/namelist_cfg` to suit your needs (see [3.1](#orgf09c573)).
 3.  On an interactive node,
     
         module purge
@@ -92,9 +104,9 @@ additional settings should be given in the `namelist_cfg`.
     this should take less than 2 minutes.
 
 
-<a id="org74cc129"></a>
+<a id="org6a98d0c"></a>
 
-## `namelist_ref::namzgr_mes` for the DOMAINcfg tool <a id="org634de86"></a>
+## `namelist_ref::namzgr_mes` for the DOMAINcfg tool <a id="orgf09c573"></a>
 
 In this example for NEMO-NORDIC we use two envelopes with 43 and 13 layers respectively.
 
@@ -128,7 +140,7 @@ In this example for NEMO-NORDIC we use two envelopes with 43 and 13 layers respe
     /
 
 
-<a id="orgf7d08cc"></a>
+<a id="orgb3addd0"></a>
 
 ## visualize `domain_cfg.nc`
 
@@ -136,22 +148,22 @@ in `<REPO_DIR>/src/python/plot/vcoord/`
 edit and run `plot_vlevels_MEs.py` or `plot_vlevels_zps.py`
 
 
-<a id="org271b0d7"></a>
+<a id="orgc7908d2"></a>
 
 # HPG error testing
 
 
-<a id="orgbcedcea"></a>
+<a id="org8a39ee5"></a>
 
 ## (optional) add an initial TS depth-profile (same procedure for 4.2.2)
 
 1.  add an initial TS depth-profile to
     `<REPO_DIR>/src/f90/NEMO_4.0.4_hpge_ovf/src/OCE/USR/usrdef_istate.F90`
     if necessary.
-2.  recompile `NEMO_4.0.4_hpge` ([1.1](#orge9a077c))
+2.  recompile `NEMO_4.0.4_hpge` ([1.1](#orgc578959))
 
 
-<a id="orgea56e2f"></a>
+<a id="org27bce9b"></a>
 
 ## run HPGE test
 
@@ -161,7 +173,7 @@ edit and run `plot_vlevels_MEs.py` or `plot_vlevels_zps.py`
     `./run_hpgetest.sh <testname> <domcfg>`
 
 
-<a id="org91d193a"></a>
+<a id="org884f0ca"></a>
 
 ## Create `maximum_hpge.nc`
 
@@ -169,11 +181,11 @@ edit and run `plot_vlevels_MEs.py` or `plot_vlevels_zps.py`
 -   (optional) visualize in the test dir: `ncview maximum_hpge.nc`
 
 
-<a id="org54dd254"></a>
+<a id="org245f5b4"></a>
 
 ## HPGE iteration
 
-Not happy with the HPGE? Go back to [2](#org6a9c21a) and use
+Not happy with the HPGE? Go back to [2](#org1ba855d) and use
  `maximum_hpge.nc` to create a new bathymetry with HPGE aware local
  smoothing (see example `.inp` files). Note that several
  `maximum_hpge.nc` input fields can be used.
