@@ -190,7 +190,12 @@ for env in range(num_env):
                for i in range(ni):
                    max_hpge = hpge[j,i]
                    if max_hpge >= e_loc_vmx[env][m]:
-                      trg_pge[j-hal:j+hal+1,i-hal:i+hal+1] = msk_pge[j,i] + 1
+                      #trg_pge[j-hal:j+hal+1,i-hal:i+hal+1] = msk_pge[j,i] + 1
+                      trg_pge[j,i] = msk_pge[j,i] + 1
+                      if hal > 0:
+                         for jj in range(j-hal,j+hal+1):
+                             for ii in range(i-hal,i+hal+1):
+                                 if trg_pge[j,i] > msk_pge[jj,ii]: trg_pge[jj,ii] = trg_pge[j,i]
          
            msk_pge = trg_pge.copy()
 
@@ -203,10 +208,8 @@ for env in range(num_env):
        msg_info(msg,)
 
        # 2. Local smoothing with Martinho & Batteen 2006                   
-       for m in range(len(e_loc_rmx[env])):
-
-           msk_smth = msk_pge.where(msk_pge==(m+1))
-           if np.nansum(msk_smth) > 0.:
+       if np.nanmax(msk_pge) == len(e_loc_rmx[env]):
+          for m in range(len(e_loc_rmx[env])):
 
               r0x = e_loc_rmx[env][m]
               hal = e_loc_hal[env][m]
@@ -217,7 +220,7 @@ for env in range(num_env):
                      "   Local halo: " + str(hal) + " cells")
               msg_info(msg)
 
-              #msk_smth = msk_pge.where(msk_pge==(m+1)) 
+              msk_smth = msk_pge.where(msk_pge==(m+1)) 
 
               msg = '   Total number of points where we target rmax is ' + str(r0x) + ': ' + str(np.nansum(msk_smth)) 
               msg_info(msg,)
@@ -236,6 +239,9 @@ for env in range(num_env):
               WRK[np.isnan(msk_smth)] = TMP[np.isnan(msk_smth)]
               hbatt_smt.data = WRK
               env_tmp = hbatt_smt.copy()
+       else:
+          msg = 'E R R O R:  Number of required level of smoothing different from number of target rmax values'
+          msg_info(msg)
 
        ds_env["msk_pge"+str(env+1)] = msk_pge
 
@@ -262,7 +268,6 @@ for env in range(num_env):
        # smoothing with Martinho & Batteen 2006 
        hbatt_smt = smooth_MB06(da_wrk, e_glo_rmx[env])
 
-
     # Computing then MB06 Slope Parameter for the smoothed envelope
     rmax0_smt = calc_rmax(hbatt_smt)*lsm
     rmax0_smt.plot.pcolormesh(add_colorbar=True, add_labels=True, \
@@ -279,29 +284,32 @@ for env in range(num_env):
 
 # -------------------------------------------------------------------------------------
 # Setting a localised MEs-coord. system if required
-if "s2z_wgt" in ds_env.variables:
-
-   msg = 'SETTING A LOCALISED MEs-coordinates system'
-   msg_info(msg, main=True)
-
-   # Read weights
-   weights = ds_env["s2z_wgt"]
-
-   # Read distribution of levels of global z-coord. grid
-   dsz = xr.open_dataset(envInfo.zgridFile)
-
-   # Computing vertical levels depth
-   # We use e3{t,z}_1d to avoid z-partial steps
-   e3T = dsz.e3t_1d.broadcast_like(dsz.e3t_0).squeeze()
-   e3W = dsz.e3w_1d.broadcast_like(dsz.e3w_0).squeeze()
-   gdepw_0, gdept_0 = e3_to_dep(e3W, e3T)
-
-   # Creating transitioning deeper envelope
-   env = ds_env["hbatt_"+str(num_env)]
-   lev = gdepw_0[{"z":-1}]
-   wrk = xr.full_like(env,None,dtype=np.double)
-   wrk.data = weights * env.data + (1. - weights) * lev.data
-   ds_env["hbatt_"+str(num_env)].data = wrk.data
+#if "s2z_wgt" in ds_env.variables:
+#
+#   msg = 'SETTING A LOCALISED MEs-coordinates system'
+#   msg_info(msg, main=True)
+#
+#   # Read weights
+#   weights = ds_env["s2z_wgt"]
+#
+#   # Read distribution of levels of global z-coord. grid
+#   dsz = xr.open_dataset(envInfo.zgridFile)
+# 
+#   if "nav_lev" in dsz.dims:
+#      dsz = dsz.rename_dims({'nav_lev':'z'})
+#
+#   # Computing vertical levels depth
+#   # We use e3{t,z}_1d to avoid z-partial steps
+#   e3T = dsz.e3t_1d.broadcast_like(dsz.e3t_0).squeeze()
+#   e3W = dsz.e3w_1d.broadcast_like(dsz.e3w_0).squeeze()
+#   gdepw_0, gdept_0 = e3_to_dep(e3W, e3T)
+#
+#   # Creating transitioning deeper envelope
+#   env = ds_env["hbatt_"+str(num_env)]
+#   lev = gdepw_0[{"z":-1}]
+#   wrk = xr.full_like(env,None,dtype=np.double)
+#   wrk.data = weights * env.data + (1. - weights) * lev.data
+#   ds_env["hbatt_"+str(num_env)].data = wrk.data
 
 # -------------------------------------------------------------------------------------   
 # Writing the bathy_meter.nc file
