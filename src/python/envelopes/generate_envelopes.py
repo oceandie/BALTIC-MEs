@@ -208,7 +208,7 @@ for env in range(num_env):
        msg_info(msg,)
 
        # 2. Local smoothing with Martinho & Batteen 2006                   
-       if np.nanmax(msk_pge) == len(e_loc_rmx[env]):
+       if np.nanmax(msk_pge) <= len(e_loc_rmx[env]):
           for m in range(len(e_loc_rmx[env])):
 
               r0x = e_loc_rmx[env][m]
