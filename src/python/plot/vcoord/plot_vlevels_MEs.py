@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+from importlib import reload
 import os
 import sys
 import subprocess
@@ -7,6 +7,8 @@ import numpy as np
 import xarray as xr
 from xnemogcm import open_domain_cfg
 from plot_section import mpl_sec_loop
+import utils
+reload(utils)
 from utils import compute_masks
 
 # ========================================================================
@@ -17,8 +19,9 @@ from utils import compute_masks
 
 # DOMCFG_MEs = '~/Projects/BALTIC-MEs/generate_domcfg/nordic_emodnet_2envs_v0/domain_cfg.nc'
 # BATHY_MEs = '~/Projects/BALTIC-MEs/generate_domcfg/nordic_emodnet_2envs_v0/bathy_meter.nc'
-DOMCFG_MEs = '~/Projects/BALTIC-MEs/generate_domcfg/nordic_emodnet_2envs_lsv2/domain_cfg.nc'
-BATHY_MEs = '~/Projects/BALTIC-MEs/generate_domcfg/nordic_emodnet_2envs_lsv2/bathy_meter.nc'
+base_dir = '~/Projects/BALTIC-MEs/generate_domcfg/nordic_emodnet_2envs_r01-007_newtool'
+DOMCFG_MEs = f'{base_dir}/domain_cfg.nc'
+BATHY_MEs = f'{base_dir}/bathy_meter.nc'
 dest_dir = os.path.dirname(DOMCFG_MEs) + '/figs'
 latlonfile = '/nobackup/smhid20/users/sm_erimu/NEMO/generate_domcfg/analysis/lonslats.nc'
 
@@ -73,7 +76,12 @@ while nenv > 0:
 del ds_msk
 
 # Loading domain geometry
-ds_dom = xr.open_dataset(DOMCFG_MEs).squeeze()
+# breakpoint()
+ds_dom = xr.open_dataset(DOMCFG_MEs).squeeze()\
+                                    .rename_dims({
+                                      'nav_lev':'z',
+#                                      'bathy_metry' : 'bathymetry'
+                                    })
 # ds_dom  = open_domain_cfg(files=[DOMCFG_MEs])
 # for i in ['bathymetry','bathy_meter']:
 #     for dim in ['x','y']:
@@ -87,7 +95,7 @@ tlat2 = ds_dom["gphit"].values
 e3t_3 = ds_dom["e3t_0"].values
 e3w_3 = ds_dom["e3w_0"].values
 tmsk3 = ds_dom["tmask"].values
-bathy = ds_dom["bathymetry"].values
+bathy = ds_dom["bathy_metry"].values
 
 nk = e3t_3.shape[0]
 nj = e3t_3.shape[1]
